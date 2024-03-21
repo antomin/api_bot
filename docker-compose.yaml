@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16.2-alpine
+    restart: on-failure
+    environment:
+      - 'POSTGRES_DB=${DB_NAME}'
+      - 'POSTGRES_USER=${DB_USER}'
+      - 'POSTGRES_PASSWORD=${DB_PASS}'
+    volumes:
+      - ./data/pg_data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    networks:
+      - custom
+
+networks:
+  custom:
+    driver: bridge
+
+volumes:
+  pg_data:

@@ -1,0 +1,79 @@
+from typing import TYPE_CHECKING
+
+from sqlalchemy.orm import mapped_column, Mapped, relationship
+from sqlalchemy import BigInteger, String, Boolean, DateTime, ForeignKey
+from datetime import datetime
+
+from sqlalchemy.sql.functions import now
+
+from . import Base
+from ..enums import TextModels, ImageModels
+
+if TYPE_CHECKING:
+    from .generations import TextSession, ImageQuery, VideoQuery, ServiceQuery
+    from .payments import Tariff, Invoice
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id: Mapped[int] = mapped_column(BigInteger(), primary_key=True, autoincrement=False)
+    username: Mapped[str | None] = mapped_column(String(), default=None, server_default=None)
+    first_name: Mapped[str | None] = mapped_column(String(), default=None, server_default=None)
+    last_name: Mapped[str | None] = mapped_column(String(), default=None, server_default=None)
+    is_active: Mapped[bool] = mapped_column(Boolean(), default=True)
+    is_admin: Mapped[bool] = mapped_column(Boolean(), default=False)
+
+    chatgpt_daily_limit: Mapped[int] = mapped_column(default=0)
+    dalle_2_daily_limit: Mapped[int] = mapped_column(default=0)
+    sd_daily_limit: Mapped[int] = mapped_column(default=0)
+    token_balance: Mapped[int] = mapped_column(default=0)
+
+    txt_model: Mapped[TextModels] = mapped_column(String(), default=TextModels.GPT_3_TURBO)
+    img_model: Mapped[ImageModels] = mapped_column(String(), default=ImageModels.STABLE_DIFFUSION)
+    context: Mapped[bool] = mapped_column(default=True)
+    tts_mode: Mapped[str | None] = mapped_column(default=None)
+
+    update_daily_limits_time: Mapped[datetime] = mapped_column(DateTime, default=now(), server_default=now())
+    tariff_id: Mapped[int | None] = mapped_column(ForeignKey("tariffs.id", ondelete="SET NULL"), default=None)
+    payment_time: Mapped[datetime | None] = mapped_column(DateTime, default=None)
+    payment_tries: Mapped[int] = mapped_column(default=0)
+    recurring: Mapped[bool] = mapped_column(default=True)
+    first_payment: Mapped[bool] = mapped_column(default=True)
+
+    referal_link_id: Mapped[int | None] = mapped_column(ForeignKey("referal_links.id"), default=None)
+
+    tariff: Mapped["Tariff"] = relationship(back_populates="users", lazy="joined")
+    invoices: Mapped[list["Invoice"]] = relationship(back_populates="user")
+    sessions: Mapped[list["TextSession"]] = relationship(back_populates="user")
+    image_queries: Mapped[list["ImageQuery"]] = relationship(back_populates="user")
+    video_queries: Mapped[list["VideoQuery"]] = relationship(back_populates="user")
+    services_queries: Mapped[list["ServiceQuery"]] = relationship(back_populates="user")
+
+    def __str__(self):
+        return f"<User: {self.username}>"
+
+    def sub_time_left(self) -> tuple:
+        days_left = (self.payment_time - datetime.now()).days
+        if days_left >= 2:
+            return ("день", "дня", "дней"), days_left
+        else:
+            hours_left = int((self.payment_time - datetime.now()).total_seconds() // 3600)
+            return ("час", "часа", "часов"), hours_left if hours_left > 1 else 1
+
+
+class ReferalLink(Base):
+    __tablename__ = "referal_links"
+
+    id: Mapped[int] = mapped_column(BigInteger(), primary_key=True)
+    name: Mapped[str]
+    owner_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    clicks: Mapped[int] = mapped_column(default=0)
+    buys_cnt: Mapped[int] = mapped_column(default=0)
+    buys_sum: Mapped[int] = mapped_column(default=0)
+    new_users: Mapped[int] = mapped_column(default=0)
+    bot_link: Mapped[str] = mapped_column(unique=True)
+    site_link: Mapped[str] = mapped_column(unique=True)
+
+    def __str__(self):
+        return f"<RefLink: {self.id}>"
