@@ -1,6 +1,7 @@
+from flask_admin.contrib.sqla import ModelView
+
 from common.models import User
 from flask_app.extensions import admin, db
-from flask_admin.contrib.sqla import ModelView
 
 
 class AdminView(ModelView):

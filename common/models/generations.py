@@ -1,9 +1,11 @@
 from typing import TYPE_CHECKING
+
 from sqlalchemy import BigInteger, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from common.models import Base
-from ..enums import TextModels, ImageModels, VideoTypes
+
+from ..enums import ImageModels, TextModels, VideoTypes
 
 if TYPE_CHECKING:
     from .user import User
@@ -73,3 +75,16 @@ class ServiceQuery(Base):
     type: Mapped[str] = mapped_column(String(20))
 
     user: Mapped["User"] = relationship(back_populates="services_queries")
+
+
+class TextGenerationRole(Base):
+    __tablename__ = "text_generation_roles"
+
+    title: Mapped[str] = mapped_column(unique=True)
+    prompt: Mapped[str] = mapped_column(String)
+    is_active: Mapped[bool] = mapped_column(default=True)
+
+    users: Mapped[list["User"]] = relationship(back_populates="txt_model_role")
+
+    def __repr__(self):
+        return f"<TextRole | {self.title}>"

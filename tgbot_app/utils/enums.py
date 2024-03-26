@@ -30,3 +30,29 @@ class ProfileButtons(Enum):
     AIS = "🤖 Нейросети"
     PREMIUM = "💳 Премиум"
     TOKENS = "💎 Купить Токены"
+
+
+class AiTypeButtons(Enum):
+    TEXT = "🔤 Генерация текста"
+    IMAGE = "🏞 Генерация изображений"
+    VIDEO = "🎞 Генерация видео"
+    MUSIC = "🎼 Генерация музыки"
+
+
+class TextSettingsButtons(Enum):
+    MODEL = "model"
+    VOICE = "voice"
+    ROLE = "role"
+    CONTEXT = "context"
+    BACK = "back"
+
+
+class SileroAction(Enum):
+    SHOW_CATEGORY = "show_category"
+    SHOW_CATEGORY_STATE = "show_category_state"
+    SET = "set"
+    EXAMPLE = "example"
+    NONE = "none"
+    BACK_TO_SERVICE = "back_to_service"
+    SET_STATE = "set_state"
+    START_SERVICE = "start_state"

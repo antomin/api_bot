@@ -1,17 +1,17 @@
+from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy.orm import mapped_column, Mapped, relationship
-from sqlalchemy import BigInteger, String, Boolean, DateTime, ForeignKey
-from datetime import datetime
-
+from sqlalchemy import BigInteger, Boolean, DateTime, ForeignKey, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql.functions import now
 
+from ..enums import ImageModels, TextModels
 from . import Base
-from ..enums import TextModels, ImageModels
 
 if TYPE_CHECKING:
-    from .generations import TextSession, ImageQuery, VideoQuery, ServiceQuery
-    from .payments import Tariff, Invoice
+    from .generations import (ImageQuery, ServiceQuery, TextGenerationRole,
+                              TextSession, VideoQuery)
+    from .payments import Invoice, Tariff
 
 
 class User(Base):
@@ -30,6 +30,8 @@ class User(Base):
     token_balance: Mapped[int] = mapped_column(default=0)
 
     txt_model: Mapped[TextModels] = mapped_column(String(), default=TextModels.GPT_3_TURBO)
+    txt_model_role_id: Mapped[int | None] = mapped_column(
+        ForeignKey("text_generation_roles.id", ondelete="SET NULL"), default=None)
     img_model: Mapped[ImageModels] = mapped_column(String(), default=ImageModels.STABLE_DIFFUSION)
     context: Mapped[bool] = mapped_column(default=True)
     tts_mode: Mapped[str | None] = mapped_column(default=None)
@@ -49,6 +51,7 @@ class User(Base):
     image_queries: Mapped[list["ImageQuery"]] = relationship(back_populates="user")
     video_queries: Mapped[list["VideoQuery"]] = relationship(back_populates="user")
     services_queries: Mapped[list["ServiceQuery"]] = relationship(back_populates="user")
+    txt_model_role: Mapped["TextGenerationRole"] = relationship(back_populates="users", lazy="joined")
 
     def __str__(self):
         return f"<User: {self.username}>"

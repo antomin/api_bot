@@ -1,8 +1,9 @@
 from typing import Any
 
 from loguru import logger
+from sqlalchemy import select
 
-from common.models import db, User, ReferalLink
+from common.models import ReferalLink, TextGenerationRole, User, db
 from common.settings import settings
 
 
@@ -39,3 +40,23 @@ async def get_obj_by_id(obj: Any, id_: int | str) -> Any:
     async with db.async_session_factory() as session:
         result = await session.get(obj, id_)
         return result
+
+
+async def update_object(obj: Any, update_relations: bool = False, **params) -> None:
+    async with db.async_session_factory() as session:
+        for field, value in params.items():
+            setattr(obj, field, value)
+        session.add(obj)
+        await session.commit()
+
+        if update_relations:
+            await session.refresh(obj)
+
+
+async def get_roles() -> list[TextGenerationRole]:
+    async with db.async_session_factory() as session:
+        result = await session.scalars(
+            select(TextGenerationRole).where(TextGenerationRole.is_active).order_by(TextGenerationRole.id)
+        )
+
+        return result.all()

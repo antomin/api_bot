@@ -1,8 +1,9 @@
 from flask import Flask
+
 from common.settings import settings
+from flask_app.admin import admin
 from flask_app.extensions import db, migrate
 from flask_app.main_app.views import main_app
-from flask_app.admin import admin
 
 
 def __register_blueprints(app: Flask) -> None:

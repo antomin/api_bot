@@ -4,13 +4,14 @@ import logging
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
-from aiogram.types import BotCommandScopeAllGroupChats, BotCommand, BotCommandScopeAllPrivateChats
+from aiogram.types import (BotCommand, BotCommandScopeAllGroupChats,
+                           BotCommandScopeAllPrivateChats)
 from loguru import logger
 
 from common.settings import settings
 from tgbot_app.handlers import main_router
-from tgbot_app.utils.enums import DefaultCommands
 from tgbot_app.middlewares import UserMiddleware
+from tgbot_app.utils.enums import DefaultCommands
 
 
 def _set_loggers() -> None:

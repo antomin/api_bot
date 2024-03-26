@@ -1,7 +1,7 @@
-from .base import Base, Database
-from .user import User, ReferalLink
-from .generations import TextQuery, ImageQuery, VideoQuery
-from .payments import Tariff, Invoice
 from ..settings import settings
+from .base import Base, Database
+from .generations import ImageQuery, TextGenerationRole, TextQuery, VideoQuery
+from .payments import Invoice, Tariff
+from .user import ReferalLink, User
 
 db = Database(url=settings.ASYNC_DB_URL)

@@ -1,5 +1,7 @@
 from common.db_api import get_obj_by_id
-from common.models import User, Tariff
+from common.enums import ImageModels, TextModels
+from common.models import Tariff, User
+from common.settings import settings
 
 
 def decl(num: int, titles: tuple) -> str:
@@ -51,5 +53,36 @@ async def gen_profile_text(user: User) -> str:
             f"├ Текущие кол-во токенов: {user.token_balance}\n"
             f"└ Безлимит ChatGPT 3.5 + Синтез речи"
         )
+
+    return text
+
+
+def gen_txt_settings_text(user: User) -> str:
+    text = ("🔹 Вы можете задавать вопросы голосом и получать озвученные ответы, а также изменять версии модели. "
+            "Стоимость каждой модели зависит от версии ChatGPT.\n\n💎 <b>Стоимость:</b> ")
+
+    if user.txt_model == TextModels.GPT_3_TURBO:
+        if not user.tariff:
+            text += (
+                f"{settings.MODELS[user.txt_model].cost} токена\n"
+                f"├ У вас осталось {user.chatgpt_daily_limit} ежедневных запросов\n"
+                f"└ На модель ChatGPT 3.5 Turbo (это самая популярная модель) распространяется безлимит по подписке."
+            )
+        else:
+            text += f"Безлимит по подписке"
+    else:
+        text += f"{settings.MODELS[user.txt_model].cost} токенов"
+
+    return text
+
+
+def gen_img_settings_text(user: User) -> str:
+    text = (f"🔹 Для Вашего выбора доступно несколько популярных нейросетей Dall-E 2, Dall-E3, Stable diffusion. "
+            f"Ежедневно мы продолжаем работать над добавлением других нейросетей для генерации изображений.\n\n"
+            f"💎 <b>Стоимость:</b> {settings.MODELS[user.img_model].cost} токенов")
+
+    if not user.tariff and user.img_model in (ImageModels.DALLE_2, ImageModels.STABLE_DIFFUSION):
+        num = user.dalle_2_daily_limit if user.img_model == ImageModels.DALLE_2 else user.sd_daily_limit
+        text += f"\n└ У вас осталось {num} ежедневных запросов"
 
     return text

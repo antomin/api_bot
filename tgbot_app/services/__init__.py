@@ -1,5 +1,7 @@
-from .neiro_api import Midjourney, OpenAI, StableDiffusion, Yandex, Gemini, Claude
 from common.settings import settings
+
+from .neiro_api import (Claude, Gemini, Midjourney, OpenAI, StableDiffusion,
+                        Yandex)
 
 midjourney = Midjourney(token=settings.NEIRO_TOKEN)
 openai = OpenAI(token=settings.NEIRO_TOKEN)
