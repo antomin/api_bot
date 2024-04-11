@@ -7,7 +7,7 @@ class TextModels(str, Enum):
     CLAUDE = "claude-2.1"
     GEMINI = "gemini-1.0-pro-latest"
     YAGPT = "yandexgpt"
-    YAGPT_LITE = "yandexgpt_lite"
+    YAGPT_LITE = "yandexgpt-lite"
 
 
 class ImageModels(str, Enum):
