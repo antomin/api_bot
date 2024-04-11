@@ -1,7 +1,15 @@
-from common.db_api import get_obj_by_id
+from aiogram import Bot
+from aiogram.dispatcher.event.bases import CancelHandler
+from aiogram.types import Message
+
+from common.db_api import get_messages, get_obj_by_id
 from common.enums import ImageModels, TextModels
 from common.models import Tariff, User
 from common.settings import settings
+from tgbot_app.keyboards import gen_error_kb, gen_no_tokens_kb, gen_premium_kb
+from tgbot_app.services import translator, yandex
+from tgbot_app.utils.text_variables import (ERROR_STT_TEXT,
+                                            ERROR_TRANSLATION_TEXT)
 
 
 def decl(num: int, titles: tuple) -> str:
@@ -77,7 +85,7 @@ def gen_txt_settings_text(user: User) -> str:
 
 
 def gen_img_settings_text(user: User) -> str:
-    text = (f"🔹 Для Вашего выбора доступно несколько популярных нейросетей Dall-E 2, Dall-E3, Stable diffusion. "
+    text = (f"🔹 Для Вашего выбора доступно несколько популярных нейросетей Dall-E 2, Dall-E3, Stable diffusion и др. "
             f"Ежедневно мы продолжаем работать над добавлением других нейросетей для генерации изображений.\n\n"
             f"💎 <b>Стоимость:</b> {settings.MODELS[user.img_model].cost} токенов")
 
@@ -86,3 +94,76 @@ def gen_img_settings_text(user: User) -> str:
         text += f"\n└ У вас осталось {num} ежедневных запросов"
 
     return text
+
+
+def can_send_query(user: User, model: ImageModels | TextModels) -> bool:  # TODO Review
+    model_cost = settings.MODELS[model].cost
+    if not user.tariff:
+        if model in (ImageModels.DALLE_2, ImageModels.STABLE_DIFFUSION, TextModels.GPT_3_TURBO):
+            if model == TextModels.GPT_3_TURBO:
+                return bool(user.chatgpt_daily_limit) or user.token_balance >= model_cost
+            if model == ImageModels.DALLE_2:
+                return bool(user.dalle_2_daily_limit) or user.token_balance >= model_cost
+            if model == ImageModels.STABLE_DIFFUSION:
+                return bool(user.sd_daily_limit) or user.token_balance >= model_cost
+        return user.token_balance >= model_cost
+    else:
+        if model == TextModels.GPT_3_TURBO:
+            return True
+        return user.token_balance >= model_cost
+
+
+async def send_no_balance_msg(user: User, bot: Bot) -> None:
+    if not user.tariff:
+        text = "🔒 Вам не хватает токенов для генерации! Но вы можете докупить их или оформить подписку на 30 дней."
+    else:
+        text = ("🔒 Похоже Вы использовали все Ваши токены, предоставленные по подписке. Но Вы можете купить еще "
+                "токенов. Для Вас они будут в 2 раза дешевле.")
+    markup = await gen_no_tokens_kb()
+    await bot.send_message(chat_id=user.id, text=text, reply_markup=markup)
+
+
+async def handle_voice_prompt(message: Message, user: User) -> str:
+    if not user.tariff:
+        text = "🗣️ Голосовые запросы доступны только в тарифе PREMIUM."
+        markup = await gen_premium_kb(user)
+        await message.answer(text=text, reply_markup=markup)
+
+        raise CancelHandler()
+
+    prompt = await yandex.speach_to_text()
+
+    if not prompt:
+        await message.answer(text=ERROR_STT_TEXT, reply_markup=await gen_error_kb())
+        raise CancelHandler()
+
+    return prompt
+
+
+async def gen_conversation(user: User, prompt: str) -> list[dict]:
+    if user.txt_model_role_id:
+        conversation = [{"role": "system", "content": user.txt_model_role.prompt}]
+    else:
+        conversation = [{"role": "system", "content": "You are a personal helpful assistant. Fluent Russian speaks."}]
+
+    if user.text_session_id:
+        messages = await get_messages(user.text_session_id)  # noqa
+        for msg in messages:
+            if msg.prompt and msg.result:
+                conversation.append({"role": "user", "content": msg.prompt})
+                conversation.append({"role": "assistant", "content": msg.result})
+
+    conversation.append({"role": "user", "content": prompt})
+
+    return conversation
+
+
+async def translate_text(text: str, message: Message) -> str:
+    result = await translator.translate(text)
+
+    if result.success:
+        return result.result
+
+    await message.answer(text=ERROR_TRANSLATION_TEXT)
+    raise CancelHandler()
+

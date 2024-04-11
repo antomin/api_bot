@@ -2,22 +2,24 @@ from aiogram import F, Router
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import CallbackQuery, FSInputFile
 
-from common.db_api import update_object
+from common.db_api import reset_session, switch_context, update_object
 from common.models import User
 from common.settings import settings
-from tgbot_app.keyboards import (gen_text_models_kb, gen_text_roles_kb,
-                                 gen_txt_settings_kb, gen_main_speaker_kb, gen_speaker_category_kb, gen_img_model_kb)
-from tgbot_app.utils.callbacks import (RoleCallback, TextModelCallback,
-                                       TextSettingsCallback, SileroCallback, ImageModelCallback)
-from tgbot_app.utils.enums import TextSettingsButtons, SileroAction
-from tgbot_app.utils.misc import gen_txt_settings_text, gen_img_settings_text
+from tgbot_app.keyboards import (gen_img_model_kb, gen_main_speaker_kb,
+                                 gen_speaker_category_kb, gen_text_models_kb,
+                                 gen_text_roles_kb, gen_txt_settings_kb)
+from tgbot_app.utils.callbacks import (ImageModelCallback, RoleCallback,
+                                       SileroCallback, TextModelCallback,
+                                       TextSettingsCallback)
+from tgbot_app.utils.enums import SileroAction, TextSettingsButtons
+from tgbot_app.utils.misc import gen_img_settings_text, gen_txt_settings_text
 
 router = Router()
 
 
 @router.callback_query(TextSettingsCallback.filter(F.action == TextSettingsButtons.CONTEXT))
 async def text_settings_context(callback: CallbackQuery, user: User):
-    await update_object(user, context=(not user.context), update_relations=True)
+    await switch_context(user)
 
     markup = await gen_txt_settings_kb(user)
 
@@ -37,6 +39,7 @@ async def text_settings_model(callback: CallbackQuery, user: User):
 async def set_text_model(callback: CallbackQuery, callback_data: TextModelCallback, user: User):
     if user.txt_model != callback_data.model:
         await update_object(user, txt_model=callback_data.model)
+        await reset_session(user)
 
     text = gen_txt_settings_text(user)
     markup = await gen_txt_settings_kb(user)

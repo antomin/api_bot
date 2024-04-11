@@ -1,11 +1,6 @@
 from enum import Enum
 
-from pydantic import BaseModel
-
-
-class DefaultCommand(BaseModel):
-    command: str
-    desc: str
+from tgbot_app.services.neiro_api import ResponseResult
 
 
 class MainButtons(str, Enum):
@@ -56,3 +51,7 @@ class SileroAction(Enum):
     BACK_TO_SERVICE = "back_to_service"
     SET_STATE = "set_state"
     START_SERVICE = "start_state"
+
+
+class GenerationResult(ResponseResult):
+    task_id: str | int | None = None

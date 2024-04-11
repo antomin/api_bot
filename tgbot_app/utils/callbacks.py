@@ -1,6 +1,6 @@
 from aiogram.filters.callback_data import CallbackData
 
-from common.enums import ImageModels, TextModels
+from common.enums import ImageAction, ImageModels, TextModels
 from tgbot_app.utils.enums import (AiTypeButtons, ProfileButtons, SileroAction,
                                    TextSettingsButtons)
 
@@ -34,3 +34,9 @@ class SileroCallback(CallbackData, prefix="silero"):
     category: str = "0"
     subcategory: str = "0"
     value: str = "0"
+
+
+class MJCallback(CallbackData, prefix="mj"):
+    action: ImageAction
+    index: int
+    task_id: str

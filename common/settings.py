@@ -54,6 +54,9 @@ class Settings(BaseSettings):
     TARGET_CHAT: str = env.str("TARGET_CHAT")
 
     NEIRO_TOKEN: str = env.str("NEIRO_TOKEN")
+    RAPIDAPI_TOKEN: str = env.str("RAPIDAPI_TOKEN")
+
+    PROXY_URL: str = env.str("PROXY_URL")
 
     ROBOKASSA_LOGIN: str = env.str("ROBOKASSA_LOGIN")
     ROBOKASSA_PASS1: str = env.str("ROBOKASSA_PASS1")

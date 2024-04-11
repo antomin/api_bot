@@ -40,7 +40,7 @@ async def gen_txt_settings_kb(user: User) -> InlineKeyboardMarkup:
     )
 
     builder.button(
-        text="Режим диалога: " + ("✅ Включен" if user.context else "❌ Выключен"),
+        text="Режим диалога: " + ("✅ Включен" if user.text_session_id else "❌ Выключен"),
         callback_data=TextSettingsCallback(action=TextSettingsButtons.CONTEXT)
     )
 

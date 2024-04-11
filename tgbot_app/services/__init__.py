@@ -1,11 +1,8 @@
 from common.settings import settings
 
-from .neiro_api import (Claude, Gemini, Midjourney, OpenAI, StableDiffusion,
-                        Yandex)
+from .neiro_api import AsyncNeiroAPI, Yandex
+from .translator import Translator
 
-midjourney = Midjourney(token=settings.NEIRO_TOKEN)
-openai = OpenAI(token=settings.NEIRO_TOKEN)
-sd = StableDiffusion(token=settings.NEIRO_TOKEN)
+neiro_api = AsyncNeiroAPI(token=settings.NEIRO_TOKEN)
+translator = Translator(token=settings.RAPIDAPI_TOKEN, proxy_url=settings.PROXY_URL)
 yandex = Yandex(token=settings.NEIRO_TOKEN)
-gemini = Gemini(token=settings.NEIRO_TOKEN)
-claude = Claude(token=settings.NEIRO_TOKEN)

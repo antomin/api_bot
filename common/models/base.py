@@ -31,4 +31,3 @@ class Database:
             autocommit=False,
             expire_on_commit=False,
         )
-

@@ -10,7 +10,7 @@ from . import Base
 
 if TYPE_CHECKING:
     from .generations import (ImageQuery, ServiceQuery, TextGenerationRole,
-                              TextSession, VideoQuery)
+                              TextQuery, TextSession, VideoQuery)
     from .payments import Invoice, Tariff
 
 
@@ -33,8 +33,8 @@ class User(Base):
     txt_model_role_id: Mapped[int | None] = mapped_column(
         ForeignKey("text_generation_roles.id", ondelete="SET NULL"), default=None)
     img_model: Mapped[ImageModels] = mapped_column(String(), default=ImageModels.STABLE_DIFFUSION)
-    context: Mapped[bool] = mapped_column(default=True)
     tts_mode: Mapped[str | None] = mapped_column(default=None)
+    text_session_id: Mapped[int | None] = mapped_column(ForeignKey("sessions.id", ondelete="SET NULL"))
 
     update_daily_limits_time: Mapped[datetime] = mapped_column(DateTime, default=now(), server_default=now())
     tariff_id: Mapped[int | None] = mapped_column(ForeignKey("tariffs.id", ondelete="SET NULL"), default=None)
@@ -47,7 +47,8 @@ class User(Base):
 
     tariff: Mapped["Tariff"] = relationship(back_populates="users", lazy="joined")
     invoices: Mapped[list["Invoice"]] = relationship(back_populates="user")
-    sessions: Mapped[list["TextSession"]] = relationship(back_populates="user")
+    text_session: Mapped["TextSession"] = relationship(back_populates="user", lazy="joined", single_parent=True)
+    text_queries: Mapped[list["TextQuery"]] = relationship(back_populates="user")
     image_queries: Mapped[list["ImageQuery"]] = relationship(back_populates="user")
     video_queries: Mapped[list["VideoQuery"]] = relationship(back_populates="user")
     services_queries: Mapped[list["ServiceQuery"]] = relationship(back_populates="user")
