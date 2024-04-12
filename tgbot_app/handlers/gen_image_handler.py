@@ -1,18 +1,21 @@
+import uuid
+
 from aiogram import F, Router
 from aiogram.enums import ChatAction
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message, URLInputFile
 from aiogram.utils.chat_action import ChatActionSender
 
-from common.db_api import change_balance
+from common.db_api import change_balance, create_image_query, update_object
 from common.enums import ImageAction, ImageModels
 from common.models import User
 from common.settings import settings
 from tgbot_app.keyboards import gen_img_model_kb, gen_midjourney_kb
+from tgbot_app.services import neiro_api
 from tgbot_app.services.neiro_api import GenerationStatus
 from tgbot_app.utils.callbacks import AiTypeCallback, MJCallback
 from tgbot_app.utils.enums import AiTypeButtons
-from tgbot_app.utils.midjourney import run_mj_generation
+from tgbot_app.utils.image_generations import run_mj_generation, run_image_generation
 from tgbot_app.utils.misc import (can_send_query, gen_img_settings_text,
                                   handle_voice_prompt, send_no_balance_msg,
                                   translate_text)
@@ -36,7 +39,7 @@ async def image_generation(callback: CallbackQuery, user: User, state: FSMContex
 
 
 @router.message(GenerationState.IMAGE)
-async def run_image_generation(message: Message, user: User, state: FSMContext):
+async def image_generation(message: Message, user: User, state: FSMContext):
     model = user.img_model
 
     if not can_send_query(user=user, model=model):
@@ -65,16 +68,16 @@ async def run_image_generation(message: Message, user: User, state: FSMContext):
     await change_balance(user=user, model=settings.MODELS[model])
 
     match model:
-        case ImageModels.STABLE_DIFFUSION:
-            return
         case ImageModels.MIDJOURNEY:
             result = await run_mj_generation(action=ImageAction.IMAGINE, status=status, prompt=prompt)
         case ImageModels.DALLE_2 | ImageModels.DALLE_3:
-            return
-        case ImageModels.KANDINSKY:
-            return
+            await status.edit_text("🖌️ Рисуем Ваше изображение...")
+            img_query = await create_image_query(id=str(uuid.uuid4()), user_id=user.id, model=model,
+                                                 status=GenerationStatus.IN_PROCESS)
+            result = await neiro_api.dalle_imagine(model=model, prompt=prompt)
+            await update_object(img_query, status=result.status, result=result.result)
         case _:
-            return
+            result = await run_image_generation(model=model, prompt=prompt, status=status)
 
     await status.delete()
 
