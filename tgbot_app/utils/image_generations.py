@@ -22,20 +22,15 @@ async def wait_image_result(model: ImageModels, task_id: str, status: Message, i
         if not result.success:
             continue
 
-        if result.status == GenerationStatus.ERROR:
-            await update_object(img_query, status=GenerationStatus.ERROR)
-            return GenerationResult(success=False)
-
-        if result.status == GenerationStatus.BANNED:
-            await update_object(img_query, status=GenerationStatus.BANNED)
-            return GenerationResult(success=False, status=GenerationStatus.BANNED)
+        if result.status in (GenerationStatus.ERROR, GenerationStatus.BANNED):
+            await update_object(img_query, status=result.status)
+            return GenerationResult(success=False, status=result.status)
 
         if result.status == GenerationStatus.WAITING:
             try:
                 await status.edit_text("🕗 В ожидании начала генерации... Это может занять 3-5 минут...")
             except TelegramBadRequest:
                 pass
-
             continue
 
         if result.status == GenerationStatus.IN_PROCESS:
@@ -43,12 +38,12 @@ async def wait_image_result(model: ImageModels, task_id: str, status: Message, i
                 await status.edit_text(f"🖌️ Рисуем Ваше изображение... {result.result}")
             except TelegramBadRequest:
                 pass
-
             continue
 
         if result.status == GenerationStatus.READY:
-            await update_object(img_query, status=GenerationStatus.READY, result=result.result)
-            return GenerationResult(result=result.result, task_id=img_query.id)
+            result = result.result if model == ImageModels.MIDJOURNEY else result.result[0]
+            await update_object(img_query, status=GenerationStatus.READY, result=result)
+            return GenerationResult(result=result, task_id=img_query.id)
 
     await update_object(img_query, status=GenerationStatus.ERROR, result='timeout')
     return GenerationResult(success=False)
@@ -74,15 +69,14 @@ async def run_mj_generation(action: ImageAction, status: Message, task_id: str =
 
 
 async def run_image_generation(model: ImageModels, prompt: str, status: Message) -> GenerationResult:
-    if model in (ImageModels.DALLE_2, ImageModels.DALLE_3):
-        task_id = str(uuid.uuid4())
-    else:
-        result = await neiro_api.imagine(model=model, prompt=prompt)
+    result = await neiro_api.imagine(model=model, prompt=prompt)
 
-        if not result.success:
-            return result
+    if not result.success:
+        return result
 
-        task_id = result.result
+    await status.edit_text("🖌️ Рисуем Ваше изображение...")
+
+    task_id = result.result
 
     img_query = await create_image_query(id=task_id, user_id=status.chat.id, model=model, action=ImageAction.IMAGINE,
                                          prompt=prompt)

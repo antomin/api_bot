@@ -15,7 +15,8 @@ from tgbot_app.services import neiro_api
 from tgbot_app.services.neiro_api import GenerationStatus
 from tgbot_app.utils.callbacks import AiTypeCallback, MJCallback
 from tgbot_app.utils.enums import AiTypeButtons
-from tgbot_app.utils.image_generations import run_mj_generation, run_image_generation
+from tgbot_app.utils.image_generations import (run_image_generation,
+                                               run_mj_generation)
 from tgbot_app.utils.misc import (can_send_query, gen_img_settings_text,
                                   handle_voice_prompt, send_no_balance_msg,
                                   translate_text)

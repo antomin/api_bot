@@ -5,7 +5,7 @@ from aiohttp import ClientSession
 from loguru import logger
 from pydantic import BaseModel
 
-from common.enums import ImageAction, TextModels, ImageModels
+from common.enums import ImageAction, ImageModels, TextModels
 
 
 class GenerationStatus(str, Enum):
@@ -20,7 +20,7 @@ class GenerationStatus(str, Enum):
 class ResponseResult(BaseModel):
     success: bool = True
     status: GenerationStatus | None = None
-    result: str | None = ""
+    result: str | list | None = ""
 
 
 class AsyncNeiroAPI:
