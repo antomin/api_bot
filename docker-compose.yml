@@ -9,7 +9,7 @@ services:
       - 'POSTGRES_USER=${DB_USER}'
       - 'POSTGRES_PASSWORD=${DB_PASS}'
     volumes:
-      - ./pg_data:/var/lib/postgresql/data
+      - ./data/pg_data:/var/lib/postgresql/data
     ports:
       - '5434:5432'
     networks:

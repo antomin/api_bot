@@ -6,7 +6,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from common.models import Base
 from tgbot_app.services.neiro_api import GenerationStatus
 
-from ..enums import ImageAction, ImageModels, TextModels, VideoModels
+from ..enums import ImageAction, ImageModels, TextModels, VideoModels, ServiceModels
 
 if TYPE_CHECKING:
     from .user import User
@@ -74,7 +74,8 @@ class ServiceQuery(Base):
     __tablename__ = "service_queries"
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    type: Mapped[str] = mapped_column(String(20))
+    type: Mapped[ServiceModels] = mapped_column(String(20))
+    result: Mapped[str]
 
     user: Mapped["User"] = relationship(back_populates="services_queries")
 
