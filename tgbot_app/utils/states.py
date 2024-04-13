@@ -6,3 +6,11 @@ class GenerationState(StatesGroup):
     IMAGE = State()
     FILE = State()
     IN_PROCESS = State()
+
+
+class VideoState(StatesGroup):
+    TEXT_TO_VIDEO = State()
+    IMG_TO_VIDEO = State()
+    RMBG_VIDEO = State()
+    CARTOON_VIDEO = State()
+    PICA = State()

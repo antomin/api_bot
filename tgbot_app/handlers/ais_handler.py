@@ -3,11 +3,17 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
+from common.db_api import reset_session
+from common.models import User
 from common.settings import settings
-from tgbot_app.keyboards import gen_ai_types_kb
-from tgbot_app.utils.callbacks import ProfileCallback
-from tgbot_app.utils.enums import DefaultCommands, MainButtons, ProfileButtons
-from tgbot_app.utils.text_variables import AIS_TEXT
+from tgbot_app.keyboards import (gen_ai_types_kb, gen_img_model_kb,
+                                 gen_main_video_kb, gen_txt_settings_kb)
+from tgbot_app.utils.callbacks import AiTypeCallback, ProfileCallback
+from tgbot_app.utils.enums import (AiTypeButtons, DefaultCommands, MainButtons,
+                                   ProfileButtons)
+from tgbot_app.utils.misc import gen_img_settings_text, gen_txt_settings_text
+from tgbot_app.utils.states import GenerationState
+from tgbot_app.utils.text_variables import AIS_TEXT, VIDEO_MAIN_TEXT
 
 router = Router()
 
@@ -23,3 +29,29 @@ async def show_ai_types(message: Message | CallbackQuery, state: FSMContext):
         message = message.message
 
     await message.answer(text=AIS_TEXT.format(app_name=settings.APP_NAME), reply_markup=await gen_ai_types_kb())
+
+
+@router.callback_query(AiTypeCallback.filter(F.type == AiTypeButtons.TEXT))
+async def text_generation_handler(callback: CallbackQuery, user: User, state: FSMContext):
+    await reset_session(user)
+
+    await callback.message.answer(text=gen_txt_settings_text(user), reply_markup=await gen_txt_settings_kb(user))
+    await callback.answer()
+
+    await state.set_state(GenerationState.TEXT)
+
+
+@router.callback_query(AiTypeCallback.filter(F.type == AiTypeButtons.IMAGE))
+async def image_generation_handler(callback: CallbackQuery, user: User, state: FSMContext):
+    await callback.message.answer(text=gen_img_settings_text(user), reply_markup=await gen_img_model_kb(user))
+    await callback.answer()
+
+    await state.set_state(GenerationState.IMAGE)
+
+
+@router.callback_query(AiTypeCallback.filter(F.type == AiTypeButtons.VIDEO))
+async def video_generation_handler(callback: CallbackQuery, state: FSMContext):
+    await state.clear()
+
+    await callback.message.answer(text=VIDEO_MAIN_TEXT, reply_markup=await gen_main_video_kb())
+    await callback.answer()

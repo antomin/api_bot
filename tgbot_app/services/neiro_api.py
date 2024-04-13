@@ -5,7 +5,7 @@ from aiohttp import ClientSession
 from loguru import logger
 from pydantic import BaseModel
 
-from common.enums import ImageAction, ImageModels, TextModels
+from common.enums import ImageAction, ImageModels, TextModels, VideoModels
 
 
 class GenerationStatus(str, Enum):
@@ -40,7 +40,7 @@ class AsyncNeiroAPI:
             ImageModels.KANDINSKY: f"{self.base_url}/kandinsky/generate/",
             ImageModels.STABLE_DIFFUSION: f"{self.base_url}/stablediffusion/text2img/",
         }
-        self.image_status_urls = {
+        self.status_urls = {
             ImageModels.MIDJOURNEY: f"{self.base_url}/midjourney/check-task/",
             ImageModels.KANDINSKY: f"{self.base_url}/kandinsky/check-task/",
             ImageModels.STABLE_DIFFUSION: f"{self.base_url}/stablediffusion/check-task/",
@@ -66,8 +66,8 @@ class AsyncNeiroAPI:
             return ResponseResult(success=False)
         return ResponseResult(result=result["task_id"])
 
-    async def get_image_status(self, task_id: str, model: ImageModels) -> ResponseResult:
-        url = self.image_status_urls[model]
+    async def get_status(self, task_id: str, model: ImageModels | VideoModels) -> ResponseResult:
+        url = self.status_urls[model]
         payload = {"task_id": task_id}
 
         result = await self.__request(url=url, payload=payload)
@@ -98,6 +98,15 @@ class AsyncNeiroAPI:
         if not result.get("result"):
             return ResponseResult(success=False)
         return ResponseResult(result=result["result"])
+
+    async def video_generation(self, model: VideoModels, params: dict) -> ResponseResult:
+        url = f"{self.base_url}/stablediffusion/{model.value}/"
+
+        result = await self.__request(url=url, payload=params)
+
+        if not result.get("task_id"):
+            return ResponseResult(success=False)
+        return ResponseResult(result=result["task_id"])
 
     async def __request(self, url: str, payload: dict) -> dict:
         async with ClientSession(headers=self.headers) as session:

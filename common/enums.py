@@ -19,11 +19,11 @@ class ImageModels(str, Enum):
 
 
 class VideoModels(str, Enum):
-    PICA = "pica"
-    TEXT_TO_VIDEO = "txt2mpeg"
-    IMG_TO_VIDEO = "img2mpg"
+    # PICA = "pica"
+    TEXT_TO_VIDEO = "text2mpeg"
+    IMG_TO_VIDEO = "img2mpeg"
     RMBG_VIDEO = "rembg"
-    CARTOON_VIDEO = "cart2mpeg"
+    CARTOON_VIDEO = "mpeg2cartoon"
 
 
 class ImageAction(str, Enum):

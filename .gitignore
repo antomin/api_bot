@@ -191,3 +191,7 @@ cython_debug/
 # CUSTOM
 
 data
+tgbot_app/tmp/*
+
+
+!.gitkeep

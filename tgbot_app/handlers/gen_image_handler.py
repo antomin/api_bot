@@ -1,6 +1,6 @@
 import uuid
 
-from aiogram import F, Router
+from aiogram import Router
 from aiogram.enums import ChatAction
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message, URLInputFile
@@ -10,33 +10,21 @@ from common.db_api import change_balance, create_image_query, update_object
 from common.enums import ImageAction, ImageModels
 from common.models import User
 from common.settings import settings
-from tgbot_app.keyboards import gen_img_model_kb, gen_midjourney_kb
+from tgbot_app.keyboards import gen_midjourney_kb
 from tgbot_app.services import neiro_api
 from tgbot_app.services.neiro_api import GenerationStatus
-from tgbot_app.utils.callbacks import AiTypeCallback, MJCallback
-from tgbot_app.utils.enums import AiTypeButtons
-from tgbot_app.utils.image_generations import (run_image_generation,
+from tgbot_app.utils.callbacks import MJCallback
+from tgbot_app.utils.media_generations import (run_image_generation,
                                                run_mj_generation)
-from tgbot_app.utils.misc import (can_send_query, gen_img_settings_text,
-                                  handle_voice_prompt, send_no_balance_msg,
-                                  translate_text)
+from tgbot_app.utils.misc import (can_send_query, handle_voice_prompt,
+                                  send_no_balance_msg, translate_text)
 from tgbot_app.utils.states import GenerationState
 from tgbot_app.utils.text_variables import (BAN_TEXT, ERROR_MAIN_TEXT,
-                                            MJ_CAPTION)
+                                            IMAGE_GEN_TEXT,
+                                            IMAGE_IN_QUEUE_TEXT, MJ_CAPTION,
+                                            TRANSLATION_TEXT)
 
 router = Router()
-
-
-@router.callback_query(AiTypeCallback.filter(F.type == AiTypeButtons.IMAGE))
-async def image_generation(callback: CallbackQuery, user: User, state: FSMContext):
-    await callback.answer()
-
-    text = gen_img_settings_text(user)
-    markup = await gen_img_model_kb(user)
-
-    await callback.message.answer(text=text, reply_markup=markup)
-
-    await state.set_state(GenerationState.IMAGE)
 
 
 @router.message(GenerationState.IMAGE)
@@ -49,21 +37,18 @@ async def image_generation(message: Message, user: User, state: FSMContext):
 
     if message.voice:
         prompt = await handle_voice_prompt(message=message, user=user)
-    elif message.photo:
-        await message.answer(text=f"🚧 Данная функция в разработке. Следите за новостями.")
-        return
     elif message.text:
         prompt = message.text
     else:
         return
 
     if model != ImageModels.KANDINSKY:
-        status = await message.answer("🌐 Переводим Ваш запрос...")
+        status = await message.answer(TRANSLATION_TEXT)
         prompt = await translate_text(text=prompt, message=message)
     else:
-        status = await message.answer("🚶‍♂️🚶‍♀️ Ваш запрос в очереди на генерацию..")
+        status = await message.answer(IMAGE_IN_QUEUE_TEXT[:-1])
 
-    await status.edit_text("🚶‍♂️🚶‍♀️ Ваш запрос в очереди на генерацию...")
+    await status.edit_text(IMAGE_IN_QUEUE_TEXT)
 
     await state.set_state(GenerationState.IN_PROCESS)
     await change_balance(user=user, model=settings.MODELS[model])
@@ -72,7 +57,7 @@ async def image_generation(message: Message, user: User, state: FSMContext):
         case ImageModels.MIDJOURNEY:
             result = await run_mj_generation(action=ImageAction.IMAGINE, status=status, prompt=prompt)
         case ImageModels.DALLE_2 | ImageModels.DALLE_3:
-            await status.edit_text("🖌️ Рисуем Ваше изображение...")
+            await status.edit_text(IMAGE_GEN_TEXT)
             img_query = await create_image_query(id=str(uuid.uuid4()), user_id=user.id, model=model,
                                                  status=GenerationStatus.IN_PROCESS)
             result = await neiro_api.dalle_imagine(model=model, prompt=prompt)
@@ -114,7 +99,7 @@ async def run_midjourney_action(callback: CallbackQuery, callback_data: MJCallba
     index = callback_data.index
     task_id = callback_data.task_id
 
-    status = await callback.message.answer("🚶‍♂️🚶‍♀️ Ваш запрос в очереди на генерацию...")
+    status = await callback.message.answer(IMAGE_IN_QUEUE_TEXT)
     await change_balance(user=user, model=settings.MODELS[ImageModels.MIDJOURNEY])
     await state.set_state(GenerationState.IN_PROCESS)
 

@@ -2,12 +2,12 @@ from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from common.db_api import get_roles
-from common.enums import ImageModels, TextModels
+from common.enums import ImageModels, TextModels, VideoModels
 from common.models import User
 from common.settings import settings
 from tgbot_app.utils.callbacks import (AiTypeCallback, ImageModelCallback,
                                        ProfileCallback, RoleCallback,
-                                       TextModelCallback, TextSettingsCallback)
+                                       TextModelCallback, TextSettingsCallback, VideoModelCallback)
 from tgbot_app.utils.enums import (AiTypeButtons, ProfileButtons,
                                    TextSettingsButtons)
 
@@ -52,7 +52,7 @@ async def gen_txt_settings_kb(user: User) -> InlineKeyboardMarkup:
 async def gen_img_model_kb(user: User) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
 
-    for model in ImageModels:
+    for model in ImageModels:  # type: ImageModels
         builder.button(
             text=("✅ " if user.img_model == model else "") + str(settings.MODELS[model].name),
             callback_data=ImageModelCallback(model=model)
@@ -66,7 +66,7 @@ async def gen_img_model_kb(user: User) -> InlineKeyboardMarkup:
 async def gen_text_models_kb(user: User) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
 
-    for model in TextModels:
+    for model in TextModels:  # type: TextModels
         builder.button(
             text=("✅ " if user.txt_model == model else "") + str(settings.MODELS[model].name),
             callback_data=TextModelCallback(model=model)
@@ -94,3 +94,16 @@ async def gen_text_roles_kb(user: User) -> InlineKeyboardMarkup:
     sizes += [2 for _ in range(len(roles) // 2)] + [1]
 
     return builder.adjust(*sizes).as_markup()
+
+
+async def gen_main_video_kb() -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+
+    for model in VideoModels:  # type: VideoModels
+        builder.button(text=settings.MODELS[model].name, callback_data=VideoModelCallback(model=model))
+
+    builder.button(text="↩️ Назад", callback_data=ProfileCallback(action=ProfileButtons.AIS))
+
+    builder.adjust(1)
+
+    return builder.as_markup()

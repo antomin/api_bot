@@ -3,7 +3,7 @@ from aiogram.dispatcher.event.bases import CancelHandler
 from aiogram.types import Message
 
 from common.db_api import get_messages, get_obj_by_id
-from common.enums import ImageModels, TextModels
+from common.enums import ImageModels, TextModels, VideoModels
 from common.models import Tariff, User
 from common.settings import settings
 from tgbot_app.keyboards import gen_error_kb, gen_no_tokens_kb, gen_premium_kb
@@ -96,7 +96,7 @@ def gen_img_settings_text(user: User) -> str:
     return text
 
 
-def can_send_query(user: User, model: ImageModels | TextModels) -> bool:  # TODO Review
+def can_send_query(user: User, model: ImageModels | TextModels | VideoModels) -> bool:  # TODO Review
     model_cost = settings.MODELS[model].cost
     if not user.tariff:
         if model in (ImageModels.DALLE_2, ImageModels.STABLE_DIFFUSION, TextModels.GPT_3_TURBO):

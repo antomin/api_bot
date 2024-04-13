@@ -5,11 +5,12 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import Message
 
 from common.db_api import create_image_query, update_object
-from common.enums import ImageAction, ImageModels
+from common.enums import ImageAction, ImageModels, VideoModels
 from common.models import ImageQuery
 from tgbot_app.services import neiro_api
 from tgbot_app.services.neiro_api import GenerationStatus
 from tgbot_app.utils.enums import GenerationResult
+from tgbot_app.utils.text_variables import IMAGE_GEN_TEXT
 
 
 async def wait_image_result(model: ImageModels, task_id: str, status: Message, img_query: ImageQuery
@@ -17,7 +18,7 @@ async def wait_image_result(model: ImageModels, task_id: str, status: Message, i
     for _ in range(60):
         await asyncio.sleep(10)
 
-        result = await neiro_api.get_image_status(task_id=task_id, model=model)
+        result = await neiro_api.get_status(task_id=task_id, model=model)
 
         if not result.success:
             continue
@@ -35,7 +36,7 @@ async def wait_image_result(model: ImageModels, task_id: str, status: Message, i
 
         if result.status == GenerationStatus.IN_PROCESS:
             try:
-                await status.edit_text(f"🖌️ Рисуем Ваше изображение... {result.result}")
+                await status.edit_text(f"{IMAGE_GEN_TEXT} {result.result}")
             except TelegramBadRequest:
                 pass
             continue
@@ -74,7 +75,7 @@ async def run_image_generation(model: ImageModels, prompt: str, status: Message)
     if not result.success:
         return result
 
-    await status.edit_text("🖌️ Рисуем Ваше изображение...")
+    await status.edit_text(IMAGE_GEN_TEXT)
 
     task_id = result.result
 
@@ -82,3 +83,26 @@ async def run_image_generation(model: ImageModels, prompt: str, status: Message)
                                          prompt=prompt)
 
     return await wait_image_result(model=model, task_id=task_id, status=status, img_query=img_query)
+
+
+async def run_video_generation(model: VideoModels, **params) -> GenerationResult:
+    result = await neiro_api.video_generation(model=model, params=params)
+
+    if not result.success:
+        return result
+
+    task_id = result.result
+
+    for _ in range(60):
+        await asyncio.sleep(10)
+
+        result = await neiro_api.get_status(task_id=task_id, model=ImageModels.STABLE_DIFFUSION)
+
+        if not result.success:
+            continue
+
+        if result.status in (GenerationStatus.ERROR, GenerationStatus.BANNED):
+            return GenerationResult(success=False, status=result.status)
+
+        if result.status == GenerationStatus.READY:
+            return GenerationResult(result=result.result[0])

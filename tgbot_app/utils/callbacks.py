@@ -1,6 +1,6 @@
 from aiogram.filters.callback_data import CallbackData
 
-from common.enums import ImageAction, ImageModels, TextModels
+from common.enums import ImageAction, ImageModels, TextModels, VideoModels
 from tgbot_app.utils.enums import (AiTypeButtons, ProfileButtons, SileroAction,
                                    TextSettingsButtons)
 
@@ -23,6 +23,10 @@ class ImageModelCallback(CallbackData, prefix="img_model"):
 
 class TextModelCallback(CallbackData, prefix="txt_model"):
     model: TextModels
+
+
+class VideoModelCallback(CallbackData, prefix="video_model"):
+    model: VideoModels
 
 
 class RoleCallback(CallbackData, prefix="txt_role"):

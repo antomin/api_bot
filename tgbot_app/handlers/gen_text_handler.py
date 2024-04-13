@@ -1,36 +1,20 @@
-from aiogram import F, Router
+from aiogram import Router
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.fsm.context import FSMContext
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import Message
 from aiogram.utils.chat_action import ChatActionSender
 
-from common.db_api import change_balance, create_text_query, reset_session
+from common.db_api import change_balance, create_text_query
 from common.models import User
 from common.settings import settings
-from tgbot_app.keyboards import gen_error_kb, gen_txt_settings_kb
+from tgbot_app.keyboards import gen_error_kb
 from tgbot_app.services import neiro_api
-from tgbot_app.utils.callbacks import AiTypeCallback
-from tgbot_app.utils.enums import AiTypeButtons
 from tgbot_app.utils.misc import (can_send_query, gen_conversation,
-                                  gen_txt_settings_text, handle_voice_prompt,
-                                  send_no_balance_msg)
+                                  handle_voice_prompt, send_no_balance_msg)
 from tgbot_app.utils.states import GenerationState
 from tgbot_app.utils.text_variables import ERROR_MAIN_TEXT
 
 router = Router()
-
-
-@router.callback_query(AiTypeCallback.filter(F.type == AiTypeButtons.TEXT))
-async def text_generation(callback: CallbackQuery, user: User, state: FSMContext):
-    await reset_session(user)
-
-    text = gen_txt_settings_text(user)
-    markup = await gen_txt_settings_kb(user)
-
-    await callback.message.answer(text=text, reply_markup=markup)
-    await callback.answer()
-
-    await state.set_state(GenerationState.TEXT)
 
 
 @router.message(GenerationState.TEXT)
