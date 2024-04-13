@@ -1,13 +1,16 @@
 from flask import Flask
 
 from common.settings import settings
-from flask_app.admin import admin
-from flask_app.extensions import db, migrate
+from flask_app.admin.admin import admin
+from flask_app.extensions import db, migrate, login_manager
 from flask_app.main_app.views import main_app
+from flask_app.auth.views import auth_app
+from flask_app.commands.create_superuser import admin_cli
 
 
 def __register_blueprints(app: Flask) -> None:
     app.register_blueprint(main_app)
+    app.register_blueprint(auth_app)
 
 
 def __set_settings(app: Flask) -> None:
@@ -22,6 +25,7 @@ def __set_extensions(app: Flask) -> None:
     db.init_app(app)
     migrate.init_app(app=app, db=db)
     admin.init_app(app=app)
+    login_manager.init_app(app)
 
 
 def create_app() -> Flask:
@@ -31,4 +35,5 @@ def create_app() -> Flask:
     __set_extensions(app)
     __register_blueprints(app)
 
+    app.cli.add_command(admin_cli)
     return app

@@ -1,12 +1,18 @@
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import BigInteger, Boolean, DateTime, ForeignKey, String
+from flask_login import UserMixin
+
+from sqlalchemy import BigInteger, Boolean, DateTime, ForeignKey, String, Column
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql.functions import now
 
+from werkzeug.security import generate_password_hash, check_password_hash
+
 from ..enums import ImageModels, TextModels
 from . import Base
+
+from flask_app.extensions import db, login_manager
 
 if TYPE_CHECKING:
     from .generations import (ImageQuery, ServiceQuery, TextGenerationRole,
@@ -64,6 +70,29 @@ class User(Base):
         else:
             hours_left = int((self.payment_time - datetime.now()).total_seconds() // 3600)
             return ("час", "часа", "часов"), hours_left if hours_left > 1 else 1
+
+    # @staticmethod
+    # def get(user_id):
+    #     return User(user_id)
+
+
+class UserAdmin(db.Model, UserMixin):
+    __tablename__ = 'users_admin'
+
+    id = Column(BigInteger, primary_key=True, autoincrement=True)
+    username = Column(String(50), unique=True, nullable=False)
+    hash_password = Column(String(256), nullable=False)
+
+    def set_password(self, password):
+        self.hash_password = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.hash_password, password)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return db.session.query(UserAdmin).get(user_id)
 
 
 class ReferalLink(Base):
