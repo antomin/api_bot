@@ -14,8 +14,8 @@ from tgbot_app.keyboards import gen_midjourney_kb
 from tgbot_app.services import neiro_api
 from tgbot_app.services.neiro_api import GenerationStatus
 from tgbot_app.utils.callbacks import MJCallback
-from tgbot_app.utils.media_generations import (run_image_generation,
-                                               run_mj_generation)
+from tgbot_app.utils.generation_workers import (run_image_generation,
+                                                run_mj_generation)
 from tgbot_app.utils.misc import (can_send_query, handle_voice_prompt,
                                   send_no_balance_msg, translate_text)
 from tgbot_app.utils.states import GenerationState
@@ -109,8 +109,7 @@ async def run_midjourney_action(callback: CallbackQuery, callback_data: MJCallba
 
     if not result.success:
         await change_balance(user=user, model=settings.MODELS[ImageModels.MIDJOURNEY], add=True)
-        text = BAN_TEXT if result.status == GenerationStatus.BANNED else ERROR_MAIN_TEXT
-        await callback.message.answer(text)
+        await callback.message.answer(BAN_TEXT if result.status == GenerationStatus.BANNED else ERROR_MAIN_TEXT)
         await state.set_state(GenerationState.IMAGE)
         return
 

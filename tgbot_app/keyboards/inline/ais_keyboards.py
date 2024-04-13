@@ -7,7 +7,8 @@ from common.models import User
 from common.settings import settings
 from tgbot_app.utils.callbacks import (AiTypeCallback, ImageModelCallback,
                                        ProfileCallback, RoleCallback,
-                                       TextModelCallback, TextSettingsCallback, VideoModelCallback)
+                                       TextModelCallback, TextSettingsCallback,
+                                       VideoModelCallback)
 from tgbot_app.utils.enums import (AiTypeButtons, ProfileButtons,
                                    TextSettingsButtons)
 

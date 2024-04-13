@@ -5,7 +5,8 @@ from aiohttp import ClientSession
 from loguru import logger
 from pydantic import BaseModel
 
-from common.enums import ImageAction, ImageModels, TextModels, VideoModels
+from common.enums import (ImageAction, ImageModels, ServiceModels, TextModels,
+                          VideoModels)
 
 
 class GenerationStatus(str, Enum):
@@ -107,6 +108,9 @@ class AsyncNeiroAPI:
         if not result.get("task_id"):
             return ResponseResult(success=False)
         return ResponseResult(result=result["task_id"])
+
+    async def service_generation(self, model: ServiceModels, params: dict) -> ResponseResult:
+        ...  # TODO
 
     async def __request(self, url: str, payload: dict) -> dict:
         async with ClientSession(headers=self.headers) as session:

@@ -14,3 +14,9 @@ class VideoState(StatesGroup):
     RMBG_VIDEO = State()
     CARTOON_VIDEO = State()
     PICA = State()
+
+
+class DiplomaState(StatesGroup):
+    TYPE_WORK = State()
+    THEME_WORK = State()
+    STRUCT_WORK = State()

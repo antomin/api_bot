@@ -167,3 +167,29 @@ async def translate_text(text: str, message: Message) -> str:
     await message.answer(text=ERROR_TRANSLATION_TEXT)
     raise CancelHandler()
 
+
+def parse_user_work_struct(raw_struct: str) -> dict | None:
+    struct = {}
+    raw_lst = raw_struct.split("\n")
+    cur_chapter = ""
+    cur_subchapter = ""
+
+    try:
+        for row in raw_lst:
+            if not row:
+                continue
+            if row.strip()[0] == "*":
+                cur_chapter = row.replace("*", "").strip()
+                struct[cur_chapter] = {}
+            elif row.strip()[0] == "+":
+                cur_subchapter = row.replace("+", "").strip()
+                struct[cur_chapter][cur_subchapter] = []
+            elif row.strip()[0] == "-":
+                struct[cur_chapter][cur_subchapter].append(row.replace("-", "").strip())
+            else:
+                raise KeyError
+
+    except KeyError:
+        return
+
+    return struct

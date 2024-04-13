@@ -19,15 +19,17 @@ class ImageModels(str, Enum):
 
 
 class VideoModels(str, Enum):
-    # PICA = "pica"
     TEXT_TO_VIDEO = "text2mpeg"
     IMG_TO_VIDEO = "img2mpeg"
     RMBG_VIDEO = "rembg"
     CARTOON_VIDEO = "mpeg2cartoon"
 
 
+class ServiceModels(str, Enum):
+    DIPLOMA = "diploma"
+
+
 class ImageAction(str, Enum):
     IMAGINE = "imagine"
     VARIATION = "variation"
     UPSAMPLE = "upsample"
-

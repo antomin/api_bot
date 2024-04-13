@@ -1,8 +1,14 @@
+from typing import Any
+
 from aiogram.filters.callback_data import CallbackData
 
 from common.enums import ImageAction, ImageModels, TextModels, VideoModels
-from tgbot_app.utils.enums import (AiTypeButtons, ProfileButtons, SileroAction,
-                                   TextSettingsButtons)
+from tgbot_app.utils.enums import (AiTypeButtons, DiplomaAction,
+                                   DiplomaStructButtons, LearningButtons,
+                                   OtherServicesButtons, ProfileButtons,
+                                   ServicesButtons, SileroAction,
+                                   TextSettingsButtons, WorkingButtons,
+                                   WorkTypes)
 
 
 class ProfileCallback(CallbackData, prefix="profile"):
@@ -44,3 +50,24 @@ class MJCallback(CallbackData, prefix="mj"):
     action: ImageAction
     index: int
     task_id: str
+
+
+class ServicesCallback(CallbackData, prefix="services"):
+    type: ServicesButtons
+
+
+class LearningCallback(CallbackData, prefix="learning"):
+    type: LearningButtons
+
+
+class WorkingCallback(CallbackData, prefix="working"):
+    type: WorkingButtons
+
+
+class OtherServicesCallback(CallbackData, prefix="o_service"):
+    type: OtherServicesButtons
+
+
+class DiplomaCallback(CallbackData, prefix="diploma"):
+    action: DiplomaAction
+    value: Any = "_"

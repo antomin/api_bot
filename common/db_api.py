@@ -5,8 +5,8 @@ from sqlalchemy import select
 
 from common.enums import TextModels
 from common.models import ReferalLink, TextGenerationRole, User, db
-from common.models.generations import (ImageQuery, TextQuery, TextSession,
-                                       VideoQuery)
+from common.models.generations import (ImageQuery, ServiceQuery, TextQuery,
+                                       TextSession, VideoQuery)
 from common.settings import Model, settings
 
 
@@ -140,6 +140,15 @@ async def create_image_query(**params) -> ImageQuery:
 
 async def create_video_query(**params) -> VideoQuery:
     query = VideoQuery(**params)
+    async with db.async_session_factory() as session:
+        session.add(query)
+        await session.commit()
+
+    return query
+
+
+async def create_service_query(**params) -> ServiceQuery:
+    query = ServiceQuery(**params)
     async with db.async_session_factory() as session:
         session.add(query)
         await session.commit()

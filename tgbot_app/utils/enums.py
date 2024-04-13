@@ -42,6 +42,49 @@ class TextSettingsButtons(Enum):
     BACK = "back"
 
 
+class ServicesButtons(Enum):
+    LEARN = "👨‍🎓 Для учёбы"
+    WORK = "👨‍💻 Для работы"
+    OTHER = "📱 Другие сервисы"
+
+
+class LearningButtons(Enum):
+    WORKS = "📄 Генерация работ"
+    ANTIPLAGIARISM = "✍️ Повышение уникальности"
+    PHOTO = "📸 Решение по фото"
+
+
+class WorkingButtons(Enum):
+    MARKETING = "🚧 Маркетологам"
+    SMM = "🚧 SMM специалистам"
+    SEO = "SEO специалистам"
+    COPYRIGHT = "Копирайтерам"
+
+
+class OtherServicesButtons(Enum):
+    TTS = "🔉 Текст в речь"
+    STT = "🎤 Речь в текст"
+    REMOVE_BACK = "🏙 Удаление фона"
+
+
+class WorkTypes(Enum):
+    ESSAY = "✏️ Эссе"
+    DIPLOMA = "📚 Дипломная работа"
+    COURSEWORK = "😮‍💨 Курсовая работа"
+    REPORT = "📝 Реферат"
+
+
+class DiplomaAction(Enum):
+    SET_TYPE = "set_type"
+    STRUCT = "struct"
+    START = "start"
+
+
+class DiplomaStructButtons(Enum):
+    GEN_STRUCT = "🪄 Начать генерацию"
+    GET_STRUCT = "🗓 Задать план"
+
+
 class SileroAction(Enum):
     SHOW_CATEGORY = "show_category"
     SHOW_CATEGORY_STATE = "show_category_state"

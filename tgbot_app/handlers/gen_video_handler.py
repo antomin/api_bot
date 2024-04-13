@@ -12,7 +12,7 @@ from common.models import User
 from common.settings import settings
 from tgbot_app.keyboards import gen_error_kb
 from tgbot_app.utils.callbacks import VideoModelCallback
-from tgbot_app.utils.media_generations import run_video_generation
+from tgbot_app.utils.generation_workers import run_video_generation
 from tgbot_app.utils.misc import (can_send_query, send_no_balance_msg,
                                   translate_text)
 from tgbot_app.utils.states import VideoState
@@ -143,11 +143,9 @@ async def run_rmbg_cartoon_video(message: Message, user: User, state: FSMContext
     status = await message.answer(VIDEO_GEN_TEXT)
 
     video_path = f"{settings.MEDIA_DIR}/tmp/{user.id}.mp4"
+    video_url = f"{settings.DOMAIN}/tmp/{user.id}.mp4"
 
     await message.bot.download(file=message.video.file_id, destination=video_path)
-
-    video_url = f"{settings.DOMAIN}/tmp/{user.id}.mp4"
-    video_url = "https://replicate.delivery/pbxt/HqiGGuuwynO7sCHpcQdYQsIf04NotwOrDdbhBf4M6Pou6MGg/butter.mp4"
 
     cur_state = await state.get_state()
 
@@ -170,6 +168,6 @@ async def run_rmbg_cartoon_video(message: Message, user: User, state: FSMContext
         return
 
     async with ChatActionSender(bot=message.bot, chat_id=message.from_user.id, action=ChatAction.UPLOAD_VIDEO):
-        await message.answer_video(video=URLInputFile(url=result.result))
         await change_balance(user=user, model=settings.MODELS[model])
         await create_video_query(user_id=user.id, prompt=video_url, type=model, result=result.result)
+        await message.answer_video(video=URLInputFile(url=result.result))

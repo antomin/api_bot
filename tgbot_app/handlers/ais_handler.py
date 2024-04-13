@@ -13,7 +13,8 @@ from tgbot_app.utils.enums import (AiTypeButtons, DefaultCommands, MainButtons,
                                    ProfileButtons)
 from tgbot_app.utils.misc import gen_img_settings_text, gen_txt_settings_text
 from tgbot_app.utils.states import GenerationState
-from tgbot_app.utils.text_variables import AIS_TEXT, VIDEO_MAIN_TEXT
+from tgbot_app.utils.text_variables import (AIS_TEXT, RECONSTRUCTION_TEXT,
+                                            VIDEO_MAIN_TEXT)
 
 router = Router()
 
@@ -55,3 +56,10 @@ async def video_generation_handler(callback: CallbackQuery, state: FSMContext):
 
     await callback.message.answer(text=VIDEO_MAIN_TEXT, reply_markup=await gen_main_video_kb())
     await callback.answer()
+
+
+@router.callback_query(AiTypeCallback.filter(F.type == AiTypeButtons.MUSIC))
+async def music_generation_handler(callback: CallbackQuery, state: FSMContext):
+    await state.clear()
+
+    await callback.answer(RECONSTRUCTION_TEXT, show_alert=True)

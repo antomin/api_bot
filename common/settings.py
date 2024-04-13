@@ -4,7 +4,7 @@ from pathlib import Path
 from environs import Env
 from pydantic_settings import BaseSettings
 
-from common.enums import ImageModels, TextModels, VideoModels
+from common.enums import ImageModels, ServiceModels, TextModels, VideoModels
 
 env = Env()
 env.read_env("../.env")
@@ -40,6 +40,8 @@ models_data = {
     VideoModels.IMG_TO_VIDEO: Model(name="Фото в видео", cost=env.int("COST_IMG_TO_VIDEO")),
     VideoModels.RMBG_VIDEO: Model(name="Удалить фон на видео", cost=env.int("COST_REMBG_VIDEO")),
     VideoModels.CARTOON_VIDEO: Model(name="Видео в мультик", cost=env.int("COST_CARTOON_VIDEO")),
+
+    ServiceModels.DIPLOMA: Model(name="Учебные работы", cost=env.int("COST_DIPLOMA")),
 }
 
 
