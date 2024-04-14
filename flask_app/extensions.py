@@ -2,7 +2,7 @@ from flask_admin import Admin, helpers
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-from flask_app import MyAdminIndexView
+from flask_app.admin.views import MyAdminIndexView
 # from flask_security import Security
 # from flask_app.adminlte.admin import AdminLte, admins_store
 # from flask import url_for

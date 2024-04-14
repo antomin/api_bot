@@ -1,8 +1,4 @@
 from flask_admin.contrib.sqla import ModelView
-from flask_admin import expose, AdminIndexView
-from flask_login import current_user, logout_user
-from flask import url_for, redirect
-import flask_login as login
 
 from common.models import User, ReferalLink, Tariff, Invoice, TextQuery, TextGenerationRole, ImageQuery, VideoQuery
 from flask_app.extensions import admin, db
@@ -10,12 +6,6 @@ from flask_app.extensions import admin, db
 
 class AdminView(ModelView):
     pass
-    # def is_accessible(self):
-    #     return current_user.is_authenticated
-    #
-    # def inaccessible_callback(self, name, **kwargs):
-    #     # Redirect to login page if user is not authenticated
-    #     return redirect(url_for('login', next=request.url))
 
 
 class UserAdminView(AdminView):
