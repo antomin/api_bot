@@ -25,15 +25,15 @@ async def run_text_generation(message: Message, user: User, state: FSMContext):
         await send_no_balance_msg(user=user, bot=message.bot)
         return
 
+    await state.set_state(GenerationState.IN_PROCESS)
+    status = await message.answer("📄 Мы отвечаем на Ваш вопрос, дождитесь окончания генерации.")
+
     if message.voice:
         prompt = await handle_voice_prompt(message=message, user=user)
     elif message.text:
         prompt = message.text
     else:
         return
-
-    await state.set_state(GenerationState.IN_PROCESS)
-    status = await message.answer("📄 Мы отвечаем на Ваш вопрос, дождитесь окончания генерации.")
 
     conversation = await gen_conversation(user=user, prompt=prompt)
 

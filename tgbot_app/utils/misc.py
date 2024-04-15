@@ -1,3 +1,5 @@
+import os
+
 from aiogram import Bot
 from aiogram.dispatcher.event.bases import CancelHandler
 from aiogram.types import Message
@@ -139,6 +141,11 @@ async def handle_voice_prompt(message: Message, user: User) -> str:
     voice_url = "https://upload.wikimedia.org/wikipedia/commons/1/1a/%D0%93%D0%BE%D1%81%D0%BF%D0%BE%D0%B4%D0%B8%D0%BD_%D0%9F%D1%80%D0%B5%D0%B7%D0%B8%D0%B4%D0%B5%D0%BD%D1%82.ogg"
 
     result = await neiro_api.speech_to_text(voice_url)
+
+    try:
+        os.remove(path)
+    except:
+        pass
 
     if not result.success:
         await message.answer(text=ERROR_STT_TEXT, reply_markup=await gen_error_kb())

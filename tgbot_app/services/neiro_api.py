@@ -1,3 +1,4 @@
+import json
 from enum import Enum
 from typing import Literal
 
@@ -27,8 +28,8 @@ class ResponseResult(BaseModel):
 class AsyncNeiroAPI:
     def __init__(self, token):
         self.headers = {"x-api-key": token}
-        # self.base_url = "https://api.mindl.in/v1"
-        self.base_url = "http://127.0.0.1:8000/v1"
+        self.base_url = "https://api.mindl.in/v1"
+        # self.base_url = "http://127.0.0.1:8000/v1"
         self.completion_urls = {
             TextModels.GPT_3_TURBO: f"{self.base_url}/openai/completion/",
             TextModels.GPT_4_TURBO: f"{self.base_url}/openai/completion/",
@@ -133,7 +134,8 @@ class AsyncNeiroAPI:
     async def __request(self, url: str, payload: dict) -> dict:
         async with ClientSession(headers=self.headers) as session:
             async with session.post(url=url, json=payload) as response:
-                result = await response.json()
+                result = await response.text()
+                result = json.loads(result)
                 if not response.ok:
                     logger.error(f"API REQUEST error: {response.status} | {response.reason}")
                 return result
