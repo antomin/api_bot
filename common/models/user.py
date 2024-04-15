@@ -59,7 +59,6 @@ class User(Base):
     video_queries: Mapped[list["VideoQuery"]] = relationship(back_populates="user")
     services_queries: Mapped[list["ServiceQuery"]] = relationship(back_populates="user")
     txt_model_role: Mapped["TextGenerationRole"] = relationship(back_populates="users", lazy="joined")
-    services: Mapped["ServiceQuery"] = relationship(back_populates="user")
 
     def __str__(self):
         return f"<User: {self.id}>"

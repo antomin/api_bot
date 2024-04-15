@@ -21,7 +21,7 @@ from tgbot_app.utils.text_variables import (DIPLOMA_MAIN_TEXT,
                                             DIPLOMA_MODE_TEXT,
                                             DIPLOMA_START_GEN_TEXT,
                                             DIPLOMA_STRUCT_TEXT,
-                                            ERROR_MAIN_TEXT)
+                                            ERROR_MAIN_TEXT, PROGRESS_TEXT)
 
 router = Router()
 
@@ -29,7 +29,7 @@ router = Router()
 @router.callback_query(LearningCallback.filter(F.type == LearningButtons.WORKS))
 async def start_diploma(callback: CallbackQuery):
     await callback.message.answer(
-        text=DIPLOMA_MAIN_TEXT.format(cost=settings.MODELS[ServiceModels.DIPLOMA]),
+        text=DIPLOMA_MAIN_TEXT.format(cost=settings.MODELS[ServiceModels.DIPLOMA].cost),
         reply_markup=await gen_type_work_kb()
     )
     await callback.answer()
@@ -52,7 +52,7 @@ async def set_diploma_theme(message: Message, state: FSMContext):
     await message.answer(text=DIPLOMA_MODE_TEXT.format(theme=theme), reply_markup=await gen_diploma_struct_kb())
 
 
-@router.callback_query(DiplomaCallback.filter(F.value == DiplomaStructButtons.GET_STRUCT))
+@router.callback_query(DiplomaCallback.filter(F.action == DiplomaAction.GET_STRUCT))
 async def get_diploma_struct(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(text=DIPLOMA_STRUCT_TEXT, reply_markup=await gen_services_back_kb())
     await callback.answer()
@@ -60,7 +60,7 @@ async def get_diploma_struct(callback: CallbackQuery, state: FSMContext):
     await state.set_state(DiplomaState.STRUCT_WORK)
 
 
-@router.callback_query(DiplomaCallback.filter(F.value == DiplomaStructButtons.GEN_STRUCT))
+@router.callback_query(DiplomaCallback.filter(F.action == DiplomaAction.CONFIRM))
 @router.message(DiplomaState.STRUCT_WORK)
 async def set_diploma_struct(message: Message | CallbackQuery, state: FSMContext):
     data = await state.get_data()
@@ -70,7 +70,7 @@ async def set_diploma_struct(message: Message | CallbackQuery, state: FSMContext
 
     if isinstance(message, Message):
         raw_struct = message.text
-        struct = parse_user_work_struct(raw_struct)
+        struct = parse_user_work_struct(message.text)
 
         if not struct:
             await message.answer(
@@ -92,7 +92,7 @@ async def set_diploma_struct(message: Message | CallbackQuery, state: FSMContext
     await message.answer(text=text, reply_markup=await gen_confirm_start_work_kb())
 
 
-@router.callback_query(F.data == "start_diploma_gen")
+@router.callback_query(DiplomaCallback.filter(F.action == DiplomaAction.START))
 async def run_diploma_generation(callback: CallbackQuery, user: User, state: FSMContext):
     if user.token_balance < settings.MODELS[ServiceModels.DIPLOMA].cost:
         await send_no_balance_msg(user=user, bot=callback.bot)
@@ -107,7 +107,7 @@ async def run_diploma_generation(callback: CallbackQuery, user: User, state: FSM
     await callback.answer()
 
     status_1 = await callback.message.answer(DIPLOMA_START_GEN_TEXT.format(theme=theme))
-    status_2 = await callback.message.answer("✍️ Готовность: <b>1%</b>")
+    status_2 = await callback.message.answer(PROGRESS_TEXT.format(progress="1%"))
 
     result = await run_service_generation(model=ServiceModels.DIPLOMA, status=status_2, theme=theme, struct=struct,
                                           type_work=type_work)

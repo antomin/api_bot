@@ -70,4 +70,4 @@ class OtherServicesCallback(CallbackData, prefix="o_service"):
 
 class DiplomaCallback(CallbackData, prefix="diploma"):
     action: DiplomaAction
-    value: Any = "_"
+    value: str = "0"

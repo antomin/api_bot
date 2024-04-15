@@ -77,11 +77,13 @@ class WorkTypes(Enum):
 class DiplomaAction(Enum):
     SET_TYPE = "set_type"
     STRUCT = "struct"
+    GET_STRUCT = "get_struct"
+    CONFIRM = "confirm"
     START = "start"
 
 
 class DiplomaStructButtons(Enum):
-    GEN_STRUCT = "🪄 Начать генерацию"
+    START_GEN = "🪄 Начать генерацию"
     GET_STRUCT = "🗓 Задать план"
 
 
