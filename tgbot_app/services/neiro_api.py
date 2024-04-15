@@ -27,7 +27,8 @@ class ResponseResult(BaseModel):
 class AsyncNeiroAPI:
     def __init__(self, token):
         self.headers = {"x-api-key": token}
-        self.base_url = "https://api.mindl.in/v1"
+        # self.base_url = "https://api.mindl.in/v1"
+        self.base_url = "http://127.0.0.1:8000/v1"
         self.completion_urls = {
             TextModels.GPT_3_TURBO: f"{self.base_url}/openai/completion/",
             TextModels.GPT_4_TURBO: f"{self.base_url}/openai/completion/",
@@ -118,6 +119,16 @@ class AsyncNeiroAPI:
         if not result:
             return ResponseResult(success=False)
         return ResponseResult(status=result["status"], result=result["result"])
+
+    async def speech_to_text(self, voice_url: str) -> ResponseResult:
+        url = f"{self.base_url}/services/speech-to-text/"
+        payload = {"url_to_file": voice_url}
+
+        result = await self.__request(url=url, payload=payload)
+
+        if not result or result.get("status") != "ready":
+            return ResponseResult(success=False)
+        return ResponseResult(result=result["result"])
 
     async def __request(self, url: str, payload: dict) -> dict:
         async with ClientSession(headers=self.headers) as session:

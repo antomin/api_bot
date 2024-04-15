@@ -27,6 +27,7 @@ class VideoModels(str, Enum):
 
 class ServiceModels(str, Enum):
     DIPLOMA = "diploma"
+    STT = "speech_to_text"
 
 
 class ImageAction(str, Enum):

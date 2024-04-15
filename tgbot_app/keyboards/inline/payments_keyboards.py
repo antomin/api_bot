@@ -12,7 +12,3 @@ async def gen_no_tokens_kb() -> InlineKeyboardMarkup:
     builder.button(text="💳 Оформить подписку", callback_data=ProfileCallback(action=ProfileButtons.PREMIUM))
 
     return builder.adjust(1).as_markup()
-
-
-async def gen_premium_kb(user: User) -> InlineKeyboardMarkup:
-    builder = InlineKeyboardBuilder()

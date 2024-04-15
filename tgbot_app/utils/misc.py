@@ -6,8 +6,8 @@ from common.db_api import get_messages, get_obj_by_id
 from common.enums import ImageModels, TextModels, VideoModels
 from common.models import Tariff, User
 from common.settings import settings
-from tgbot_app.keyboards import gen_error_kb, gen_no_tokens_kb, gen_premium_kb
-from tgbot_app.services import translator, yandex
+from tgbot_app.keyboards import gen_error_kb, gen_no_tokens_kb
+from tgbot_app.services import translator, neiro_api
 from tgbot_app.utils.text_variables import (ERROR_STT_TEXT,
                                             ERROR_TRANSLATION_TEXT)
 
@@ -125,19 +125,26 @@ async def send_no_balance_msg(user: User, bot: Bot) -> None:
 
 async def handle_voice_prompt(message: Message, user: User) -> str:
     if not user.tariff:
-        text = "🗣️ Голосовые запросы доступны только в тарифе PREMIUM."
-        markup = await gen_premium_kb(user)
-        await message.answer(text=text, reply_markup=markup)
-
+        await message.answer(text="🗣️ Голосовые запросы доступны только в тарифе PREMIUM.",
+                             reply_markup=await gen_no_tokens_kb())
         raise CancelHandler()
 
-    prompt = await yandex.speach_to_text()
+    if message.voice.duration > 30:
+        await message.answer(text="🗣️ Длина аудио не должна превышать 30сек. Попробуйте ещё раз.")
+        raise CancelHandler()
 
-    if not prompt:
+    path = f"{settings.MEDIA_DIR}/tmp/{user.id}.ogg"
+    await message.bot.download(file=message.voice.file_id, destination=path)
+    voice_url = f"{settings.DOMAIN}/tmp/{user.id}.ogg"
+    voice_url = "https://upload.wikimedia.org/wikipedia/commons/1/1a/%D0%93%D0%BE%D1%81%D0%BF%D0%BE%D0%B4%D0%B8%D0%BD_%D0%9F%D1%80%D0%B5%D0%B7%D0%B8%D0%B4%D0%B5%D0%BD%D1%82.ogg"
+
+    result = await neiro_api.speech_to_text(voice_url)
+
+    if not result.success:
         await message.answer(text=ERROR_STT_TEXT, reply_markup=await gen_error_kb())
         raise CancelHandler()
 
-    return prompt
+    return result.result
 
 
 async def gen_conversation(user: User, prompt: str) -> list[dict]:
