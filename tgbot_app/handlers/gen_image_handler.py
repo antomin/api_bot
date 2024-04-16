@@ -33,7 +33,6 @@ async def image_generation(message: Message, user: User, state: FSMContext):
 
     if not can_send_query(user=user, model=model):
         await send_no_balance_msg(user=user, bot=message.bot)
-        return
 
     if message.voice:
         prompt = await handle_voice_prompt(message=message, user=user)
@@ -93,7 +92,6 @@ async def run_midjourney_action(callback: CallbackQuery, callback_data: MJCallba
 
     if not can_send_query(user=user, model=ImageModels.MIDJOURNEY):
         await send_no_balance_msg(user=user, bot=callback.bot)
-        return
 
     action = callback_data.action
     index = callback_data.index

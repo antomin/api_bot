@@ -96,7 +96,6 @@ async def set_diploma_struct(message: Message | CallbackQuery, state: FSMContext
 async def run_diploma_generation(callback: CallbackQuery, user: User, state: FSMContext):
     if user.token_balance < settings.MODELS[ServiceModels.DIPLOMA].cost:
         await send_no_balance_msg(user=user, bot=callback.bot)
-        return
 
     data = await state.get_data()
     type_work = data.get("type")
@@ -121,6 +120,6 @@ async def run_diploma_generation(callback: CallbackQuery, user: User, state: FSM
 
     async with ChatActionSender(bot=callback.message.bot, chat_id=callback.message.from_user.id,
                                 action=ChatAction.UPLOAD_DOCUMENT):
-        await create_service_query(user_id=user.id, type=ServiceModels.DIPLOMA, result=result.result[0])
-        await change_balance(user=user, model=settings.MODELS[ServiceModels])
-        await callback.message.answer_document(document=URLInputFile(url=result.result[0]))
+        await create_service_query(user_id=user.id, type=ServiceModels.DIPLOMA, result=result.result)
+        await change_balance(user=user, model=settings.MODELS[ServiceModels.REWRITE])
+        await callback.message.answer_document(document=URLInputFile(url=result.result))

@@ -12,6 +12,7 @@ from .start_handlers import router as start_router
 from .subscription_handler import router as subscription_router
 from .tokens_handler import router as tokens_router
 from .diploma_handler import router as diploma_router
+from .rewrite_handler import router as rewrite_router
 
 main_router = Router()
 
@@ -25,6 +26,7 @@ main_router.include_routers(
     tokens_router,
     modes_router,
     diploma_router,
+    rewrite_router,
     image_router,
     text_router,
     video_router

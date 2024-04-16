@@ -138,6 +138,7 @@ async def run_service_generation(model: ServiceModels, status: Message, **params
             continue
 
         if result.status == GenerationStatus.READY:
-            return GenerationResult(result=result.result[0])
+            return GenerationResult(result=result.result)
 
-    return GenerationResult()
+    return GenerationResult(success=False)
+

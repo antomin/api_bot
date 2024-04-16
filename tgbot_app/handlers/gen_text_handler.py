@@ -23,7 +23,6 @@ async def run_text_generation(message: Message, user: User, state: FSMContext):
 
     if not can_send_query(user=user, model=model):
         await send_no_balance_msg(user=user, bot=message.bot)
-        return
 
     await state.set_state(GenerationState.IN_PROCESS)
     status = await message.answer("📄 Мы отвечаем на Ваш вопрос, дождитесь окончания генерации.")

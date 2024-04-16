@@ -20,3 +20,7 @@ class DiplomaState(StatesGroup):
     TYPE_WORK = State()
     THEME_WORK = State()
     STRUCT_WORK = State()
+
+
+class CommonState(StatesGroup):
+    REWRITE = State()

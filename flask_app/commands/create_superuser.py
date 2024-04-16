@@ -5,6 +5,7 @@ from common.models.user import UserAdmin
 
 admin_cli = AppGroup('admin')
 
+
 @admin_cli.command('create-admin')
 @click.argument('username')
 @click.argument('password')

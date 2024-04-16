@@ -25,6 +25,13 @@ def decl(num: int, titles: tuple) -> str:
     return titles[idx]
 
 
+def delete_file(path: str) -> None:
+    try:
+        os.remove(path)
+    except:
+        pass
+
+
 async def gen_profile_text(user: User) -> str:
     tariff: Tariff = user.tariff
 
@@ -123,6 +130,7 @@ async def send_no_balance_msg(user: User, bot: Bot) -> None:
                 "токенов. Для Вас они будут в 2 раза дешевле.")
     markup = await gen_no_tokens_kb()
     await bot.send_message(chat_id=user.id, text=text, reply_markup=markup)
+    raise CancelHandler()
 
 
 async def handle_voice_prompt(message: Message, user: User) -> str:
@@ -138,14 +146,10 @@ async def handle_voice_prompt(message: Message, user: User) -> str:
     path = f"{settings.MEDIA_DIR}/tmp/{user.id}.ogg"
     await message.bot.download(file=message.voice.file_id, destination=path)
     voice_url = f"{settings.DOMAIN}/tmp/{user.id}.ogg"
-    voice_url = "https://upload.wikimedia.org/wikipedia/commons/1/1a/%D0%93%D0%BE%D1%81%D0%BF%D0%BE%D0%B4%D0%B8%D0%BD_%D0%9F%D1%80%D0%B5%D0%B7%D0%B8%D0%B4%D0%B5%D0%BD%D1%82.ogg"
 
     result = await neiro_api.speech_to_text(voice_url)
 
-    try:
-        os.remove(path)
-    except:
-        pass
+    delete_file(path)
 
     if not result.success:
         await message.answer(text=ERROR_STT_TEXT, reply_markup=await gen_error_kb())

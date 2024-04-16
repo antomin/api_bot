@@ -48,6 +48,7 @@ models_data = {
     VideoModels.CARTOON_VIDEO: Model(name="Видео в мультик", cost=settings_data["cost_cartoon_video"]),
 
     ServiceModels.DIPLOMA: Model(name="Учебные работы", cost=settings_data["cost_diploma"]),
+    ServiceModels.REWRITE: Model(name="Рерайт", cost=settings_data["cost_rewrite"]),
 }
 
 
