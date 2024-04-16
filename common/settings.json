@@ -30,5 +30,6 @@
   "cost_rembg_video": 20,
   "cost_cartoon_video": 25,
   "cost_diploma": 6,
-  "cost_rewrite": 30
+  "cost_rewrite": 30,
+  "cost_vision": 30
 }

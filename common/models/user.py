@@ -2,17 +2,16 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 
 from flask_login import UserMixin
-
-from sqlalchemy import BigInteger, Boolean, DateTime, ForeignKey, String, Column
+from sqlalchemy import (BigInteger, Boolean, Column, DateTime, ForeignKey,
+                        String)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql.functions import now
+from werkzeug.security import check_password_hash, generate_password_hash
 
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask_app.extensions import db, login_manager
 
 from ..enums import ImageModels, TextModels
 from . import Base
-
-from flask_app.extensions import db, login_manager
 
 if TYPE_CHECKING:
     from .generations import (ImageQuery, ServiceQuery, TextGenerationRole,

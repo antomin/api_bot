@@ -93,6 +93,16 @@ class AsyncNeiroAPI:
             return ResponseResult(success=False)
         return ResponseResult(result=result["result"])
 
+    async def vision(self, img_url: str, prompt: str) -> ResponseResult:
+        url = f"{self.base_url}/openai/vision/"
+        payload = {"image_url": img_url, "text": prompt}
+
+        result = await self.__request(url=url, payload=payload)
+
+        if not result.get("result"):
+            return ResponseResult(success=False)
+        return ResponseResult(result=result["result"])
+
     async def video_generation(self, model: VideoModels, params: dict) -> ResponseResult:
         url = f"{self.base_url}/stablediffusion/{model.value}/"
 

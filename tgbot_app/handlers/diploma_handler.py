@@ -12,8 +12,7 @@ from tgbot_app.keyboards import (gen_confirm_start_work_kb,
                                  gen_diploma_struct_kb, gen_error_kb,
                                  gen_services_back_kb, gen_type_work_kb)
 from tgbot_app.utils.callbacks import DiplomaCallback, LearningCallback
-from tgbot_app.utils.enums import (DiplomaAction, DiplomaStructButtons,
-                                   LearningButtons)
+from tgbot_app.utils.enums import DiplomaAction, LearningButtons
 from tgbot_app.utils.generation_workers import run_service_generation
 from tgbot_app.utils.misc import parse_user_work_struct, send_no_balance_msg
 from tgbot_app.utils.states import DiplomaState

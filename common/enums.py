@@ -29,6 +29,7 @@ class ServiceModels(str, Enum):
     DIPLOMA = "diploma"
     STT = "speech_to_text"
     REWRITE = "rewrite"
+    VISION = "vision"
 
 
 class ImageAction(str, Enum):

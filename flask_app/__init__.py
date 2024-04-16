@@ -1,7 +1,7 @@
-from flask_admin import expose, AdminIndexView
-from flask_login import current_user, logout_user
-from flask import url_for, redirect
 import flask_login as login
+from flask import redirect, url_for
+from flask_admin import AdminIndexView, expose
+from flask_login import current_user, logout_user
 
 
 class MyAdminIndexView(AdminIndexView):

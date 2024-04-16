@@ -9,7 +9,7 @@ from common.enums import ImageModels, TextModels, VideoModels
 from common.models import Tariff, User
 from common.settings import settings
 from tgbot_app.keyboards import gen_error_kb, gen_no_tokens_kb
-from tgbot_app.services import translator, neiro_api
+from tgbot_app.services import neiro_api, translator
 from tgbot_app.utils.text_variables import (ERROR_STT_TEXT,
                                             ERROR_TRANSLATION_TEXT)
 

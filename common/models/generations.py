@@ -1,12 +1,13 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import BigInteger, ForeignKey, String
+from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from common.models import Base
 from tgbot_app.services.neiro_api import GenerationStatus
 
-from ..enums import ImageAction, ImageModels, TextModels, VideoModels, ServiceModels
+from ..enums import (ImageAction, ImageModels, ServiceModels, TextModels,
+                     VideoModels)
 
 if TYPE_CHECKING:
     from .user import User

@@ -13,8 +13,8 @@ from common.settings import settings
 from tgbot_app.keyboards import gen_error_kb
 from tgbot_app.utils.callbacks import VideoModelCallback
 from tgbot_app.utils.generation_workers import run_video_generation
-from tgbot_app.utils.misc import (can_send_query, send_no_balance_msg,
-                                  translate_text, delete_file)
+from tgbot_app.utils.misc import (can_send_query, delete_file,
+                                  send_no_balance_msg, translate_text)
 from tgbot_app.utils.states import VideoState
 from tgbot_app.utils.text_variables import (CARTOON_VIDEO_TEXT,
                                             ERROR_MAIN_TEXT, IMG_TO_VIDEO_TEXT,

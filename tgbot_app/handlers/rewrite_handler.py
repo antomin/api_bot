@@ -2,17 +2,18 @@ from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message, URLInputFile
 
-from common.db_api import create_service_query, change_balance
+from common.db_api import change_balance, create_service_query
 from common.enums import ServiceModels
 from common.models import User
 from common.settings import settings
-from tgbot_app.keyboards import gen_services_back_kb, gen_error_kb
+from tgbot_app.keyboards import gen_error_kb, gen_services_back_kb
 from tgbot_app.utils.callbacks import LearningCallback
 from tgbot_app.utils.enums import LearningButtons
 from tgbot_app.utils.generation_workers import run_service_generation
-from tgbot_app.utils.misc import send_no_balance_msg, delete_file
+from tgbot_app.utils.misc import delete_file, send_no_balance_msg
 from tgbot_app.utils.states import CommonState
-from tgbot_app.utils.text_variables import REWRITE_TEXT, PROGRESS_TEXT, ERROR_MAIN_TEXT
+from tgbot_app.utils.text_variables import (ERROR_MAIN_TEXT, PROGRESS_TEXT,
+                                            REWRITE_TEXT)
 
 router = Router()
 

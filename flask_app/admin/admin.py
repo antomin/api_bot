@@ -1,10 +1,11 @@
-from flask_admin.contrib.sqla import ModelView
-from flask_admin import expose, AdminIndexView
-from flask_login import current_user, logout_user
-from flask import url_for, redirect
 import flask_login as login
+from flask import redirect, url_for
+from flask_admin import AdminIndexView, expose
+from flask_admin.contrib.sqla import ModelView
+from flask_login import current_user, logout_user
 
-from common.models import User, ReferalLink, Tariff, Invoice, TextQuery, TextGenerationRole, ImageQuery, VideoQuery
+from common.models import (ImageQuery, Invoice, ReferalLink, Tariff,
+                           TextGenerationRole, TextQuery, User, VideoQuery)
 from flask_app.extensions import admin, db
 
 

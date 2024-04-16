@@ -24,3 +24,4 @@ class DiplomaState(StatesGroup):
 
 class CommonState(StatesGroup):
     REWRITE = State()
+    VISION = State()
