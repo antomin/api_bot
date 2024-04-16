@@ -30,6 +30,8 @@ class ServiceModels(str, Enum):
     STT = "speech_to_text"
     REWRITE = "rewrite"
     VISION = "vision"
+    ARTICLE = "article-generate"
+    ARTICLE_PLAN = "article-plan"
 
 
 class ImageAction(str, Enum):

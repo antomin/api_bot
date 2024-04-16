@@ -1,5 +1,6 @@
 import json
 from enum import Enum
+from json import JSONDecodeError
 from typing import Literal
 
 from aiohttp import ClientSession
@@ -141,11 +142,15 @@ class AsyncNeiroAPI:
             return ResponseResult(success=False)
         return ResponseResult(result=result["result"])
 
-    async def __request(self, url: str, payload: dict) -> dict:
+    async def __request(self, url: str, payload: dict) -> dict | None:
         async with ClientSession(headers=self.headers) as session:
             async with session.post(url=url, json=payload) as response:
                 result = await response.text()
-                result = json.loads(result)
+                try:
+                    result = json.loads(result)
+                except JSONDecodeError as error:
+                    logger.error(f"API REQUEST JSON error: {error.args} | {result}")
+                    return
                 if not response.ok:
                     logger.error(f"API REQUEST error: {response.status} | {response.reason}")
                 return result

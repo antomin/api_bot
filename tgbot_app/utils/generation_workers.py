@@ -107,7 +107,7 @@ async def run_video_generation(model: VideoModels, **params) -> GenerationResult
             return GenerationResult(result=result.result[0])
 
 
-async def run_service_generation(model: ServiceModels, status: Message, **params) -> GenerationResult:
+async def run_service_generation(model: ServiceModels, status: Message = None, **params) -> GenerationResult:
     result = await neiro_api.service_generation(model=model, params=params)
 
     if not result.success:
@@ -128,7 +128,7 @@ async def run_service_generation(model: ServiceModels, status: Message, **params
         if result.status == GenerationStatus.ERROR:
             return GenerationResult(success=False)
 
-        if result.status == GenerationStatus.IN_PROCESS and result.result != cur_result:
+        if status and result.status == GenerationStatus.IN_PROCESS and result.result != cur_result:
             try:
                 await status.edit_text(PROGRESS_TEXT.format(progress=result.result))
             except TelegramBadRequest:

@@ -1,6 +1,9 @@
 from .inline.ais_keyboards import (gen_ai_types_kb, gen_img_model_kb,
                                    gen_main_video_kb, gen_text_models_kb,
                                    gen_text_roles_kb, gen_txt_settings_kb)
+from .inline.article_keyboards import (gen_article_mode_kb,
+                                       gen_article_search_kb,
+                                       gen_edit_work_plan_kb)
 from .inline.common_keyboards import gen_error_kb
 from .inline.diploma_keyboards import (gen_confirm_start_work_kb,
                                        gen_diploma_struct_kb, gen_type_work_kb)

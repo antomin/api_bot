@@ -1,6 +1,7 @@
 from aiogram import Router
 
 from .ais_handler import router as ais_router
+from .article_handler import router as article_router
 from .diploma_handler import router as diploma_router
 from .faq_handler import router as faq_router
 from .gen_image_handler import router as image_router
@@ -29,6 +30,7 @@ main_router.include_routers(
     diploma_router,
     rewrite_router,
     vision_router,
+    article_router,
     image_router,
     text_router,
     video_router

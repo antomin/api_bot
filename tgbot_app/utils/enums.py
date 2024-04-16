@@ -55,10 +55,8 @@ class LearningButtons(Enum):
 
 
 class WorkingButtons(Enum):
-    MARKETING = "🚧 Маркетологам"
-    SMM = "🚧 SMM специалистам"
-    SEO = "SEO специалистам"
-    COPYRIGHT = "Копирайтерам"
+    ARTICLE = "📰 Генерация статей"
+    REWRITE = "✍️ Рерайт"
 
 
 class OtherServicesButtons(Enum):
@@ -98,5 +96,27 @@ class SileroAction(Enum):
     START_SERVICE = "start_state"
 
 
+class ArticleModes(Enum):
+    AUTO = "Автоматический режим"
+    EXPERT = "Режим эксперта"
+
+
+class ArticleAction(Enum):
+    MODE = "mode"
+    ENGINE = "engine"
+    WORK_PLAN = "work_plan"
+
+
+class SearchEngine(Enum):
+    GOOGLE = "google"
+    YANDEX = "яндекс"
+
+
+class WorkPlanButtons(Enum):
+    EDIT = "Изменить структуру"
+    RUN = "Продолжить генерацию"
+
+
 class GenerationResult(ResponseResult):
     task_id: str | int | None = None
+
