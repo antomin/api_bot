@@ -16,7 +16,7 @@ from . import Base
 if TYPE_CHECKING:
     from .generations import (ImageQuery, ServiceQuery, TextGenerationRole,
                               TextQuery, TextSession, VideoQuery)
-    from .payments import Invoice, Tariff
+    from .payments import Invoice, Tariff, Refund
 
 
 class User(Base):
@@ -52,6 +52,7 @@ class User(Base):
 
     tariff: Mapped["Tariff"] = relationship(back_populates="users", lazy="joined")
     invoices: Mapped[list["Invoice"]] = relationship(back_populates="user")
+    refunds: Mapped[list["Refund"]] = relationship(back_populates="user")
     text_session: Mapped["TextSession"] = relationship(back_populates="user", lazy="joined", single_parent=True)
     text_queries: Mapped[list["TextQuery"]] = relationship(back_populates="user")
     image_queries: Mapped[list["ImageQuery"]] = relationship(back_populates="user")

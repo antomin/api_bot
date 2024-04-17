@@ -13,7 +13,7 @@ from .rewrite_handler import router as rewrite_router
 from .services_handler import router as services_router
 from .start_handlers import router as start_router
 from .stt_handler import router as stt_router
-from .subscription_handler import router as subscription_router
+from .premium_handler import router as premium_router
 from .tokens_handler import router as tokens_router
 from .tts_handler import router as tts_router
 from .vision_handler import router as vision_router
@@ -26,7 +26,6 @@ main_router.include_routers(
     faq_router,
     profile_router,
     services_router,
-    subscription_router,
     tokens_router,
     modes_router,
     diploma_router,
@@ -35,6 +34,7 @@ main_router.include_routers(
     article_router,
     stt_router,
     tts_router,
+    premium_router,
     image_router,
     text_router,
     video_router

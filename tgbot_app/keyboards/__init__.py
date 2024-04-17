@@ -12,7 +12,7 @@ from .inline.faq_keyboards import (gen_back_faq_kb, gen_faq_finances_kb,
                                    gen_faq_problems_kb, gen_faq_rec_kb,
                                    gen_main_faq_kb)
 from .inline.midjourney_keyboards import gen_midjourney_kb
-from .inline.payments_keyboards import gen_no_tokens_kb
+from .inline.payments_keyboards import gen_no_tokens_kb, gen_premium_kb, gen_confirm_premium_kb, gen_premium_cancel_kb, gen_tokens_kb
 from .inline.profile_keyboards import gen_profile_kb
 from .inline.services_keyboards import (gen_learning_kb, gen_other_services_kb,
                                         gen_services_back_kb, gen_services_kb,

@@ -4,7 +4,6 @@ from aiogram.types import CallbackQuery, FSInputFile
 
 from common.db_api import reset_session, switch_context, update_object
 from common.models import User
-from common.settings import settings
 from tgbot_app.keyboards import (gen_img_model_kb, gen_main_speaker_kb,
                                  gen_speaker_category_kb, gen_text_models_kb,
                                  gen_text_roles_kb, gen_txt_settings_kb)
@@ -12,7 +11,7 @@ from tgbot_app.utils.callbacks import (ImageModelCallback, RoleCallback,
                                        SileroCallback, TextModelCallback,
                                        TextSettingsCallback)
 from tgbot_app.utils.enums import SileroAction, TextSettingsButtons
-from tgbot_app.utils.misc import gen_img_settings_text, gen_txt_settings_text
+from tgbot_app.utils.text_generators import gen_img_settings_text, gen_txt_settings_text
 from tgbot_app.utils.text_variables import VOICE_NO_PREMIUM_TEXT
 
 router = Router()

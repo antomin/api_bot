@@ -6,7 +6,7 @@ from tgbot_app.services.neiro_api import ResponseResult
 class MainButtons(str, Enum):
     PROFILE = "👨‍💼 Профиль"
     AIS = "🤖 Нейросети"
-    SUBSCRIPTION = "💎 Подписка"
+    PREMIUM = "💎 Подписка"
     SERVICES = "📲 Сервисы"
     FAQ = "❓ Часто задаваемые вопросы"
 
@@ -146,3 +146,11 @@ class FAQFinancesButtons(Enum):
     TOKENS = "Не начислились токены"
     RECURRING = "Продление подписки"
     REFUND = "Политика возврата средств"
+
+
+class PaymentAction(Enum):
+    SUBSCRIBE = "subscribe"
+    CONFIRM = "confirm"
+    REACTIVATE = "reactivate"
+    CANCEL = "cancel"
+    CONFIRM_CANCEL = "confirm_cancel"

@@ -1,13 +1,15 @@
 from typing import Any
 
 from loguru import logger
-from sqlalchemy import select
+from sqlalchemy import select, desc, func
 
 from common.enums import TextModels
-from common.models import ReferalLink, TextGenerationRole, User, db
+from common.models import ReferalLink, TextGenerationRole, User, db, Tariff, Invoice
 from common.models.generations import (ImageQuery, ServiceQuery, TextQuery,
                                        TextSession, VideoQuery)
+from common.models.payments import Refund
 from common.settings import Model, settings
+from datetime import datetime
 
 
 async def get_or_create_user(tgid: int, username: str, first_name: str, last_name: str, link_id: int | None) -> User:
@@ -21,7 +23,7 @@ async def get_or_create_user(tgid: int, username: str, first_name: str, last_nam
             user.chatgpt_daily_limit = settings.FREE_GPT_QUERIES
             user.sd_daily_limit = settings.FREE_SD_QUERIES
             user.dalle_2_daily_limit = settings.FREE_DALLE2_QUERIES
-            text_session = TextSession(user_id=user.id)
+            text_session = TextSession()
             user.text_session = text_session
 
             session.add(user)
@@ -154,3 +156,50 @@ async def create_service_query(**params) -> ServiceQuery:
         await session.commit()
 
     return query
+
+
+async def unsubscribe_user(user: User) -> None:
+    ...
+
+
+async def get_tariffs(is_extra: bool = False, is_trial: bool = False) -> list[Tariff]:
+    if is_trial:
+        stmt = (select(Tariff)
+                .where(Tariff.is_active, Tariff.is_extra == is_extra)
+                .order_by("token_balance"))
+    else:
+        stmt = (select(Tariff)
+                .where(Tariff.is_active, Tariff.is_extra == is_extra, ~Tariff.is_trial)
+                .order_by("token_balance"))
+    async with db.async_session_factory() as session:
+        result = await session.scalars(stmt)
+        return result.all()
+
+
+async def get_last_invoice(user_id: int) -> Invoice | None:
+    stmt = (select(Invoice)
+            .filter(Invoice.user_id == user_id, ~Invoice.tariff.has(Tariff.is_extra), Invoice.is_paid)
+            .order_by(desc("created_at")))
+
+    async with db.async_session_factory() as session:
+        result = await session.scalars(stmt)
+        if result.all():
+            return result.all()[0]
+        return None
+
+
+async def create_refund(user: User) -> None:
+    last_invoice = await get_last_invoice(user.id)
+
+    stmt = (select(Invoice.id)
+            .where(Invoice.user_id == user.id, Invoice.is_paid, Invoice.tariff.has(Tariff.is_extra),
+                   Invoice.created_at.between(datetime.now(), last_invoice.created_at)))
+    async with db.async_session_factory() as session:
+        result = await session.execute(stmt)
+        extra_invoices_cnt = result.count()
+        session.add(Refund(user_id=user.id, sum=last_invoice.tariff.price, attention=bool(extra_invoices_cnt)))
+        user.token_balance -= user.tariff.token_balance
+
+        await session.commit()
+
+    await unsubscribe_user(user)

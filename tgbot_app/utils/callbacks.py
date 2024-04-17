@@ -11,7 +11,7 @@ from tgbot_app.utils.enums import (AiTypeButtons, ArticleAction, ArticleModes,
                                    OtherServicesButtons, ProfileButtons,
                                    SearchEngine, ServicesButtons, SileroAction,
                                    TextSettingsButtons, WorkingButtons,
-                                   WorkPlanButtons, WorkTypes)
+                                   WorkPlanButtons, WorkTypes, PaymentAction)
 
 
 class ProfileCallback(CallbackData, prefix="profile"):
@@ -84,3 +84,8 @@ class ArticleCallback(CallbackData, prefix="article"):
 class FAQCallback(CallbackData, prefix="faq"):
     chapter: FAQMainButtons | MainButtons | FAQRecButtons | FAQProblemsButtons | FAQFinancesButtons
     sub_chapter: str = "_"
+
+
+class PaymentCallback(CallbackData, prefix="pay"):
+    action: PaymentAction
+    value: int | bool

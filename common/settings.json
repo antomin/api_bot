@@ -1,6 +1,8 @@
 {
   "app_name": "SuperBot",
   "domain": "127.0.0.1:5000",
+  "policy_url": "https://ya.ru",
+  "offer_url": "https://ya.ru",
   "tgbot_token": "6923957221:AAHf-JBUWUP3Jo1bOBWyr0zBto3FbygXOYk",
   "bot_username": "neiroapi_dev_bot",
   "support_username": "super_support",

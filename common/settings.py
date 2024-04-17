@@ -65,6 +65,8 @@ class Settings(BaseSettings):
 
     APP_NAME: str = settings_data["app_name"]
     DOMAIN: str = settings_data["domain"]
+    POLICY_URL: str = settings_data["policy_url"]
+    OFFER_URL: str = settings_data["offer_url"]
 
     TG_TOKEN: str = settings_data["tgbot_token"]
     BOT_USERNAME: str = settings_data["bot_username"]

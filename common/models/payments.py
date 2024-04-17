@@ -42,7 +42,18 @@ class Invoice(Base):
     tariff_id: Mapped[int] = mapped_column(ForeignKey("tariffs.id"))
 
     user: Mapped["User"] = relationship(back_populates="invoices")
-    tariff: Mapped["Tariff"] = relationship(back_populates="invoices")
+    tariff: Mapped["Tariff"] = relationship(back_populates="invoices", lazy="joined")
 
     def __str__(self):
         return f"<Invoice: {self.id} | User: {self.user_id}>"
+
+
+class Refund(Base):
+    __tablename__ = "refunds"
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    sum: Mapped[int]
+    attention: Mapped[bool]
+    is_done: Mapped[bool] = mapped_column(default=False)
+
+    user: Mapped["User"] = relationship(back_populates="refunds")
