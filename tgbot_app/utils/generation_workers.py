@@ -107,7 +107,8 @@ async def run_video_generation(model: VideoModels, **params) -> GenerationResult
             return GenerationResult(result=result.result[0])
 
 
-async def run_service_generation(model: ServiceModels, status: Message = None, **params) -> GenerationResult:
+async def run_service_generation(model: ServiceModels, status: Message = None, delay: int = 10, **params
+                                 ) -> GenerationResult:
     result = await neiro_api.service_generation(model=model, params=params)
 
     if not result.success:
@@ -118,7 +119,7 @@ async def run_service_generation(model: ServiceModels, status: Message = None, *
     cur_result = "1%"
 
     for _ in range(180):
-        await asyncio.sleep(10)  # TODO 20
+        await asyncio.sleep(delay)
 
         result = await neiro_api.get_status(task_id=task_id, model=model)
 

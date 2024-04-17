@@ -27,7 +27,8 @@ class VideoModels(str, Enum):
 
 class ServiceModels(str, Enum):
     DIPLOMA = "diploma"
-    STT = "speech_to_text"
+    STT = "speech-to-text"
+    TTS = "text-to-speech"
     REWRITE = "rewrite"
     VISION = "vision"
     ARTICLE = "article-generate"

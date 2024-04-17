@@ -38,7 +38,7 @@ class User(Base):
     txt_model_role_id: Mapped[int | None] = mapped_column(
         ForeignKey("text_generation_roles.id", ondelete="SET NULL"), default=None)
     img_model: Mapped[ImageModels] = mapped_column(String(), default=ImageModels.STABLE_DIFFUSION)
-    tts_mode: Mapped[str | None] = mapped_column(default=None)
+    tts_mode: Mapped[str] = mapped_column(default="")
     text_session_id: Mapped[int | None] = mapped_column(ForeignKey("sessions.id", ondelete="SET NULL"))
 
     update_daily_limits_time: Mapped[datetime] = mapped_column(DateTime, default=now(), server_default=now())

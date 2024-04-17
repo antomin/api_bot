@@ -21,9 +21,10 @@ from tgbot_app.utils.text_variables import (ARTICLE_AUTO_TEXT,
                                             ARTICLE_CONFIRM_PLAN_TEXT,
                                             ARTICLE_EDIT_PLAN_TEXT,
                                             ARTICLE_ENGINE_TEXT,
+                                            ARTICLE_ERROR_PLAN_TEXT,
+                                            ARTICLE_PLAN_PROCESS_TEXT,
                                             ARTICLE_PRO_TEXT, ARTICLE_TEXT,
-                                            ERROR_MAIN_TEXT, PROGRESS_TEXT, ARTICLE_ERROR_PLAN_TEXT,
-                                            ARTICLE_PLAN_PROCESS_TEXT)
+                                            ERROR_MAIN_TEXT, PROGRESS_TEXT)
 
 router = Router()
 

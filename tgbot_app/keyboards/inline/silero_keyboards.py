@@ -1,9 +1,22 @@
 from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from tgbot_app.utils.callbacks import SileroCallback, TextSettingsCallback
-from tgbot_app.utils.enums import SileroAction, TextSettingsButtons
+from tgbot_app.utils.callbacks import (ServicesCallback, SileroCallback,
+                                       TextSettingsCallback)
+from tgbot_app.utils.enums import (ServicesButtons, SileroAction,
+                                   TextSettingsButtons)
 from tgbot_app.utils.silero_speakers import SPEAKERS
+
+
+async def gen_tts_kb(cur_speaker: str) -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+
+    text = "Голос: " + (cur_speaker if cur_speaker else "Не выбран")
+
+    builder.button(text=text, callback_data=SileroCallback(action=SileroAction.START_SERVICE))
+    builder.button(text="↩️ Назад", callback_data=ServicesCallback(type=ServicesButtons.OTHER))
+
+    return builder.adjust(1).as_markup()
 
 
 async def gen_main_speaker_kb(cur_speaker: str | None, is_service: bool = False) -> InlineKeyboardMarkup:

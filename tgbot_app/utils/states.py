@@ -25,6 +25,8 @@ class DiplomaState(StatesGroup):
 class CommonState(StatesGroup):
     REWRITE = State()
     VISION = State()
+    STT = State()
+    TTS = State()
 
 
 class ArticleState(StatesGroup):

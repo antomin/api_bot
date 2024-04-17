@@ -12,8 +12,10 @@ from .profile_handler import router as profile_router
 from .rewrite_handler import router as rewrite_router
 from .services_handler import router as services_router
 from .start_handlers import router as start_router
+from .stt_handler import router as stt_router
 from .subscription_handler import router as subscription_router
 from .tokens_handler import router as tokens_router
+from .tts_handler import router as tts_router
 from .vision_handler import router as vision_router
 
 main_router = Router()
@@ -31,6 +33,8 @@ main_router.include_routers(
     rewrite_router,
     vision_router,
     article_router,
+    stt_router,
+    tts_router,
     image_router,
     text_router,
     video_router

@@ -51,6 +51,8 @@ models_data = {
     ServiceModels.REWRITE: Model(name="Рерайт", cost=settings_data["cost_rewrite"]),
     ServiceModels.VISION: Model(name="Решение по фото", cost=settings_data["cost_vision"]),
     ServiceModels.ARTICLE: Model(name="Статьи", cost=settings_data["cost_article"]),
+    ServiceModels.STT: Model(name="STT", cost=settings_data["cost_stt"]),
+    ServiceModels.TTS: Model(name="TTS", cost=settings_data["cost_stt"]),
 }
 
 

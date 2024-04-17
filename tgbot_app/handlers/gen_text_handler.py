@@ -10,7 +10,8 @@ from common.settings import settings
 from tgbot_app.keyboards import gen_error_kb
 from tgbot_app.services import neiro_api
 from tgbot_app.utils.misc import (can_send_query, gen_conversation,
-                                  handle_voice_prompt, send_no_balance_msg)
+                                  handle_voice_prompt, send_no_balance_msg,
+                                  send_voice_answer)
 from tgbot_app.utils.states import GenerationState
 from tgbot_app.utils.text_variables import ERROR_MAIN_TEXT
 
@@ -57,6 +58,7 @@ async def run_text_generation(message: Message, user: User, state: FSMContext):
                 await message.answer(text=part, reply_markup=markup, parse_mode=None)
 
         await change_balance(user=user, model=settings.MODELS[model])
-
         await state.set_state(GenerationState.TEXT)
 
+        if user.tts_mode:
+            await send_voice_answer(bot=message.bot, user_id=user.id, text=result.result, speaker=user.tts_mode)

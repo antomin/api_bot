@@ -2,16 +2,23 @@ import os
 
 from aiogram import Bot
 from aiogram.dispatcher.event.bases import CancelHandler
-from aiogram.types import Message
+from aiogram.enums import ChatAction
+from aiogram.exceptions import TelegramBadRequest
+from aiogram.types import Message, URLInputFile
+from aiogram.utils.chat_action import ChatActionSender
 
 from common.db_api import get_messages, get_obj_by_id
-from common.enums import ImageModels, TextModels, VideoModels
+from common.enums import ImageModels, ServiceModels, TextModels, VideoModels
 from common.models import Tariff, User
 from common.settings import settings
 from tgbot_app.keyboards import gen_error_kb, gen_no_tokens_kb
 from tgbot_app.services import neiro_api, translator
-from tgbot_app.utils.text_variables import (ERROR_STT_TEXT,
-                                            ERROR_TRANSLATION_TEXT)
+from tgbot_app.utils.enums import GenerationResult
+from tgbot_app.utils.generation_workers import run_service_generation
+from tgbot_app.utils.text_variables import (ERROR_MAIN_TEXT, ERROR_STT_TEXT,
+                                            ERROR_TRANSLATION_TEXT,
+                                            VOICE_CLOSE_TEXT,
+                                            VOICE_PROCESS_TEXT)
 
 
 def decl(num: int, titles: tuple) -> str:
@@ -133,8 +140,8 @@ async def send_no_balance_msg(user: User, bot: Bot) -> None:
     raise CancelHandler()
 
 
-async def handle_voice_prompt(message: Message, user: User) -> str:
-    if not user.tariff:
+async def handle_voice_prompt(message: Message, user: User, check_premium: bool = True) -> str:
+    if check_premium and not user.tariff:
         await message.answer(text="🗣️ Голосовые запросы доступны только в тарифе PREMIUM.",
                              reply_markup=await gen_no_tokens_kb())
         raise CancelHandler()
@@ -156,6 +163,26 @@ async def handle_voice_prompt(message: Message, user: User) -> str:
         raise CancelHandler()
 
     return result.result
+
+
+async def send_voice_answer(bot: Bot, user_id: int, text: str, speaker: str) -> GenerationResult:
+    status = await bot.send_message(text=VOICE_PROCESS_TEXT, chat_id=user_id)
+
+    async with ChatActionSender(bot=bot, chat_id=user_id, action=ChatAction.RECORD_VOICE):
+        result = await run_service_generation(model=ServiceModels.TTS, speaker=speaker, text=text, delay=3)
+
+        await status.delete()
+
+        if not result.success:
+            await bot.send_message(chat_id=user_id, text=ERROR_MAIN_TEXT, reply_markup=await gen_error_kb())
+            return result
+
+        try:
+            await bot.send_voice(chat_id=user_id, voice=URLInputFile(url=result.result))
+            return result
+        except TelegramBadRequest:
+            await bot.send_message(chat_id=user_id, text=VOICE_CLOSE_TEXT)
+            return GenerationResult(success=False)
 
 
 async def gen_conversation(user: User, prompt: str) -> list[dict]:

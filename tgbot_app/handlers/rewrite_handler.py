@@ -7,8 +7,8 @@ from common.enums import ServiceModels
 from common.models import User
 from common.settings import settings
 from tgbot_app.keyboards import gen_error_kb, gen_services_back_kb
-from tgbot_app.utils.callbacks import LearningCallback
-from tgbot_app.utils.enums import LearningButtons
+from tgbot_app.utils.callbacks import LearningCallback, WorkingCallback
+from tgbot_app.utils.enums import LearningButtons, WorkingButtons
 from tgbot_app.utils.generation_workers import run_service_generation
 from tgbot_app.utils.misc import delete_file, send_no_balance_msg
 from tgbot_app.utils.states import CommonState
@@ -18,6 +18,7 @@ from tgbot_app.utils.text_variables import (ERROR_MAIN_TEXT, PROGRESS_TEXT,
 router = Router()
 
 
+@router.callback_query(WorkingCallback.filter(F.type == WorkingButtons.REWRITE))
 @router.callback_query(LearningCallback.filter(F.type == LearningButtons.ANTIPLAGIARISM))
 async def rewrite_handler(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(text=REWRITE_TEXT.format(cost=settings.MODELS[ServiceModels.REWRITE].cost),
