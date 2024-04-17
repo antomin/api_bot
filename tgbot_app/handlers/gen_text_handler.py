@@ -57,8 +57,8 @@ async def run_text_generation(message: Message, user: User, state: FSMContext):
             except TelegramBadRequest:
                 await message.answer(text=part, reply_markup=markup, parse_mode=None)
 
-        await change_balance(user=user, model=settings.MODELS[model])
-        await state.set_state(GenerationState.TEXT)
+    await change_balance(user=user, model=settings.MODELS[model])
+    await state.set_state(GenerationState.TEXT)
 
-        if user.tts_mode:
-            await send_voice_answer(bot=message.bot, user_id=user.id, text=result.result, speaker=user.tts_mode)
+    if user.tts_mode:
+        await send_voice_answer(bot=message.bot, user_id=user.id, text=result.result, speaker=user.tts_mode)

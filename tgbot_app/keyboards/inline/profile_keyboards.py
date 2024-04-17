@@ -13,7 +13,6 @@ async def gen_profile_kb() -> InlineKeyboardMarkup:
         builder.button(text=btn.value, callback_data=ProfileCallback(action=btn))
 
     builder.button(text="🧑‍🏭 Техподдержка", url=f"https://t.me/{settings.SUPPORT_USERNAME}")
-    builder.button(text="🗯 Общий чат", url=f"https://t.me/{settings.TARGET_CHAT}")
 
     builder.adjust(1)
 

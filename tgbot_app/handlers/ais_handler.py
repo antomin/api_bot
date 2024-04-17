@@ -21,7 +21,6 @@ router = Router()
 
 @router.message(Command(DefaultCommands.ais.name))
 @router.message(F.text == MainButtons.AIS.value)
-@router.callback_query(ProfileCallback.filter(F.action == ProfileButtons.AIS))
 async def show_ai_types(message: Message | CallbackQuery, state: FSMContext):
     await state.clear()
 
