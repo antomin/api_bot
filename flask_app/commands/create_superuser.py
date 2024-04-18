@@ -1,9 +1,11 @@
 import click
 from flask.cli import AppGroup
-from flask_app.extensions import db
+
 from common.models.user import UserAdmin
+from flask_app.extensions import db
 
 admin_cli = AppGroup('admin')
+
 
 @admin_cli.command('create-admin')
 @click.argument('username')

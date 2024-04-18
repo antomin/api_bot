@@ -1,7 +1,7 @@
-from aiogram import Router
+from aiogram import F, Router
 from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
+from aiogram.types import CallbackQuery, Message
 
 from common.settings import settings
 from tgbot_app.keyboards import main_kb
@@ -11,6 +11,12 @@ router = Router()
 
 
 @router.message(CommandStart())
-async def start(message: Message, state: FSMContext):
+@router.callback_query(F.data == "start")
+async def start(message: Message | CallbackQuery, state: FSMContext):
     await state.clear()
+
+    if isinstance(message, CallbackQuery):
+        await message.answer()
+        message = message.message
+
     await message.answer(text=START_TEXT.format(app_name=settings.APP_NAME), reply_markup=await main_kb())

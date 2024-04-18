@@ -2,22 +2,21 @@ from datetime import datetime
 from typing import TYPE_CHECKING
 
 from flask_login import UserMixin
-
-from sqlalchemy import BigInteger, Boolean, DateTime, ForeignKey, String, Column
+from sqlalchemy import (BigInteger, Boolean, Column, DateTime, ForeignKey,
+                        String)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql.functions import now
+from werkzeug.security import check_password_hash, generate_password_hash
 
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask_app.extensions import db, login_manager
 
 from ..enums import ImageModels, TextModels
 from . import Base
 
-from flask_app.extensions import db, login_manager
-
 if TYPE_CHECKING:
     from .generations import (ImageQuery, ServiceQuery, TextGenerationRole,
                               TextQuery, TextSession, VideoQuery)
-    from .payments import Invoice, Tariff
+    from .payments import Invoice, Tariff, Refund
 
 
 class User(Base):
@@ -39,7 +38,7 @@ class User(Base):
     txt_model_role_id: Mapped[int | None] = mapped_column(
         ForeignKey("text_generation_roles.id", ondelete="SET NULL"), default=None)
     img_model: Mapped[ImageModels] = mapped_column(String(), default=ImageModels.STABLE_DIFFUSION)
-    tts_mode: Mapped[str | None] = mapped_column(default=None)
+    tts_mode: Mapped[str] = mapped_column(default="")
     text_session_id: Mapped[int | None] = mapped_column(ForeignKey("sessions.id", ondelete="SET NULL"))
 
     update_daily_limits_time: Mapped[datetime] = mapped_column(DateTime, default=now(), server_default=now())
@@ -53,13 +52,13 @@ class User(Base):
 
     tariff: Mapped["Tariff"] = relationship(back_populates="users", lazy="joined")
     invoices: Mapped[list["Invoice"]] = relationship(back_populates="user")
+    refunds: Mapped[list["Refund"]] = relationship(back_populates="user")
     text_session: Mapped["TextSession"] = relationship(back_populates="user", lazy="joined", single_parent=True)
     text_queries: Mapped[list["TextQuery"]] = relationship(back_populates="user")
     image_queries: Mapped[list["ImageQuery"]] = relationship(back_populates="user")
     video_queries: Mapped[list["VideoQuery"]] = relationship(back_populates="user")
     services_queries: Mapped[list["ServiceQuery"]] = relationship(back_populates="user")
     txt_model_role: Mapped["TextGenerationRole"] = relationship(back_populates="users", lazy="joined")
-    services: Mapped["ServiceQuery"] = relationship(back_populates="user")
 
     def __str__(self):
         return f"<User: {self.id}>"

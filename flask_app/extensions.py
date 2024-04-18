@@ -7,8 +7,10 @@ from flask_app.admin.views import MyAdminIndexView
 # from flask_app.adminlte.admin import AdminLte, admins_store
 # from flask import url_for
 
+
 from common.models import Base
 from common.settings import settings
+from flask_app import MyAdminIndexView
 
 db = SQLAlchemy(model_class=Base)
 migrate = Migrate(compare_type=True)

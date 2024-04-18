@@ -2,10 +2,10 @@ from flask import Flask
 
 from common.settings import settings
 from flask_app.admin.admin import admin
-from flask_app.extensions import db, migrate, login_manager
-from flask_app.main_app.views import main_app
 from flask_app.auth.views import auth_app
 from flask_app.commands.create_superuser import admin_cli
+from flask_app.extensions import db, login_manager, migrate
+from flask_app.main_app.views import main_app
 
 
 def __register_blueprints(app: Flask) -> None:

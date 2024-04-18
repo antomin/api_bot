@@ -13,8 +13,8 @@ from common.settings import settings
 from tgbot_app.keyboards import gen_error_kb
 from tgbot_app.utils.callbacks import VideoModelCallback
 from tgbot_app.utils.generation_workers import run_video_generation
-from tgbot_app.utils.misc import (can_send_query, send_no_balance_msg,
-                                  translate_text)
+from tgbot_app.utils.misc import (can_send_query, delete_file,
+                                  send_no_balance_msg, translate_text)
 from tgbot_app.utils.states import VideoState
 from tgbot_app.utils.text_variables import (CARTOON_VIDEO_TEXT,
                                             ERROR_MAIN_TEXT, IMG_TO_VIDEO_TEXT,
@@ -55,7 +55,6 @@ async def get_chapter_video(callback: CallbackQuery, callback_data: VideoModelCa
 async def run_text_to_video(message: Message, user: User):
     if not can_send_query(user=user, model=VideoModels.TEXT_TO_VIDEO):
         await send_no_balance_msg(user=user, bot=message.bot)
-        return
 
     status = await message.answer(TRANSLATION_TEXT)
 
@@ -81,7 +80,6 @@ async def run_text_to_video(message: Message, user: User):
 async def run_img_to_video(message: Message, user: User):
     if not can_send_query(user=user, model=VideoModels.TEXT_TO_VIDEO):
         await send_no_balance_msg(user=user, bot=message.bot)
-        return
 
     if not message.photo:
         await message.answer("Мы не получили от Вас фото. Пожалуйста попробуйте ещё раз.")
@@ -105,10 +103,7 @@ async def run_img_to_video(message: Message, user: User):
 
     result = await run_video_generation(model=VideoModels.IMG_TO_VIDEO, image=img_url, prompt=prompt)
 
-    try:
-        os.remove(path=path_img)
-    except:
-        pass
+    delete_file(path_img)
 
     await status.delete()
 
@@ -128,7 +123,6 @@ async def run_img_to_video(message: Message, user: User):
 async def run_rmbg_cartoon_video(message: Message, user: User, state: FSMContext):
     if not can_send_query(user=user, model=VideoModels.TEXT_TO_VIDEO):
         await send_no_balance_msg(user=user, bot=message.bot)
-        return
 
     if not message.video:
         text = "Мы не получили от Вас видео. Пожалуйста попробуйте ещё раз."
@@ -156,10 +150,7 @@ async def run_rmbg_cartoon_video(message: Message, user: User, state: FSMContext
         model = VideoModels.CARTOON_VIDEO
         result = await run_video_generation(model=model, infile=video_url)
 
-    try:
-        os.remove(path=video_path)
-    except:
-        pass
+    delete_file(video_path)
 
     await status.delete()
 

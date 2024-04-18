@@ -1,15 +1,24 @@
+import os
+
 from aiogram import Bot
 from aiogram.dispatcher.event.bases import CancelHandler
-from aiogram.types import Message
+from aiogram.enums import ChatAction
+from aiogram.exceptions import TelegramBadRequest
+from aiogram.types import Message, URLInputFile
+from aiogram.utils.chat_action import ChatActionSender
 
-from common.db_api import get_messages, get_obj_by_id
-from common.enums import ImageModels, TextModels, VideoModels
+from common.db_api import get_messages, get_obj_by_id, get_last_invoice
+from common.enums import ImageModels, ServiceModels, TextModels, VideoModels
 from common.models import Tariff, User
 from common.settings import settings
-from tgbot_app.keyboards import gen_error_kb, gen_no_tokens_kb, gen_premium_kb
-from tgbot_app.services import translator, yandex
-from tgbot_app.utils.text_variables import (ERROR_STT_TEXT,
-                                            ERROR_TRANSLATION_TEXT)
+from tgbot_app.keyboards import gen_error_kb, gen_no_tokens_kb
+from tgbot_app.services import neiro_api, translator
+from tgbot_app.utils.enums import GenerationResult
+from tgbot_app.utils.generation_workers import run_service_generation
+from tgbot_app.utils.text_variables import (ERROR_MAIN_TEXT, ERROR_STT_TEXT,
+                                            ERROR_TRANSLATION_TEXT,
+                                            VOICE_CLOSE_TEXT,
+                                            VOICE_PROCESS_TEXT)
 
 
 def decl(num: int, titles: tuple) -> str:
@@ -23,77 +32,11 @@ def decl(num: int, titles: tuple) -> str:
     return titles[idx]
 
 
-async def gen_profile_text(user: User) -> str:
-    tariff: Tariff = user.tariff
-
-    if not tariff:
-        tariff_str = "Free"
-    elif tariff.is_trial:
-        main_tariff: Tariff = await get_obj_by_id(Tariff, tariff.main_tariff_id)
-        tariff_str = f"Trial {main_tariff.token_balance}"
-    else:
-        tariff_str = f"PREMIUM {tariff.token_balance}"
-
-    text = f'👨‍💻 <b>Добро пожаловать</b>{(", " + user.first_name) if user.first_name else "<b>!</b>"}\n'
-    if user.username:
-        text += f"├ Ваш юзернейм: <code>@{user.username}</code>\n"
-    text += f"└ Ваш ID: <code>{user.id}</code>\n\n💳 Подписка: <b>{tariff_str}</b>\n"
-
-    if not tariff:
-        chatgpt_daily_str = decl(user.chatgpt_daily_limit, ("генерация", "генерации", "генераций"))
-        sd_daily_str = decl(user.sd_daily_limit, ("генерация", "генерации", "генераций"))
-        dalle_2_str = decl(user.dalle_2_daily_limit, ("генерация", "генерации", "генераций"))
-
-        text += (
-            f"├ Ваши токены: {user.token_balance}\n"
-            f"├ {user.chatgpt_daily_limit} {chatgpt_daily_str} ChatGPT 3.5\n"
-            f"├ {user.sd_daily_limit} {sd_daily_str} StableDiffusion\n"
-            f"└ {user.dalle_2_daily_limit} {dalle_2_str} Dall-E 2\n\n"
-            f"<i>* Ваши бесплатные генерации обновляются каждые 24 часа.</i>"
-        )
-    else:
-        words, time_left = user.sub_time_left()
-        time_left_str = f"{time_left} {decl(time_left, words)}"
-
-        text += (
-            f"├ Подписка истекает через: <u>{time_left_str}</u>\n"
-            f"├ Кол-во токенов по подписке: {tariff.token_balance} токенов\n"
-            f"├ Текущие кол-во токенов: {user.token_balance}\n"
-            f"└ Безлимит ChatGPT 3.5 + Синтез речи"
-        )
-
-    return text
-
-
-def gen_txt_settings_text(user: User) -> str:
-    text = ("🔹 Вы можете задавать вопросы голосом и получать озвученные ответы, а также изменять версии модели. "
-            "Стоимость каждой модели зависит от версии ChatGPT.\n\n💎 <b>Стоимость:</b> ")
-
-    if user.txt_model == TextModels.GPT_3_TURBO:
-        if not user.tariff:
-            text += (
-                f"{settings.MODELS[user.txt_model].cost} токена\n"
-                f"├ У вас осталось {user.chatgpt_daily_limit} ежедневных запросов\n"
-                f"└ На модель ChatGPT 3.5 Turbo (это самая популярная модель) распространяется безлимит по подписке."
-            )
-        else:
-            text += f"Безлимит по подписке"
-    else:
-        text += f"{settings.MODELS[user.txt_model].cost} токенов"
-
-    return text
-
-
-def gen_img_settings_text(user: User) -> str:
-    text = (f"🔹 Для Вашего выбора доступно несколько популярных нейросетей Dall-E 2, Dall-E3, Stable diffusion и др. "
-            f"Ежедневно мы продолжаем работать над добавлением других нейросетей для генерации изображений.\n\n"
-            f"💎 <b>Стоимость:</b> {settings.MODELS[user.img_model].cost} токенов")
-
-    if not user.tariff and user.img_model in (ImageModels.DALLE_2, ImageModels.STABLE_DIFFUSION):
-        num = user.dalle_2_daily_limit if user.img_model == ImageModels.DALLE_2 else user.sd_daily_limit
-        text += f"\n└ У вас осталось {num} ежедневных запросов"
-
-    return text
+def delete_file(path: str) -> None:
+    try:
+        os.remove(path)
+    except:
+        pass
 
 
 def can_send_query(user: User, model: ImageModels | TextModels | VideoModels) -> bool:  # TODO Review
@@ -121,23 +64,52 @@ async def send_no_balance_msg(user: User, bot: Bot) -> None:
                 "токенов. Для Вас они будут в 2 раза дешевле.")
     markup = await gen_no_tokens_kb()
     await bot.send_message(chat_id=user.id, text=text, reply_markup=markup)
+    raise CancelHandler()
 
 
-async def handle_voice_prompt(message: Message, user: User) -> str:
-    if not user.tariff:
-        text = "🗣️ Голосовые запросы доступны только в тарифе PREMIUM."
-        markup = await gen_premium_kb(user)
-        await message.answer(text=text, reply_markup=markup)
-
+async def handle_voice_prompt(message: Message, user: User, check_premium: bool = True) -> str:
+    if check_premium and not user.tariff:
+        await message.answer(text="🗣️ Голосовые запросы доступны только в тарифе PREMIUM.",
+                             reply_markup=await gen_no_tokens_kb())
         raise CancelHandler()
 
-    prompt = await yandex.speach_to_text()
+    if message.voice.duration > 30:
+        await message.answer(text="🗣️ Длина аудио не должна превышать 30сек. Попробуйте ещё раз.")
+        raise CancelHandler()
 
-    if not prompt:
+    path = f"{settings.MEDIA_DIR}/tmp/{user.id}.ogg"
+    await message.bot.download(file=message.voice.file_id, destination=path)
+    voice_url = f"{settings.DOMAIN}/tmp/{user.id}.ogg"
+
+    result = await neiro_api.speech_to_text(voice_url)
+
+    delete_file(path)
+
+    if not result.success:
         await message.answer(text=ERROR_STT_TEXT, reply_markup=await gen_error_kb())
         raise CancelHandler()
 
-    return prompt
+    return result.result
+
+
+async def send_voice_answer(bot: Bot, user_id: int, text: str, speaker: str) -> GenerationResult:
+    status = await bot.send_message(text=VOICE_PROCESS_TEXT, chat_id=user_id)
+
+    async with ChatActionSender(bot=bot, chat_id=user_id, action=ChatAction.RECORD_VOICE):
+        result = await run_service_generation(model=ServiceModels.TTS, speaker=speaker, text=text, delay=3)
+
+        await status.delete()
+
+        if not result.success:
+            await bot.send_message(chat_id=user_id, text=ERROR_MAIN_TEXT, reply_markup=await gen_error_kb())
+            return result
+
+        try:
+            await bot.send_voice(chat_id=user_id, voice=URLInputFile(url=result.result))
+            return result
+        except TelegramBadRequest:
+            await bot.send_message(chat_id=user_id, text=VOICE_CLOSE_TEXT)
+            return GenerationResult(success=False)
 
 
 async def gen_conversation(user: User, prompt: str) -> list[dict]:
@@ -193,3 +165,12 @@ def parse_user_work_struct(raw_struct: str) -> dict | None:
         return
 
     return struct
+
+
+async def can_create_refund(user: User) -> bool:
+    if not user.tariff:
+        return False
+
+    last_invoice = await get_last_invoice(user.id)
+    if not last_invoice:
+        return False

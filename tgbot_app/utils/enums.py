@@ -6,7 +6,7 @@ from tgbot_app.services.neiro_api import ResponseResult
 class MainButtons(str, Enum):
     PROFILE = "👨‍💼 Профиль"
     AIS = "🤖 Нейросети"
-    SUBSCRIPTION = "💎 Подписка"
+    PREMIUM = "💎 Подписка"
     SERVICES = "📲 Сервисы"
     FAQ = "❓ Часто задаваемые вопросы"
 
@@ -55,10 +55,8 @@ class LearningButtons(Enum):
 
 
 class WorkingButtons(Enum):
-    MARKETING = "🚧 Маркетологам"
-    SMM = "🚧 SMM специалистам"
-    SEO = "SEO специалистам"
-    COPYRIGHT = "Копирайтерам"
+    ARTICLE = "📰 Генерация статей"
+    REWRITE = "✍️ Рерайт"
 
 
 class OtherServicesButtons(Enum):
@@ -77,11 +75,13 @@ class WorkTypes(Enum):
 class DiplomaAction(Enum):
     SET_TYPE = "set_type"
     STRUCT = "struct"
+    GET_STRUCT = "get_struct"
+    CONFIRM = "confirm"
     START = "start"
 
 
 class DiplomaStructButtons(Enum):
-    GEN_STRUCT = "🪄 Начать генерацию"
+    START_GEN = "🪄 Начать генерацию"
     GET_STRUCT = "🗓 Задать план"
 
 
@@ -96,5 +96,61 @@ class SileroAction(Enum):
     START_SERVICE = "start_state"
 
 
+class ArticleModes(Enum):
+    AUTO = "Автоматический режим"
+    EXPERT = "Режим эксперта"
+
+
+class ArticleAction(Enum):
+    MODE = "mode"
+    ENGINE = "engine"
+    WORK_PLAN = "work_plan"
+
+
+class SearchEngine(Enum):
+    GOOGLE = "google"
+    YANDEX = "яндекс"
+
+
+class WorkPlanButtons(Enum):
+    EDIT = "Изменить структуру"
+    RUN = "Продолжить генерацию"
+
+
 class GenerationResult(ResponseResult):
     task_id: str | int | None = None
+
+
+class FAQMainButtons(Enum):
+    PREMIUM = "💳 Что дает премиум подписка?"
+    TOKENS = "💎 Что такое токены?"
+    RECOMMENDATIONS = "❗️ Рекомендации"
+    PROBLEMS = "❌ Проблемы с ботом"
+    INLINE = "➕ Как добавить бота в группу?"
+    FINANCES = "💵 Финансовые вопросы"
+
+
+class FAQRecButtons(Enum):
+    USE = "Для чего можно использовать бот?"
+    AIS = "Как правильно пользоваться нейросетями"
+    WORK = "Генерация статей и учебных работ"
+
+
+class FAQProblemsButtons(Enum):
+    AI = "Не работает нейросеть"
+    SERVICE = "Не работает сервис"
+
+
+class FAQFinancesButtons(Enum):
+    PREMIUM = "Не начислилась подписка"
+    TOKENS = "Не начислились токены"
+    RECURRING = "Продление подписки"
+    REFUND = "Политика возврата средств"
+
+
+class PaymentAction(Enum):
+    SUBSCRIBE = "subscribe"
+    CONFIRM = "confirm"
+    REACTIVATE = "reactivate"
+    CANCEL = "cancel"
+    CONFIRM_CANCEL = "confirm_cancel"

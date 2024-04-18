@@ -1,5 +1,4 @@
 import asyncio
-import uuid
 
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import Message
@@ -10,7 +9,7 @@ from common.models import ImageQuery
 from tgbot_app.services import neiro_api
 from tgbot_app.services.neiro_api import GenerationStatus
 from tgbot_app.utils.enums import GenerationResult
-from tgbot_app.utils.text_variables import IMAGE_GEN_TEXT
+from tgbot_app.utils.text_variables import IMAGE_GEN_TEXT, PROGRESS_TEXT
 
 
 async def wait_image_result(model: ImageModels, task_id: str, status: Message, img_query: ImageQuery
@@ -108,7 +107,39 @@ async def run_video_generation(model: VideoModels, **params) -> GenerationResult
             return GenerationResult(result=result.result[0])
 
 
-async def run_service_generation(model: ServiceModels, status: Message, **params) -> GenerationResult:
+async def run_service_generation(model: ServiceModels, status: Message = None, delay: int = 10, **params
+                                 ) -> GenerationResult:
     result = await neiro_api.service_generation(model=model, params=params)
 
-    return GenerationResult()  # TODO
+    if not result.success:
+        return result
+
+    task_id = result.result
+
+    cur_result = "1%"
+
+    for _ in range(180):
+        await asyncio.sleep(delay)
+
+        result = await neiro_api.get_status(task_id=task_id, model=model)
+
+        if not result.success:
+            continue
+
+        if result.status == GenerationStatus.ERROR:
+            return GenerationResult(success=False)
+
+        if status and result.status == GenerationStatus.IN_PROCESS and result.result != cur_result:
+            try:
+                await status.edit_text(PROGRESS_TEXT.format(progress=result.result))
+            except TelegramBadRequest:
+                pass
+
+            cur_result = result.result
+            continue
+
+        if result.status == GenerationStatus.READY:
+            return GenerationResult(result=result.result)
+
+    return GenerationResult(success=False)
+

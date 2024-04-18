@@ -3,12 +3,15 @@ from typing import Any
 from aiogram.filters.callback_data import CallbackData
 
 from common.enums import ImageAction, ImageModels, TextModels, VideoModels
-from tgbot_app.utils.enums import (AiTypeButtons, DiplomaAction,
-                                   DiplomaStructButtons, LearningButtons,
+from tgbot_app.utils.enums import (AiTypeButtons, ArticleAction, ArticleModes,
+                                   DiplomaAction, DiplomaStructButtons,
+                                   FAQFinancesButtons, FAQMainButtons,
+                                   FAQProblemsButtons, FAQRecButtons,
+                                   LearningButtons, MainButtons,
                                    OtherServicesButtons, ProfileButtons,
-                                   ServicesButtons, SileroAction,
+                                   SearchEngine, ServicesButtons, SileroAction,
                                    TextSettingsButtons, WorkingButtons,
-                                   WorkTypes)
+                                   WorkPlanButtons, WorkTypes, PaymentAction)
 
 
 class ProfileCallback(CallbackData, prefix="profile"):
@@ -70,4 +73,19 @@ class OtherServicesCallback(CallbackData, prefix="o_service"):
 
 class DiplomaCallback(CallbackData, prefix="diploma"):
     action: DiplomaAction
-    value: Any = "_"
+    value: str = "0"
+
+
+class ArticleCallback(CallbackData, prefix="article"):
+    action: ArticleAction
+    value: ArticleModes | SearchEngine | WorkPlanButtons
+
+
+class FAQCallback(CallbackData, prefix="faq"):
+    chapter: FAQMainButtons | MainButtons | FAQRecButtons | FAQProblemsButtons | FAQFinancesButtons
+    sub_chapter: str = "_"
+
+
+class PaymentCallback(CallbackData, prefix="pay"):
+    action: PaymentAction
+    value: int | bool

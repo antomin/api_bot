@@ -22,12 +22,8 @@ async def gen_type_work_kb() -> InlineKeyboardMarkup:
 async def gen_diploma_struct_kb() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
 
-    for struct_type in DiplomaStructButtons:
-        builder.button(
-            text=struct_type.value,
-            callback_data=DiplomaCallback(action=DiplomaAction.STRUCT, value=struct_type),
-        )
-
+    builder.button(text="🪄 Начать генерацию", callback_data=DiplomaCallback(action=DiplomaAction.CONFIRM))
+    builder.button(text="🗓 Задать план", callback_data=DiplomaCallback(action=DiplomaAction.GET_STRUCT))
     builder.button(text="↩️ Назад", callback_data=LearningCallback(type=LearningButtons.WORKS))
 
     return builder.adjust(2, 1).as_markup()

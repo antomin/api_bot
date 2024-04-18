@@ -1,4 +1,6 @@
+import json
 from enum import Enum
+from json import JSONDecodeError
 from typing import Literal
 
 from aiohttp import ClientSession
@@ -28,6 +30,7 @@ class AsyncNeiroAPI:
     def __init__(self, token):
         self.headers = {"x-api-key": token}
         self.base_url = "https://api.mindl.in/v1"
+        # self.base_url = "http://127.0.0.1:8000/v1"
         self.completion_urls = {
             TextModels.GPT_3_TURBO: f"{self.base_url}/openai/completion/",
             TextModels.GPT_4_TURBO: f"{self.base_url}/openai/completion/",
@@ -46,6 +49,7 @@ class AsyncNeiroAPI:
             ImageModels.KANDINSKY: f"{self.base_url}/kandinsky/check-task/",
             ImageModels.STABLE_DIFFUSION: f"{self.base_url}/stablediffusion/check-task/",
         }
+        self.status_urls.update({model: f"{self.base_url}/services/check-task/" for model in ServiceModels})
 
     async def imagine(self, model: ImageModels, prompt: str) -> ResponseResult:
         url = self.imagine_urls[model]
@@ -66,16 +70,6 @@ class AsyncNeiroAPI:
         if not result:
             return ResponseResult(success=False)
         return ResponseResult(result=result["task_id"])
-
-    async def get_status(self, task_id: str, model: ImageModels | VideoModels) -> ResponseResult:
-        url = self.status_urls[model]
-        payload = {"task_id": task_id}
-
-        result = await self.__request(url=url, payload=payload)
-
-        if not result:
-            return ResponseResult(success=False)
-        return ResponseResult(status=result["status"], result=result["result"])
 
     async def dalle_imagine(self, model: ImageModels, prompt: str) -> ResponseResult:
         url = f"{self.base_url}/openai/image/"
@@ -100,6 +94,16 @@ class AsyncNeiroAPI:
             return ResponseResult(success=False)
         return ResponseResult(result=result["result"])
 
+    async def vision(self, img_url: str, prompt: str) -> ResponseResult:
+        url = f"{self.base_url}/openai/vision/"
+        payload = {"image_url": img_url, "text": prompt}
+
+        result = await self.__request(url=url, payload=payload)
+
+        if not result.get("result"):
+            return ResponseResult(success=False)
+        return ResponseResult(result=result["result"])
+
     async def video_generation(self, model: VideoModels, params: dict) -> ResponseResult:
         url = f"{self.base_url}/stablediffusion/{model.value}/"
 
@@ -110,90 +114,43 @@ class AsyncNeiroAPI:
         return ResponseResult(result=result["task_id"])
 
     async def service_generation(self, model: ServiceModels, params: dict) -> ResponseResult:
-        ...  # TODO
+        url = f"{self.base_url}/services/{model.value}/"
 
-    async def __request(self, url: str, payload: dict) -> dict:
+        result = await self.__request(url=url, payload=params)
+
+        if not result.get("task_id"):
+            return ResponseResult(success=False)
+        return ResponseResult(result=result["task_id"])
+
+    async def get_status(self, task_id: str, model: ImageModels | VideoModels) -> ResponseResult:
+        url = self.status_urls[model]
+        payload = {"task_id": task_id}
+
+        result = await self.__request(url=url, payload=payload)
+
+        if not result:
+            return ResponseResult(success=False)
+        return ResponseResult(status=result["status"], result=result["result"])
+
+    async def speech_to_text(self, voice_url: str) -> ResponseResult:
+        url = f"{self.base_url}/services/speech-to-text/"
+        payload = {"url_to_file": voice_url}
+
+        result = await self.__request(url=url, payload=payload)
+
+        if not result or result.get("status") != "ready":
+            return ResponseResult(success=False)
+        return ResponseResult(result=result["result"])
+
+    async def __request(self, url: str, payload: dict) -> dict | None:
         async with ClientSession(headers=self.headers) as session:
             async with session.post(url=url, json=payload) as response:
-                result = await response.json()
+                result = await response.text()
+                try:
+                    result = json.loads(result)
+                except JSONDecodeError as error:
+                    logger.error(f"API REQUEST JSON error: {error.args} | {result}")
+                    return
                 if not response.ok:
                     logger.error(f"API REQUEST error: {response.status} | {response.reason}")
                 return result
-
-
-
-
-
-
-
-#
-#
-#
-#
-#
-# class Midjourney:
-#     def __init__(self, token):
-#         self.headers = {"x-api-key": token}
-#         self.url = "https://api.нейросети.com/midjourney/"
-#
-#     async def imagine(self, prompt: str) -> GenerationResult:
-#         return GenerationResult(result='uuuuuiiiiiddddd')
-#
-#     async def action(self, action: ImageAction, index: int, task_id: str) -> GenerationResult:
-#         return GenerationResult(result=f"{action}|{index}|{task_id}")
-#
-#
-# class TextGenerator:
-#     def __init__(self, token):
-#         self.headers = {"x-api-key": token}
-#         self.url = "https://api.нейросети.com/midjourney/"
-#
-#     async def run_generation(self, model: TextModels, conversation: list[dict]) -> GenerationResult:
-#         return GenerationResult(result=f"Model: {model} answer: {str(conversation)}")  # TODO
-#
-#
-# class OpenAI:
-#     def __init__(self, token):
-#         self.headers = {"x-api-key": token}
-#         self.url = "https://api.нейросети.com/openai/"
-#
-#
-# class StableDiffusion:
-#     def __init__(self, token):
-#         self.headers = {"x-api-key": token}
-#         self.url = "https://api.нейросети.com/stablediffusion/"
-#
-#     async def gen_image(self, prompt) -> GenerationResult:
-#         return GenerationResult(result="https://w7.pngwing.com/pngs/895/199/png-transparent-spider-man-heroes-download-with-transparent-background-free-thumbnail.png")
-#
-#
-#
-# class Gemini:
-#     def __init__(self, token):
-#         self.headers = {"x-api-key": token}
-#         self.url = "https://api.нейросети.com/bard/"
-#
-#
-# class Claude:
-#     def __init__(self, token):
-#         self.headers = {"x-api-key": token}
-#         self.url = "https://api.нейросети.com/claude/"
-#
-#
-class Yandex:
-    def __init__(self, token):
-        self.headers = {"x-api-key": token}
-        self.url = "https://api.нейросети.com/yandex/"
-
-    async def speach_to_text(self) -> str:  # TODO
-        return "Привет"
-#
-#
-# class Translator:
-#     def __init__(self, token):
-#         self.headers = {"x-api-key": token}
-#         self.url = "https://api.нейросети.com/translate/"
-#
-#     async def translate(self, text: str) -> GenerationResult:
-#         return GenerationResult(result="Hello World!")
-#

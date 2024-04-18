@@ -20,3 +20,15 @@ class DiplomaState(StatesGroup):
     TYPE_WORK = State()
     THEME_WORK = State()
     STRUCT_WORK = State()
+
+
+class CommonState(StatesGroup):
+    REWRITE = State()
+    VISION = State()
+    STT = State()
+    TTS = State()
+
+
+class ArticleState(StatesGroup):
+    START = State()
+    EDIT_PLAN = State()

@@ -4,7 +4,6 @@ from aiogram.types import CallbackQuery, FSInputFile
 
 from common.db_api import reset_session, switch_context, update_object
 from common.models import User
-from common.settings import settings
 from tgbot_app.keyboards import (gen_img_model_kb, gen_main_speaker_kb,
                                  gen_speaker_category_kb, gen_text_models_kb,
                                  gen_text_roles_kb, gen_txt_settings_kb)
@@ -12,7 +11,8 @@ from tgbot_app.utils.callbacks import (ImageModelCallback, RoleCallback,
                                        SileroCallback, TextModelCallback,
                                        TextSettingsCallback)
 from tgbot_app.utils.enums import SileroAction, TextSettingsButtons
-from tgbot_app.utils.misc import gen_img_settings_text, gen_txt_settings_text
+from tgbot_app.utils.text_generators import gen_img_settings_text, gen_txt_settings_text
+from tgbot_app.utils.text_variables import VOICE_NO_PREMIUM_TEXT
 
 router = Router()
 
@@ -79,12 +79,9 @@ async def text_settings_role_back(callback: CallbackQuery, user: User):
 
 @router.callback_query(TextSettingsCallback.filter(F.action == TextSettingsButtons.VOICE))
 async def choice_speaker(callback: CallbackQuery, user: User):
-    # if not user.tariff:
-    #     await callback.answer(
-    #         text="Выбор голоса для синтеза речи доступен только для пользователей с оплаченной подпиской.",
-    #         show_alert=True,
-    #     )
-    #     return
+    if not user.tariff:
+        await callback.answer(text=VOICE_NO_PREMIUM_TEXT, show_alert=True)
+        return
 
     markup = await gen_main_speaker_kb(cur_speaker=user.tts_mode)
 
@@ -94,12 +91,9 @@ async def choice_speaker(callback: CallbackQuery, user: User):
 
 @router.callback_query(SileroCallback.filter(F.action == SileroAction.SHOW_CATEGORY))
 async def show_speaker_category(callback: CallbackQuery, callback_data: SileroCallback, user: User):
-    # if not user.tariff:
-    #     await callback.answer(
-    #         text="Выбор голоса для синтеза речи доступен только для пользователей с оплаченной подпиской.",
-    #         show_alert=True,
-    #     )
-    #     return
+    if not user.tariff:
+        await callback.answer(text=VOICE_NO_PREMIUM_TEXT, show_alert=True)
+        return
 
     category = callback_data.category
     subcategory = callback_data.subcategory
@@ -112,7 +106,7 @@ async def show_speaker_category(callback: CallbackQuery, callback_data: SileroCa
 
 @router.callback_query(SileroCallback.filter(F.action == SileroAction.SET))
 async def set_speaker_handler(callback: CallbackQuery, callback_data: SileroCallback, user: User):
-    speaker = None if callback_data.value == "0" else callback_data.value
+    speaker = "" if callback_data.value == "0" else callback_data.value
     category = callback_data.category
     subcategory = callback_data.subcategory
 
@@ -133,7 +127,7 @@ async def set_speaker_handler(callback: CallbackQuery, callback_data: SileroCall
 
 
 @router.callback_query(SileroCallback.filter(F.action == SileroAction.EXAMPLE))
-async def send_example(callback: CallbackQuery, user: User):
+async def send_example(callback: CallbackQuery):
     await callback.answer("TODO", show_alert=True)  # TODO
 
     # example = FSInputFile(f"{settings.MEDIA_DIR}/tts_examples/{user.tts_mode}.wav")
