@@ -3,7 +3,7 @@
 
 {% if current_user.is_authenticated %}
 <div class="btn-group pull-right">
-    <a class="btn" href="{{ url_for('admin.logout_page') }}">{{ current_user.username }} - Log out</a>
+    <a class="btn btn-danger" href="{{ url_for('admin.logout_page') }}">Выйти</a>
 </div>
 {% endif %}
 {% endblock %}
