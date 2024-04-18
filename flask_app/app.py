@@ -6,11 +6,13 @@ from flask_app.auth.views import auth_app
 from flask_app.commands.create_superuser import admin_cli
 from flask_app.extensions import db, login_manager, migrate
 from flask_app.main_app.views import main_app
+from flask_app.payments_app.views import payments_app
 
 
 def __register_blueprints(app: Flask) -> None:
     app.register_blueprint(main_app)
     app.register_blueprint(auth_app)
+    app.register_blueprint(payments_app)
 
 
 def __set_settings(app: Flask) -> None:
@@ -36,4 +38,5 @@ def create_app() -> Flask:
     __register_blueprints(app)
 
     app.cli.add_command(admin_cli)
+
     return app

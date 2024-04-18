@@ -7,12 +7,12 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import Message, URLInputFile
 from aiogram.utils.chat_action import ChatActionSender
 
-from common.db_api import get_messages, get_obj_by_id, get_last_invoice
+from common.db_api import get_last_invoice, get_messages, get_obj_by_id
 from common.enums import ImageModels, ServiceModels, TextModels, VideoModels
 from common.models import Tariff, User
+from common.services import neiro_api, translator
 from common.settings import settings
 from tgbot_app.keyboards import gen_error_kb, gen_no_tokens_kb
-from tgbot_app.services import neiro_api, translator
 from tgbot_app.utils.enums import GenerationResult
 from tgbot_app.utils.generation_workers import run_service_generation
 from tgbot_app.utils.text_variables import (ERROR_MAIN_TEXT, ERROR_STT_TEXT,
@@ -131,7 +131,7 @@ async def gen_conversation(user: User, prompt: str) -> list[dict]:
 
 
 async def translate_text(text: str, message: Message) -> str:
-    result = await translator.translate(text)
+    result = await neiro_api.translate(text)
 
     if result.success:
         return result.result

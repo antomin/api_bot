@@ -2,10 +2,10 @@ from aiogram.types import InlineKeyboardMarkup, WebAppInfo
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from common.db_api import get_tariffs
-from common.models import User, Tariff
+from common.models import Tariff, User
 from common.settings import settings
-from tgbot_app.utils.callbacks import ProfileCallback, PaymentCallback
-from tgbot_app.utils.enums import ProfileButtons, PaymentAction
+from tgbot_app.utils.callbacks import PaymentCallback, ProfileCallback
+from tgbot_app.utils.enums import PaymentAction, ProfileButtons
 
 
 async def gen_no_tokens_kb() -> InlineKeyboardMarkup:
@@ -44,11 +44,10 @@ async def gen_premium_kb(user: User) -> InlineKeyboardMarkup:
 
 
 async def gen_confirm_premium_kb(user: User, tariff: Tariff) -> InlineKeyboardMarkup:
-    url = f"{settings.DOMAIN}/payments/redirect/{tariff.id}/{user.id}/"
-    url = "https://ya.ru"  # TODO
-
     builder = InlineKeyboardBuilder()
-    builder.button(text=f"Оплатить {tariff.price}₽", web_app=WebAppInfo(url=url))
+    builder.button(
+        text=f"Оплатить {tariff.price}₽",
+        web_app=WebAppInfo(url=f"{settings.DOMAIN}/payments/redirect/{tariff.id}/{user.id}/"))
 
     return builder.as_markup()
 
@@ -73,7 +72,6 @@ async def gen_tokens_kb(user: User) -> InlineKeyboardMarkup:
         else:
             price = tariff.price
         url = f"{settings.DOMAIN}/payments/redirect/{tariff.id}/{user.id}/"
-        url = "https://ya.ru"
 
         builder.button(text=f"💎 {tariff.name} / {price} ₽ 💸", web_app=WebAppInfo(url=url))
 

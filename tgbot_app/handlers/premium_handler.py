@@ -1,14 +1,18 @@
 from aiogram import F, Router
 from aiogram.filters import Command
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import CallbackQuery, Message
 
-from common.db_api import get_obj_by_id, create_refund, update_object
-from common.models import User, Tariff
-from tgbot_app.keyboards import gen_premium_kb, gen_confirm_premium_kb, gen_premium_cancel_kb, main_kb
-from tgbot_app.utils.callbacks import PaymentCallback
-from tgbot_app.utils.enums import DefaultCommands, MainButtons, PaymentAction
+from common.db_api import create_refund, get_obj_by_id, update_object
+from common.models import Tariff, User
+from tgbot_app.keyboards import (gen_confirm_premium_kb, gen_premium_cancel_kb,
+                                 gen_premium_kb, main_kb)
+from tgbot_app.utils.callbacks import PaymentCallback, ProfileCallback
+from tgbot_app.utils.enums import (DefaultCommands, MainButtons, PaymentAction,
+                                   ProfileButtons)
 from tgbot_app.utils.misc import can_create_refund
-from tgbot_app.utils.text_generators import gen_confirm_tariff_text, gen_refund_text, gen_premium_canceled_text
+from tgbot_app.utils.text_generators import (gen_confirm_tariff_text,
+                                             gen_premium_canceled_text,
+                                             gen_refund_text)
 from tgbot_app.utils.text_variables import PREMIUM_TEXT
 
 router = Router()
@@ -16,6 +20,7 @@ router = Router()
 
 @router.message(Command(DefaultCommands.subscription.name))
 @router.message(F.text == MainButtons.PREMIUM.value)
+@router.callback_query(ProfileCallback.filter(F.action == ProfileButtons.PREMIUM))
 async def premium_handler(message: Message | CallbackQuery, user: User):
     if isinstance(message, CallbackQuery):
         await message.answer()

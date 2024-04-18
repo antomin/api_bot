@@ -1,6 +1,6 @@
 from aiogram import F, Router
 from aiogram.filters import Command
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import CallbackQuery, Message
 
 from common.models import User
 from tgbot_app.keyboards import gen_tokens_kb
@@ -18,7 +18,5 @@ async def tokens(message: Message | CallbackQuery, user: User):
         await message.answer()
         message = message.message
 
-    text = gen_token_text(user)
-    markup = await gen_tokens_kb(user)
-
-    await message.answer(text=text, reply_markup=markup, disable_web_page_preview=True)
+    await message.answer(text=gen_token_text(user), reply_markup=await gen_tokens_kb(user),
+                         disable_web_page_preview=True)

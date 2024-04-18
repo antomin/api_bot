@@ -142,6 +142,16 @@ class AsyncNeiroAPI:
             return ResponseResult(success=False)
         return ResponseResult(result=result["result"])
 
+    async def translate(self, text: str, from_lang: str = "ru", to_lang: str = "en"):
+        url = f"{self.base_url}/services/translate/"
+        payload = {"text": text, "from_lang": from_lang, "to_lang": to_lang}
+
+        result = await self.__request(url=url, payload=payload)
+
+        if not result or result.get("status") != "ready":
+            return ResponseResult(success=False)
+        return ResponseResult(result=result["result"])
+
     async def __request(self, url: str, payload: dict) -> dict | None:
         async with ClientSession(headers=self.headers) as session:
             async with session.post(url=url, json=payload) as response:

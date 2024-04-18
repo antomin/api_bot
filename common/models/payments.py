@@ -40,8 +40,9 @@ class Invoice(Base):
     is_paid: Mapped[bool] = mapped_column(default=False)
     mother_invoice_id: Mapped[int | None] = mapped_column(default=None)
     tariff_id: Mapped[int] = mapped_column(ForeignKey("tariffs.id"))
+    sum: Mapped[int] = mapped_column(default=0)
 
-    user: Mapped["User"] = relationship(back_populates="invoices")
+    user: Mapped["User"] = relationship(back_populates="invoices", lazy="joined")
     tariff: Mapped["Tariff"] = relationship(back_populates="invoices", lazy="joined")
 
     def __str__(self):

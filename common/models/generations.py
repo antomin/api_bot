@@ -4,7 +4,7 @@ from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from common.models import Base
-from tgbot_app.services.neiro_api import GenerationStatus
+from common.services.neiro_api import GenerationStatus
 
 from ..enums import (ImageAction, ImageModels, ServiceModels, TextModels,
                      VideoModels)

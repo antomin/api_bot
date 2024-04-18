@@ -27,6 +27,7 @@ class CommonState(StatesGroup):
     VISION = State()
     STT = State()
     TTS = State()
+    LINK = State()
 
 
 class ArticleState(StatesGroup):

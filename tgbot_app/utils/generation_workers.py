@@ -6,8 +6,8 @@ from aiogram.types import Message
 from common.db_api import create_image_query, update_object
 from common.enums import ImageAction, ImageModels, ServiceModels, VideoModels
 from common.models import ImageQuery
-from tgbot_app.services import neiro_api
-from tgbot_app.services.neiro_api import GenerationStatus
+from common.services import neiro_api
+from common.services.neiro_api import GenerationStatus
 from tgbot_app.utils.enums import GenerationResult
 from tgbot_app.utils.text_variables import IMAGE_GEN_TEXT, PROGRESS_TEXT
 

@@ -65,8 +65,6 @@ class Settings(BaseSettings):
 
     APP_NAME: str = settings_data["app_name"]
     DOMAIN: str = settings_data["domain"]
-    POLICY_URL: str = settings_data["policy_url"]
-    OFFER_URL: str = settings_data["offer_url"]
 
     TG_TOKEN: str = settings_data["tgbot_token"]
     BOT_USERNAME: str = settings_data["bot_username"]
@@ -74,9 +72,6 @@ class Settings(BaseSettings):
     TARGET_CHAT: str | None = settings_data["target_chat"]
 
     NEIRO_TOKEN: str = settings_data["api_token"]
-    RAPIDAPI_TOKEN: str = settings_data["rapidapi_token"]
-
-    PROXY_URL: str = settings_data["proxy_url"]
 
     ROBOKASSA_LOGIN: str = settings_data["robokassa_login"]
     ROBOKASSA_PASS1: str = settings_data["robokassa_pass1"]
@@ -84,7 +79,6 @@ class Settings(BaseSettings):
 
     DB_URL: str = f"postgresql+psycopg2://{_db_user}:{_db_pass}@{_db_host}:{_db_port}/{_db_name}"
     ASYNC_DB_URL: str = f"postgresql+asyncpg://{_db_user}:{_db_pass}@{_db_host}:{_db_port}/{_db_name}"
-    REDIS_URL: str = env.str("REDIS_URL")
 
     FREE_GPT_QUERIES: int = settings_data["free_gpt_queries"]
     FREE_SD_QUERIES: int = settings_data["free_sd_queries"]

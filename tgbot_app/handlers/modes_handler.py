@@ -11,7 +11,8 @@ from tgbot_app.utils.callbacks import (ImageModelCallback, RoleCallback,
                                        SileroCallback, TextModelCallback,
                                        TextSettingsCallback)
 from tgbot_app.utils.enums import SileroAction, TextSettingsButtons
-from tgbot_app.utils.text_generators import gen_img_settings_text, gen_txt_settings_text
+from tgbot_app.utils.text_generators import (gen_img_settings_text,
+                                             gen_txt_settings_text)
 from tgbot_app.utils.text_variables import VOICE_NO_PREMIUM_TEXT
 
 router = Router()

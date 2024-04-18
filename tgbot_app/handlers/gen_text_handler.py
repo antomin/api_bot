@@ -6,9 +6,9 @@ from aiogram.utils.chat_action import ChatActionSender
 
 from common.db_api import change_balance, create_text_query
 from common.models import User
+from common.services import neiro_api
 from common.settings import settings
 from tgbot_app.keyboards import gen_error_kb
-from tgbot_app.services import neiro_api
 from tgbot_app.utils.misc import (can_send_query, gen_conversation,
                                   handle_voice_prompt, send_no_balance_msg,
                                   send_voice_answer)

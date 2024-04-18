@@ -1,6 +1,6 @@
 from enum import Enum
 
-from tgbot_app.services.neiro_api import ResponseResult
+from common.services.neiro_api import ResponseResult
 
 
 class MainButtons(str, Enum):
@@ -154,3 +154,11 @@ class PaymentAction(Enum):
     REACTIVATE = "reactivate"
     CANCEL = "cancel"
     CONFIRM_CANCEL = "confirm_cancel"
+
+
+class AdminMainButtons(Enum):
+    LINKS = "Генерация ссылок"
+
+
+class AdminLinksButtons(Enum):
+    CREATE = "Создать"

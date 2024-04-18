@@ -16,7 +16,7 @@ from . import Base
 if TYPE_CHECKING:
     from .generations import (ImageQuery, ServiceQuery, TextGenerationRole,
                               TextQuery, TextSession, VideoQuery)
-    from .payments import Invoice, Tariff, Refund
+    from .payments import Invoice, Refund, Tariff
 
 
 class User(Base):
@@ -44,6 +44,7 @@ class User(Base):
     update_daily_limits_time: Mapped[datetime] = mapped_column(DateTime, default=now(), server_default=now())
     tariff_id: Mapped[int | None] = mapped_column(ForeignKey("tariffs.id", ondelete="SET NULL"), default=None)
     payment_time: Mapped[datetime | None] = mapped_column(DateTime, default=None)
+    mother_invoice_id: Mapped[int | None] = mapped_column(default=None)
     payment_tries: Mapped[int] = mapped_column(default=0)
     recurring: Mapped[bool] = mapped_column(default=True)
     first_payment: Mapped[bool] = mapped_column(default=True)

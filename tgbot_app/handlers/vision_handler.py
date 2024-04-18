@@ -6,9 +6,9 @@ from aiogram.utils.chat_action import ChatActionSender
 from common.db_api import change_balance, create_service_query
 from common.enums import ServiceModels
 from common.models import User
+from common.services import neiro_api
 from common.settings import settings
 from tgbot_app.keyboards import gen_error_kb, gen_services_back_kb
-from tgbot_app.services import neiro_api
 from tgbot_app.utils.callbacks import LearningCallback
 from tgbot_app.utils.enums import LearningButtons
 from tgbot_app.utils.misc import delete_file, send_no_balance_msg

@@ -2,16 +2,16 @@ from aiogram import F, Router
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
-from common.settings import settings
 
+from common.settings import settings
 from tgbot_app.keyboards import (gen_back_faq_kb, gen_faq_finances_kb,
                                  gen_faq_finances_sub_kb, gen_faq_inline_kb,
                                  gen_faq_problems_kb, gen_faq_rec_kb,
                                  gen_main_faq_kb)
 from tgbot_app.utils.callbacks import FAQCallback
-from tgbot_app.utils.enums import (FAQFinancesButtons, FAQMainButtons,
-                                   FAQProblemsButtons, FAQRecButtons,
-                                   MainButtons, DefaultCommands)
+from tgbot_app.utils.enums import (DefaultCommands, FAQFinancesButtons,
+                                   FAQMainButtons, FAQProblemsButtons,
+                                   FAQRecButtons, MainButtons)
 
 router = Router()
 

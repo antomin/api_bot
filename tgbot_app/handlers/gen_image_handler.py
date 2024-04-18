@@ -9,10 +9,10 @@ from aiogram.utils.chat_action import ChatActionSender
 from common.db_api import change_balance, create_image_query, update_object
 from common.enums import ImageAction, ImageModels
 from common.models import User
+from common.services import neiro_api
+from common.services.neiro_api import GenerationStatus
 from common.settings import settings
 from tgbot_app.keyboards import gen_midjourney_kb
-from tgbot_app.services import neiro_api
-from tgbot_app.services.neiro_api import GenerationStatus
 from tgbot_app.utils.callbacks import MJCallback
 from tgbot_app.utils.generation_workers import (run_image_generation,
                                                 run_mj_generation)

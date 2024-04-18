@@ -1,15 +1,17 @@
+import asyncio
+from datetime import datetime, timedelta
 from typing import Any
 
 from loguru import logger
-from sqlalchemy import select, desc, func
+from sqlalchemy import desc, select, update
 
-from common.enums import TextModels
-from common.models import ReferalLink, TextGenerationRole, User, db, Tariff, Invoice
+from common.enums import ImageModels, TextModels
+from common.models import (Invoice, ReferalLink, Tariff, TextGenerationRole,
+                           User, db)
 from common.models.generations import (ImageQuery, ServiceQuery, TextQuery,
                                        TextSession, VideoQuery)
 from common.models.payments import Refund
 from common.settings import Model, settings
-from datetime import datetime
 
 
 async def get_or_create_user(tgid: int, username: str, first_name: str, last_name: str, link_id: int | None) -> User:
@@ -159,7 +161,22 @@ async def create_service_query(**params) -> ServiceQuery:
 
 
 async def unsubscribe_user(user: User) -> None:
-    ...
+    user.tariff_id = None
+    user.payment_tries = 0
+    user.payment_time = None
+    user.recurring = True
+    user.txt_model = TextModels.GPT_3_TURBO
+    user.img_model = ImageModels.STABLE_DIFFUSION
+    user.voice_mode = None
+    user.check_subscriptions = True
+    user.update_daily_limits_time = datetime.now()
+    user.chatgpt_daily_limit = settings.FREE_GPT_QUERIES
+    user.dalle_2_daily_limit = settings.FREE_DALLE2_QUERIES
+    user.sd_daily_limit = settings.FREE_SD_QUERIES
+
+    async with db.async_session_factory() as session:
+        session.add(user)
+        await session.commit()
 
 
 async def get_tariffs(is_extra: bool = False, is_trial: bool = False) -> list[Tariff]:
@@ -203,3 +220,84 @@ async def create_refund(user: User) -> None:
         await session.commit()
 
     await unsubscribe_user(user)
+
+
+def sync_get_object_by_id(obj: Any, id_: int) -> Any:
+    with db.session_factory() as session:
+        result = session.get(obj, id_)
+
+        return result
+
+
+def sync_create_obj(obj: Any, **params) -> Any:
+    new_obj = obj(**params)
+    with db.session_factory() as session:
+        session.add(new_obj)
+        session.commit()
+
+    return new_obj
+
+
+def sync_update_object(obj: Any, **params) -> None:
+    with db.session_factory() as session:
+        for field, value in params.items():
+            setattr(obj, field, value)
+
+        session.add(obj)
+        session.commit()
+        session.refresh(obj)
+
+
+def update_subscription(user: User, invoice: Invoice, price: int) -> None:
+    tariff = invoice.tariff
+    user.tariff = tariff
+
+    if user.payment_time:  # Recurring update
+        user.payment_time += timedelta(days=tariff.days)
+    else:  # First payment
+        user.payment_time = datetime.now() + timedelta(days=tariff.days)
+        user.chatgpt_daily_limit = tariff.chatgpt_daily_limit
+        user.dalle_2_daily_limit = tariff.dalle_2_daily_limit
+        user.sd_daily_limit = tariff.sd_daily_limit
+        user.check_subscriptions = False
+        user.update_daily_limits_time = datetime.now() + timedelta(hours=24)
+
+    user.token_balance += tariff.token_balance
+    user.payment_tries = 0
+    user.recurring = True
+    user.first_payment = False
+
+    if not user.mother_invoice_id:
+        user.mother_invoice_id = invoice.id
+
+    with db.session_factory() as session:
+        session.add(user)
+        session.commit()
+
+
+async def get_users_for_recurring() -> list[User]:
+    async with db.async_session_factory() as session:
+        result = await session.scalars(select(User).where(User.tariff_id.is_not(None),
+                                                          User.payment_time.is_not(None),
+                                                          User.mother_invoice_id.is_not(None),
+                                                          User.payment_time < datetime.now()))
+        return result.all()
+
+
+async def create_invoice(**params) -> Invoice:
+    invoice = Invoice(**params)
+
+    async with db.async_session_factory() as session:
+        session.add(invoice)
+        await session.commit()
+        await session.refresh(invoice)
+
+    return invoice
+
+
+async def get_admins_id() -> list[int]:
+    async with db.async_session_factory() as session:
+        result = await session.scalars(select(User.id).where(User.is_admin))
+
+        return result.all()
+
