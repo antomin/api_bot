@@ -1,36 +1,140 @@
 {
-  "app_name": "SuperBot",
-  "domain": "https://3e66-109-111-130-245.ngrok-free.app",
-  "tgbot_token": "6923957221:AAHf-JBUWUP3Jo1bOBWyr0zBto3FbygXOYk",
-  "bot_username": "neiroapi_dev_bot",
-  "support_username": "super_support",
-  "target_chat": null,
-  "api_token": "bae13502-6936-4e64-a2b6-6dd5893bae42",
-  "robokassa_login": "login",
-  "robokassa_pass1": "pass1",
-  "robokassa_pass2": "pass2",
-  "free_gpt_queries": 5,
-  "free_sd_queries": 3,
-  "free_dalle2_queries": 3,
-  "cost_gpt_3": 2,
-  "cost_gpt_4": 150,
-  "cost_yagpt": 9,
-  "cost_yagpt_lite": 3,
-  "cost_claude": 10,
-  "cost_gemini": 10,
-  "cost_sd": 6,
-  "cost_midjourney": 30,
-  "cost_dalle_2": 12,
-  "cost_dalle_3": 30,
-  "cost_kandinsky": 10,
-  "cost_text_to_video": 25,
-  "cost_img_to_video": 15,
-  "cost_rembg_video": 20,
-  "cost_cartoon_video": 25,
-  "cost_diploma": 6,
-  "cost_rewrite": 30,
-  "cost_vision": 30,
-  "cost_article": 30,
-  "cost_stt": 40,
-  "cost_tts": 6
+  "\u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438 \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u044f": {
+    "csrf_token": {
+      "value": "ImY4M2ZmNGMzZGU4ZTc1YTJiNTE3OGFkNzE3YjRjZWNiNDU5YTg3ZTci.Zh_LjQ.aSslUmGU6eoB261nnjy6G24oDpE",
+      "hide": true
+    },
+    "app_name": {
+      "value": "SuperBot1",
+      "caption": "\u041d\u0430\u0437\u0432\u0430\u043d\u0438\u0435 \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u044f"
+    },
+    "domain": {
+      "value": "127.0.0.1:5000",
+      "caption": "\u0414\u043e\u043c\u0435\u043d"
+    },
+    "tgbot_token": {
+      "value": "6923957221:AAHf-JBUWUP3Jo1bOBWyr0zBto3FbygXOYk",
+      "caption": "\u0422\u043e\u043a\u0435\u043d \u0431\u043e\u0442\u0430"
+    },
+    "bot_username": {
+      "value": "neiroapi_dev_bot",
+      "caption": "Username \u0431\u043e\u0442\u0430"
+    },
+    "support_username": {
+      "value": "super_support",
+      "caption": "Username \u043f\u043e\u0434\u0434\u0435\u0440\u0436\u043a\u0438"
+    },
+    "target_chat": {
+      "value": "None",
+      "caption": "\u0427\u0430\u0442"
+    },
+    "api_token": {
+      "value": "bae13502-6936-4e64-a2b6-6dd5893bae42",
+      "caption": "Api \u0442\u043e\u043a\u0435\u043d"
+    },
+    "rapidapi_token": {
+      "value": "9ede58cab8msh414de47f5540f3bp15887fjsn700b88861419",
+      "caption": "RapidAPI \u0442\u043e\u043a\u0435\u043d",
+      "hide": true
+    },
+    "proxy_url": {
+      "value": "http://Dh72m2:VUhUUq@91.108.238.147:8000",
+      "caption": "Proxy URL",
+      "hide": true
+    }
+  },
+  "\u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438 \u0420\u043e\u0431\u043e\u043a\u0430\u0441\u0441\u044b": {
+    "robokassa_login": {
+      "value": "login",
+      "caption": "\u041b\u043e\u0433\u0438\u043d"
+    },
+    "robokassa_pass1": {
+      "value": "pass1",
+      "caption": "\u041f\u0430\u0440\u043e\u043b\u044c 1"
+    },
+    "robokassa_pass2": {
+      "value": "pass2",
+      "caption": "\u041f\u0430\u0440\u043e\u043b\u044c 2"
+    }
+  },
+  "\u0411\u0435\u0441\u043f\u043b\u0430\u0442\u043d\u044b\u0435 \u0437\u0430\u043f\u0440\u043e\u0441\u044b": {
+    "free_gpt_queries": {
+      "value": "5",
+      "caption": "ChatGPT"
+    },
+    "free_sd_queries": {
+      "value": "3",
+      "caption": "StableDiffusion"
+    },
+    "free_dalle2_queries": {
+      "value": "11",
+      "caption": "Dalle 2"
+    }
+  },
+  "\u0421\u0442\u043e\u0438\u043c\u043e\u0441\u0442\u0438 \u0433\u0435\u043d\u0435\u0440\u0430\u0446\u0438\u0439": {
+    "cost_gpt_3": {
+      "value": "2",
+      "caption": "ChatGPT 3"
+    },
+    "cost_gpt_4": {
+      "value": "150",
+      "caption": "ChatGPT 4"
+    },
+    "cost_yagpt": {
+      "value": "9",
+      "caption": "Yandex GPT"
+    },
+    "cost_yagpt_lite": {
+      "value": "3",
+      "caption": "Yandex GPT Lite"
+    },
+    "cost_claude": {
+      "value": "10",
+      "caption": "Claude"
+    },
+    "cost_gemini": {
+      "value": "10",
+      "caption": "Gemini"
+    },
+    "cost_sd": {
+      "value": "6",
+      "caption": "StableDiffusion"
+    },
+    "cost_midjourney": {
+      "value": "30",
+      "caption": "Midjourney"
+    },
+    "cost_dalle_2": {
+      "value": "12",
+      "caption": "Dalle 2"
+    },
+    "cost_dalle_3": {
+      "value": "30",
+      "caption": "Dalle 3"
+    },
+    "cost_kandinsky": {
+      "value": "10",
+      "caption": "Kandinsky"
+    },
+    "cost_text_to_video": {
+      "value": "25",
+      "caption": "\u0422\u0435\u043a\u0441\u0442 \u0432 \u0432\u0438\u0434\u0435\u043e"
+    },
+    "cost_img_to_video": {
+      "value": "15",
+      "caption": "\u0418\u0437\u043e\u0431\u0440\u0430\u0436\u0435\u043d\u0438\u0435 \u0432 \u0432\u0438\u0434\u0435\u043e"
+    },
+    "cost_rembg_video": {
+      "value": "20",
+      "caption": "\u0423\u0434\u0430\u043b\u0438\u0442\u044c \u0444\u043e\u043d \u0438\u0437 \u0432\u0438\u0434\u0435\u043e"
+    },
+    "cost_cartoon_video": {
+      "value": "26",
+      "caption": "\u041c\u0443\u043b\u044c\u0442\u0444\u0438\u043b\u044c\u043c \u0438\u0437 \u0432\u0438\u0434\u0435\u043e"
+    },
+    "cost_diploma": {
+      "value": "7",
+      "caption": "\u0414\u0438\u043f\u043b\u043e\u043c"
+    }
+  }
 }
