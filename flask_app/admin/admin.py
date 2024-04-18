@@ -1,24 +1,29 @@
+from common.models import (ImageQuery, Invoice, ReferalLink, Tariff,
+                           TextGenerationRole, TextQuery, User, VideoQuery)
 from flask_admin.contrib.sqla import ModelView
-
-from common.models import User, ReferalLink, Tariff, Invoice, TextQuery, TextGenerationRole, ImageQuery, VideoQuery
+from flask_admin.contrib.sqla.filters import BooleanEqualFilter
 from flask_app.extensions import admin, db
 
 
 class AdminView(ModelView):
     pass
 
+class TariffView(AdminView):
+    pass
 
 class UserAdminView(AdminView):
     column_display_pk = True
     can_create = True
-    form_columns = ['id', 'username', 'first_name', 'last_name']
+    form_columns = ['id', 'username', 'first_name', 'last_name', 'is_active', 'is_admin', 'chatgpt_daily_limit', 'dalle_2_daily_limit', 'sd_daily_limit', 'token_balance', 'txt_model', 'txt_model_role_id', 'img_model', 'tts_mode', 'text_session_id', 'update_daily_limits_time', 'tariff', 'payment_time', 'payment_tries', 'recurring', 'first_payment']
+    
+    column_searchable_list = ('id', )
+
+    # column_filters = [BooleanEqualFilter(column=User.is_active, name='Active1')]
+    # column_filters = ('is_active',)
+
 
 
 class ReferalLinkView(AdminView):
-    pass
-
-
-class TariffView(AdminView):
     pass
 
 
@@ -43,10 +48,10 @@ class VideoQueryView(AdminView):
 
 
 admin.add_view(UserAdminView(User, db.session, name='Пользователи'))
-admin.add_view(ReferalLinkView(ReferalLink, db.session))
-admin.add_view(TariffView(Tariff, db.session))
-admin.add_view(InvoiceView(Invoice, db.session))
-admin.add_view(TextQueryView(TextQuery, db.session))
-admin.add_view(TextGenerationRoleView(TextGenerationRole, db.session))
-admin.add_view(ImageQueryView(ImageQuery, db.session))
-admin.add_view(VideoQueryView(VideoQuery, db.session))
+# admin.add_view(ReferalLinkView(ReferalLink, db.session))
+admin.add_view(TariffView(Tariff, db.session, name='Тарифы'))
+admin.add_view(InvoiceView(Invoice, db.session, name='Счета'))
+# admin.add_view(TextQueryView(TextQuery, db.session))
+admin.add_view(TextGenerationRoleView(TextGenerationRole, db.session, name='Роли'))
+# admin.add_view(ImageQueryView(ImageQuery, db.session))
+# admin.add_view(VideoQueryView(VideoQuery, db.session))

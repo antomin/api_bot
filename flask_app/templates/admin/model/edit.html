@@ -13,14 +13,19 @@
         <h1>{{ admin_view.name }}</h1>
     </section>
     <section class="content">
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="box">
-                    {% block edit_form %}
-                        {% set modal_name = 'Edit' + ' #' + request.args.get('id') %}
-                        {% set icon = 'fa fa-pencil' %}
-                        {{ forms.form(modal_name, icon, form, form_opts, return_url, has_more=False, is_modal=False) }}
-                    {% endblock %}
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card card-primary">
+                        <div class="card-header">
+                          <h3 class="card-title">Редактирование #{{request.args.get('id')}}</h3>
+                        </div>
+                        {% block edit_form %}
+                            {% set modal_name = 'Edit' + ' #' + request.args.get('id') %}
+                            {% set icon = 'fa fa-pencil' %}
+                            {{ forms.form(modal_name, icon, form, form_opts, return_url, has_more=False, is_modal=False) }}
+                        {% endblock %}
+                    </div>
                 </div>
             </div>
         </div>

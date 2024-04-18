@@ -13,32 +13,26 @@
     {% endblock head_meta %}
 
     {% block head_css %}
-        <!-- Bootstrap 3.3.6 -->
-        <link href="{{ url_for('static',filename='css/bootstrap.min.css') }}" rel="stylesheet"/>
+        <!-- Google Font: Source Sans Pro -->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
         <!-- Font Awesome -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+        <link rel="stylesheet" href="{{url_for('static', filename='plugins/fontawesome-free/css/all.min.css')}}">
         <!-- Ionicons -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css"/>
-        <!-- Theme style -->
-        <link href="{{ url_for('static',filename='css/AdminLTE.min.css') }}" rel="stylesheet"/>
-        <!-- AdminLTE Skins. Choose a skin from the css/skins folder instead of downloading all of them to reduce the load. -->
-        <link href="{{ url_for('static',filename='css/skins/_all-skins.min.css') }}" rel="stylesheet"/>
+        <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+        <!-- Tempusdominus Bootstrap 4 -->
+        <link rel="stylesheet" href="{{url_for('static', filename='plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css')}}">
         <!-- iCheck -->
-        <link href="{{ url_for('static',filename='plugins/iCheck/flat/blue.css') }}" rel="stylesheet"/>
-        <!-- Morris chart -->
-        <link href="{{ url_for('static',filename='plugins/morris/morris.css') }}" rel="stylesheet"/>
-        <!-- jvectormap -->
-        <link href="{{ url_for('static',filename='plugins/jvectormap/jquery-jvectormap-1.2.2.css') }}"
-              rel="stylesheet"/>
-        <!-- Date Picker -->
-        <link href="{{ url_for('static',filename='plugins/datepicker/datepicker3.css') }}" rel="stylesheet"/>
+        <link rel="stylesheet" href="{{url_for('static', filename='plugins/icheck-bootstrap/icheck-bootstrap.min.css')}}">
+        <!-- JQVMap -->
+        <link rel="stylesheet" href="{{url_for('static', filename='plugins/jqvmap/jqvmap.min.css')}}">
+        <!-- Theme style -->
+        <link rel="stylesheet" href="{{url_for('static', filename='css/adminlte.min.css')}}">
+        <!-- overlayScrollbars -->
+        <link rel="stylesheet" href="{{url_for('static', filename='plugins/overlayScrollbars/css/OverlayScrollbars.min.css')}}">
         <!-- Daterange picker -->
-        <link href="{{ url_for('static',filename='plugins/daterangepicker/daterangepicker.css') }}" rel="stylesheet"/>
-        <!-- bootstrap wysihtml5 - text editor -->
-        <link href="{{ url_for('static',filename='plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css') }}"
-              rel="stylesheet"/>
-        <!-- Flask-admin admin styles -->
-        <link href="{{ admin_static.url(filename='admin/css/bootstrap3/admin.css', v='1.1.1') }}" rel="stylesheet">
+        <link rel="stylesheet" href="{{url_for('static', filename='plugins/daterangepicker/daterangepicker.css')}}">
+        <!-- summernote -->
+        <link rel="stylesheet" href="{{url_for('static', filename='plugins/summernote/summernote-bs4.min.css')}}">
         {% if admin_view.extra_css %}
             {% for css_url in admin_view.extra_css %}
                 <link href="{{ css_url }}" rel="stylesheet">
@@ -82,6 +76,7 @@
                 <ul class="nav navbar-nav">
                     <li>
                         {% block access_control %}
+                        
                             {% if current_user.is_authenticated %}
                                 <li class="dropdown user user-menu">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"
@@ -135,40 +130,40 @@
         </nav>
     </header>
 
-    <aside class="main-sidebar">
-        <section class="sidebar">
-            <ul class="sidebar-menu">
-                <li class="header">NAVIGATION</li>
-                {% block main_menu %}
-                    {{ layout.menu() }}
-                {% endblock %}
-            </ul>
-        </section>
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+        <div class="sidebar">
+            <span class="brand-link">
+                <span class="brand-text font-weight-light">Меню</span>
+            </span>
+            <nav class="mt-2">
+                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                    {% block main_menu %}
+                        {{ layout.menu() }}
+                    {% endblock %}
+                </ul>
+            </nav>
+        </div>
     </aside>
+    
 
     <div class="content-wrapper">
-        {% endif %}
+        
 
         {% block messages %}
-            <section style="padding: 1px;">
-                {{ layout.messages() }}
-            </section>
+            {{ layout.messages() }}
         {% endblock messages %}
-
+        
         {# store the jinja2 context for form_rules rendering logic #}
         {% set render_ctx = h.resolve_ctx() %}
 
         {% block body %}
         {% endblock body %}
-
+    </div>
+    {% endif %}
         {% if current_user.is_authenticated %}
-            </div>
+            
 
-            <footer class="main-footer">
-                <strong>Copyright &copy; 2018 <a href="http://tomasznajda.com">Tomasz Najda</a></strong>. All rights
-                reserved.
-                <div class="pull-right hidden-xs"><b>Version</b> 1.0</div>
-            </footer>
+        <footer class="main-footer"></footer>
         {% endif %}
 
 </div>
@@ -176,51 +171,36 @@
 {% endblock page_body %}
 
 {% block tail_js %}
-
-    <!-- jQuery 2.2.3 -->
-    <script src="{{ url_for('static',filename='plugins/jQuery/jquery-2.2.3.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='plugins/jquery/jquery.min.js') }}"></script>
     <!-- jQuery UI 1.11.4 -->
-    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+    <script src="{{ url_for('static',filename='plugins/jquery-ui/jquery-ui.min.js') }}"></script>
     <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
     <script>
-        $.widget.bridge('uibutton', $.ui.button);
+    $.widget.bridge('uibutton', $.ui.button)
     </script>
-    <!-- Bootstrap 3.3.6 -->
-    <script src="{{ url_for('static',filename='js/bootstrap.min.js') }}"></script>
-    <script src="{{ admin_static.url(filename='vendor/select2/select2.min.js', v='3.5.2') }}"
-            type="text/javascript"></script>
-
-    {% if admin_view.extra_js %}
-        {% for js_url in admin_view.extra_js %}
-            <script src="{{ js_url }}" type="text/javascript"></script>
-        {% endfor %}
-    {% endif %}
-
-    <!-- Morris.js charts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
-    <script src="{{ url_for('static',filename='plugins/morris/morris.min.js') }}"></script>
+    <!-- Bootstrap 4 -->
+    <script src="{{ url_for('static',filename='plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <!-- ChartJS -->
+    <script src="{{ url_for('static',filename='plugins/chart.js/Chart.min.js') }}"></script>
     <!-- Sparkline -->
-    <script src="{{ url_for('static',filename='plugins/sparkline/jquery.sparkline.min.js') }}"></script>
-    <!-- jvectormap -->
-    <script src="{{ url_for('static',filename='plugins/jvectormap/jquery-jvectormap-1.2.2.min.js') }}"></script>
-    <script src="{{ url_for('static',filename='plugins/jvectormap/jquery-jvectormap-world-mill-en.js') }}"></script>
+    <script src="{{ url_for('static',filename='plugins/sparklines/sparkline.js') }}"></script>
+    <!-- JQVMap -->
+    <script src="{{ url_for('static',filename='plugins/jqvmap/jquery.vmap.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='plugins/jqvmap/maps/jquery.vmap.usa.js') }}"></script>
     <!-- jQuery Knob Chart -->
-    <script src="{{ url_for('static',filename='plugins/knob/jquery.knob.js') }}"></script>
+    <script src="{{ url_for('static',filename='plugins/jquery-knob/jquery.knob.min.js') }}"></script>
     <!-- daterangepicker -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+    <script src="{{ url_for('static',filename='plugins/moment/moment.min.js') }}"></script>
     <script src="{{ url_for('static',filename='plugins/daterangepicker/daterangepicker.js') }}"></script>
-    <!-- datepicker -->
-    <script src="{{ url_for('static',filename='plugins/datepicker/bootstrap-datepicker.js') }}"></script>
-    <!-- Bootstrap WYSIHTML5 -->
-    <script src="{{ url_for('static',filename='plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js') }}"></script>
-    <!-- Slimscroll -->
-    <script src="{{ url_for('static',filename='plugins/slimScroll/jquery.slimscroll.min.js') }}"></script>
-    <!-- FastClick -->
-    <script src="{{ url_for('static',filename='plugins/fastclick/fastclick.js') }}"></script>
+    <!-- Tempusdominus Bootstrap 4 -->
+    <script src="{{ url_for('static',filename='plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script>
+    <!-- Summernote -->
+    <script src="{{ url_for('static',filename='plugins/summernote/summernote-bs4.min.js') }}"></script>
+    <!-- overlayScrollbars -->
+    <script src="{{ url_for('static',filename='plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
     <!-- AdminLTE App -->
-    <script src="{{ url_for('static',filename='js/app.min.js') }}"></script>
-    <!-- AdminLTE for demo purposes -->
-    <script src="{{ url_for('static',filename='js/demo.js') }}"></script>
+    <script src="{{ url_for('static',filename='dist/js/adminlte.js') }}"></script>
+    <script src="{{ url_for('static',filename='dist/js/pages/dashboard.js') }}"></script>
     {% if admin_view.name=="Home" %}
         <script src="{{ url_for('static',filename='js/pages/dashboard.js') }}"></script>
     {% endif %}

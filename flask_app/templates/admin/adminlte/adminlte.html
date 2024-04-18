@@ -12,7 +12,7 @@
 {% endmacro %}
 
 {% macro action_edit_button(action, row_id, row, modal=True) %}
-    {{ action_button(action, get_url('.edit_view', id=row_id, url=return_url, modal=modal), modal, 'fa fa-pencil glyphicon glyphicon-pencil', 'btn btn-success btn-xs') }}
+    {{ action_button(action, get_url('.edit_view', id=row_id, url=return_url, modal=modal), modal, 'fa fa-pencil-alt', 'btn btn-success btn-xs') }}
 {% endmacro %}
 
 {% macro action_delete_button(action, row_id, row) %}
@@ -33,18 +33,19 @@
 {% endmacro %}
 
 {% macro dropdown_button(text) %}
-    <a class="btn btn-default btn-sm" data-toggle="dropdown" href="javascript:void(0)">
+    <a class="btn btn-primary dropdown-toggle dropdown-icon" aria-expanded="false" data-toggle="dropdown">
         {{ text }} <b class="caret"></b>
     </a>
+    
 {% endmacro %}
 
 {% macro filter_dropdown_button(btn_class='dropdown-toggle') %}
-    <div class="input-group-btn" style="display: inline-block; width: auto;">
+    <div class="input-group-btn btn-group" style="display: inline-block; width: auto;">
         {{ dropdown_button(_gettext('Filter')) }}
-        <ul class="dropdown-menu field-filters">
+        <ul class="dropdown-menu field-filters" >
             {% for k in filter_groups %}
                 <li>
-                    <a href="javascript:void(0)" class="filter" onclick="return false;">{{ k }}</a>
+                    <a href="javascript:void(0)" class="dropdown-item filter" onclick="return false;">{{ k }}</a>
                 </li>
             {% endfor %}
         </ul>

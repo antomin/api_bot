@@ -24,6 +24,9 @@
         <script src="{{ admin_static.url(filename='admin/js/actions.js', v='1.0.0') }}"></script>
         <script language="javascript">
             var modelActions = new AdminModelActions({{ message|tojson|safe }}, {{ actions_confirmation|tojson|safe }});
+            $('a.filter').click(function(){
+                $('#filter_form button').show();
+            })
         </script>
     {% endif %}
 {% endmacro %}

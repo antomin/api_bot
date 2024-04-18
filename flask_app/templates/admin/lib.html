@@ -120,29 +120,36 @@
 {% macro render_field(form, field, kwargs={}, caller=None) %}
     {% set direct_error = h.is_field_error(field.errors) %}
     <div class="form-group{{ ' has-error' if direct_error else '' }}">
-        <label for="{{ field.id }}" class="col-md-2 control-label">{{ field.label.text }}
-            {% if h.is_required_form_field(field) %}
-                <strong style="color: red">&#42;</strong>
-            {%- else -%}
-                &nbsp;
-            {%- endif %}
-        </label>
-        <div class="{{ kwargs.get('column_class', 'col-md-10') }}">
-            {% set _dummy = kwargs.setdefault('class', 'form-control') %}
+        {% if field.type == 'BooleanField' %}
+        <div class="form-check">
             {{ field(**kwargs)|safe }}
-            {% if field.description %}
-                <p class="help-block">{{ field.description|safe }}</p>
-            {% endif %}
-            {% if direct_error %}
-                <ul class="help-block input-errors">
-                    {% for e in field.errors if e is string %}
-                        <li>{{ e }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
+            <label class="form-check-label" for="{{ field.id }}">{{ field.label.text }}</label>
         </div>
-        {% if caller %}
-            {{ caller(form, field, direct_error, kwargs) }}
+        {% else %}
+            <label for="{{ field.id }}" class="col-md-2 control-label">{{ field.label.text }}
+                {% if h.is_required_form_field(field) %}
+                    <strong style="color: red">&#42;</strong>
+                {%- else -%}
+                    &nbsp;
+                {%- endif %}
+            </label>
+            <div class="{{ kwargs.get('column_class', 'col-md-10') }}">
+                {% set _dummy = kwargs.setdefault('class', 'form-control') %}
+                {{ field(**kwargs)|safe }}
+                {% if field.description %}
+                    <p class="help-block">{{ field.description|safe }}</p>
+                {% endif %}
+                {% if direct_error %}
+                    <ul class="help-block input-errors">
+                        {% for e in field.errors if e is string %}
+                            <li>{{ e }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+            {% if caller %}
+                {{ caller(form, field, direct_error, kwargs) }}
+            {% endif %}
         {% endif %}
     </div>
 {% endmacro %}

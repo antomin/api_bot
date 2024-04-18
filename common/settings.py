@@ -25,8 +25,19 @@ class Model:
     cost: int
 
 
-with open(f"{_base_dir}/common/settings.json", "r", encoding="utf-8") as file:
-    settings_data = json.loads(file.read())
+def get_settings():
+    settings_data = {}
+    with open(f"{_base_dir}/common/settings.json", "r", encoding="utf-8") as file:
+        settings_raw_data = json.loads(file.read())
+        
+    for section, data in settings_raw_data.items():
+        for key, info in data.items():
+            settings_data[key] = info['value']
+            
+    return settings_data
+
+
+settings_data = get_settings()
 
 models_data = {
     TextModels.GPT_3_TURBO: Model(name="ChatGPT 3.5 Turbo", cost=settings_data["cost_gpt_3"]),

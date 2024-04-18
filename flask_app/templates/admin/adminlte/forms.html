@@ -66,7 +66,7 @@
 {% endmacro %}
 
 {% macro form_footer(cancel_url, has_more=False, is_modal=False) %}
-    <div class="pull-left">
+    <span class="pull-left">
         {% if cancel_url %}
             <a href="{{ cancel_url }}" class="btn btn-default" role="button"
                {% if is_modal %}data-dismiss="modal"{% endif %}>
@@ -77,14 +77,14 @@
                 {% endif %}
             </a>
         {% endif %}
-    </div>
-    <div class="pull-right">
+    </span>
+    <span class="float-right">
         {% if has_more and admin_view.can_create %}
             <input name="_add_another" type="submit" class="btn btn-success"
                    value="{{ _gettext('Save & Add More') }}"/>
         {% endif %}
         <input type="submit" class="btn btn-success" value="{{ _gettext('Save') }}"/>
-    </div>
+    </span>
 {% endmacro %}
 
 {% macro form_tag(form=None, action=None) %}
@@ -97,8 +97,8 @@
 {% macro form(header, icon, form, form_opts, cancel_url, action=None, has_more=False, is_modal=False) %}
     {% call form_tag(action=action) %}
         {% if is_modal %}{% set type='modal' %}{% else %}{% set type='box' %}{% endif %}
-        <div class="{{ type }}-header {% if not is_modal %}with-border{% endif %}" style="vertical-align: middle;">{{ form_header(header, icon, is_modal) }}</div>
-        <div class="{{ type }}-body">{{ form_body(form, form_opts) }}</div>
-        <div class="{{ type }}-footer">{{ form_footer(cancel_url, has_more, is_modal) }}</div>
+        
+        <div class="{{ type }}-body card-body">{{ form_body(form, form_opts) }}</div>
+        <div class="{{ type }}-footer card-footer">{{ form_footer(cancel_url, has_more, is_modal) }}</div>
     {% endcall %}
 {% endmacro %}

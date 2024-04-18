@@ -1,20 +1,32 @@
-from flask_admin import expose, AdminIndexView
-from flask_login import current_user, logout_user
-from flask import url_for, redirect, request
-import flask_login as login
+import copy
 import json
-from flask_app.forms import EditForm
-from wtforms import StringField, PasswordField, SubmitField
-from flask_wtf import FlaskForm
-from flask_admin.form import rules
 
+import flask_login as login
+from flask import redirect, request, url_for
+from flask_admin import AdminIndexView, expose
+from flask_admin.form import rules
+from flask_app.forms import EditForm
+from flask_login import current_user, logout_user
+from flask_wtf import FlaskForm
+from wtforms import PasswordField, StringField, SubmitField
+
+
+def get_json_data():
+    with open('common/settings.json', 'r') as json_file:
+        data = json.load(json_file)
+        
+    return data
 
 def update_json(data):
-    result = {}
-    for key, value in data.items():
-        result[key] = value
-    with open('../common/settings.json', 'w') as json_file:
-        json.dump(data, json_file, indent=4)
+    old_data = get_json_data()
+    result = copy.deepcopy(old_data)
+    for c, settings in old_data.items():
+        for key, info in settings.items():
+            if new_value := data.get(key):
+                result[c][key]['value'] = new_value
+                
+    with open('common/settings.json', 'w') as json_file:
+        json.dump(result, json_file, indent=4)
 
 
 class MyAdminIndexView(AdminIndexView):
@@ -27,9 +39,8 @@ class MyAdminIndexView(AdminIndexView):
         if request.method == 'POST' and form.validate_on_submit():
             update_json(request.form)
 
-        with open('../common/settings.json', 'r') as json_file:
-            data = json.load(json_file)
-
+        data = get_json_data()
+        
         return self.render('admin/index.html', title='Admin Panel', data=data, form=form)
 
     @expose('/logout/')
