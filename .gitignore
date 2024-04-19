@@ -192,4 +192,4 @@ cython_debug/
 
 data/pg_data
 tgbot_app/tmp/*
-common/settings.json
+data/settings.json
