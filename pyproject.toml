@@ -24,6 +24,7 @@ flask-wtf = "^1.2.1"
 requests = "^2.31.0"
 apscheduler = "^3.10.4"
 gunicorn = "^22.0.0"
+flask-security = "^3.0.0"
 
 
 [build-system]
