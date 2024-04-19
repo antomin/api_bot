@@ -31,7 +31,7 @@ def __set_extensions(app: Flask) -> None:
 
 
 def create_app() -> Flask:
-    app = Flask(__name__)
+    app = Flask(__name__, static_url_path="/static", static_folder="flask_app/static")
 
     __set_settings(app)
     __set_extensions(app)
