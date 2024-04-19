@@ -8,8 +8,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql.functions import now
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from flask_app.extensions import db, login_manager
-
 from ..enums import ImageModels, TextModels
 from . import Base
 
@@ -29,8 +27,8 @@ class User(Base):
     is_active: Mapped[bool] = mapped_column(Boolean(), default=True)
     is_admin: Mapped[bool] = mapped_column(Boolean(), default=False)
 
-    chatgpt_daily_limit: Mapped[int] = mapped_column(default=0)
-    dalle_2_daily_limit: Mapped[int] = mapped_column(default=0)
+    gemini_daily_limit: Mapped[int] = mapped_column(default=0)
+    kandinsky_daily_limit: Mapped[int] = mapped_column(default=0)
     sd_daily_limit: Mapped[int] = mapped_column(default=0)
     token_balance: Mapped[int] = mapped_column(default=0)
 
@@ -72,28 +70,18 @@ class User(Base):
             hours_left = int((self.payment_time - datetime.now()).total_seconds() // 3600)
             return ("час", "часа", "часов"), hours_left if hours_left > 1 else 1
 
-    # @staticmethod
-    # def get(user_id):
-    #     return User(user_id)
 
-
-class UserAdmin(db.Model, UserMixin):
+class UserAdmin(Base, UserMixin):
     __tablename__ = 'users_admin'
 
-    id = Column(BigInteger, primary_key=True, autoincrement=True)
-    username = Column(String(50), unique=True, nullable=False)
-    hash_password = Column(String(256), nullable=False)
+    username: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
+    hash_password: Mapped[str] = mapped_column(String(256), nullable=False)
 
     def set_password(self, password):
         self.hash_password = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.hash_password, password)
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    return db.session.query(UserAdmin).get(user_id)
 
 
 class ReferalLink(Base):

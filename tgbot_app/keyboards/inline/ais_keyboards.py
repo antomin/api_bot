@@ -8,9 +8,9 @@ from common.settings import settings
 from tgbot_app.utils.callbacks import (AiTypeCallback, ImageModelCallback,
                                        ProfileCallback, RoleCallback,
                                        TextModelCallback, TextSettingsCallback,
-                                       VideoModelCallback)
+                                       VideoModelCallback, CommonCallback)
 from tgbot_app.utils.enums import (AiTypeButtons, ProfileButtons,
-                                   TextSettingsButtons)
+                                   TextSettingsButtons, CommonChapter)
 
 
 async def gen_ai_types_kb() -> InlineKeyboardMarkup:
@@ -45,7 +45,7 @@ async def gen_txt_settings_kb(user: User) -> InlineKeyboardMarkup:
         callback_data=TextSettingsCallback(action=TextSettingsButtons.CONTEXT)
     )
 
-    builder.button(text="↩️ Назад", callback_data=ProfileCallback(action=ProfileButtons.AIS))
+    builder.button(text="↩️ Назад", callback_data=CommonCallback(chapter=CommonChapter.AIS))
 
     return builder.adjust(1).as_markup()
 
@@ -59,7 +59,7 @@ async def gen_img_model_kb(user: User) -> InlineKeyboardMarkup:
             callback_data=ImageModelCallback(model=model)
         )
 
-    builder.button(text="↩️ Назад", callback_data=ProfileCallback(action=ProfileButtons.AIS))
+    builder.button(text="↩️ Назад", callback_data=CommonCallback(chapter=CommonChapter.AIS))
 
     return builder.adjust(1).as_markup()
 
@@ -103,7 +103,7 @@ async def gen_main_video_kb() -> InlineKeyboardMarkup:
     for model in VideoModels:  # type: VideoModels
         builder.button(text=settings.MODELS[model].name, callback_data=VideoModelCallback(model=model))
 
-    builder.button(text="↩️ Назад", callback_data=ProfileCallback(action=ProfileButtons.AIS))
+    builder.button(text="↩️ Назад", callback_data=CommonCallback(chapter=CommonChapter.AIS))
 
     builder.adjust(1)
 

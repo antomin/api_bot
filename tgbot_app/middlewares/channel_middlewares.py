@@ -20,7 +20,7 @@ class ChannelMiddleware(BaseMiddleware):
 
         user: User = data["user"]
 
-        if user.is_admin or user.tariff or (command and command.command == "start") or not settings.TARGET_CHAT:
+        if user.is_admin or user.tariff_id or (command and command.command == "start") or not settings.TARGET_CHAT:
             return await handler(event, data)
 
         status = await event.bot.get_chat_member(chat_id=f"@{settings.TARGET_CHAT}", user_id=event.from_user.id)

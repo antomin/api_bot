@@ -1,6 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 
+from common.db_api import get_admin_user
 from common.models.user import UserAdmin
 from flask_app.forms import LoginForm
 
@@ -14,11 +15,11 @@ def login():
 
     form = LoginForm()
     if request.method == 'POST' and form.validate_on_submit():
-        user = UserAdmin.query.filter_by(username=form.username.data).one_or_none()
+        user = get_admin_user(form.username.data)
         if user is None:
             return render_template("auth/login.html", form=form, error="username doesn't exist")
         if not user.check_password(form.password.data):
-            return render_template("auth/login.html", form=form, error="unvalid username or password")
+            return render_template("auth/login.html", form=form, error="invalid username or password")
 
         login_user(user)
         return redirect(url_for("admin.index"))

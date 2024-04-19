@@ -15,9 +15,9 @@ class Tariff(Base):
     name: Mapped[str] = mapped_column(String(50))
     code: Mapped[str] = mapped_column(String(50), unique=True)
     description: Mapped[str]
-    chatgpt_daily_limit: Mapped[int]
-    dalle_2_daily_limit: Mapped[int]
-    sd_daily_limit: Mapped[int]
+    gemini_daily_limit: Mapped[int] = mapped_column(default=0)
+    kandinsky_daily_limit: Mapped[int] = mapped_column(default=0)
+    sd_daily_limit: Mapped[int] = mapped_column(default=0)
     token_balance: Mapped[int]
     days: Mapped[int]
     price: Mapped[int]

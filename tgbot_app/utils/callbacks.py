@@ -13,7 +13,7 @@ from tgbot_app.utils.enums import (AdminLinksButtons, AdminMainButtons,
                                    ProfileButtons, SearchEngine,
                                    ServicesButtons, SileroAction,
                                    TextSettingsButtons, WorkingButtons,
-                                   WorkPlanButtons, WorkTypes)
+                                   WorkPlanButtons, WorkTypes, CommonChapter)
 
 
 class ProfileCallback(CallbackData, prefix="profile"):
@@ -99,3 +99,7 @@ class AdminCallback(CallbackData, prefix="admin"):
 
 class AdminLinksCallback(CallbackData, prefix="adm_links"):
     command: AdminLinksButtons
+
+
+class CommonCallback(CallbackData, prefix="common"):
+    chapter: CommonChapter

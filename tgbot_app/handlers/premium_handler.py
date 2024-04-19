@@ -19,7 +19,6 @@ router = Router()
 
 
 @router.message(Command(DefaultCommands.subscription.name))
-@router.message(F.text == MainButtons.PREMIUM.value)
 @router.callback_query(ProfileCallback.filter(F.action == ProfileButtons.PREMIUM))
 async def premium_handler(message: Message | CallbackQuery, user: User):
     if isinstance(message, CallbackQuery):

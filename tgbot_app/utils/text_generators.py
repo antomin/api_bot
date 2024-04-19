@@ -22,15 +22,11 @@ async def gen_profile_text(user: User) -> str:
     text += f"└ Ваш ID: <code>{user.id}</code>\n\n💳 Подписка: <b>{tariff_str}</b>\n"
 
     if not tariff:
-        chatgpt_daily_str = decl(user.chatgpt_daily_limit, ("генерация", "генерации", "генераций"))
-        sd_daily_str = decl(user.sd_daily_limit, ("генерация", "генерации", "генераций"))
-        dalle_2_str = decl(user.dalle_2_daily_limit, ("генерация", "генерации", "генераций"))
-
         text += (
             f"├ Ваши токены: {user.token_balance}\n"
-            f"├ {user.chatgpt_daily_limit} {chatgpt_daily_str} ChatGPT 3.5\n"
-            f"├ {user.sd_daily_limit} {sd_daily_str} StableDiffusion\n"
-            f"└ {user.dalle_2_daily_limit} {dalle_2_str} Dall-E 2\n\n"
+            f"├ {user.gemini_daily_limit} из {settings.FREE_GEMINI_QUERIES} генераций Gemini Pro\n"
+            f"├ {user.sd_daily_limit} из  {settings.FREE_SD_QUERIES} генераций StableDiffusion\n"
+            f"└ {user.kandinsky_daily_limit} из {settings.FREE_KANDINSKY_QUERIES} генераций Kandinsky\n\n"
             f"<i>* Ваши бесплатные генерации обновляются каждые 24 часа.</i>"
         )
     else:
@@ -51,11 +47,11 @@ def gen_txt_settings_text(user: User) -> str:
     text = ("🔹 Вы можете задавать вопросы голосом и получать озвученные ответы, а также изменять версии модели. "
             "Стоимость каждой модели зависит от версии ChatGPT.\n\n💎 <b>Стоимость:</b> ")
 
-    if user.txt_model == TextModels.GPT_3_TURBO:
+    if user.txt_model == TextModels.GEMINI:
         if not user.tariff:
             text += (
                 f"{settings.MODELS[user.txt_model].cost} токена\n"
-                f"├ У вас осталось {user.chatgpt_daily_limit} ежедневных запросов\n"
+                f"├ У вас осталось {user.gemini_daily_limit} ежедневных запросов\n"
                 f"└ На модель ChatGPT 3.5 Turbo (это самая популярная модель) распространяется безлимит по подписке."
             )
         else:
@@ -71,8 +67,8 @@ def gen_img_settings_text(user: User) -> str:
             f"Ежедневно мы продолжаем работать над добавлением других нейросетей для генерации изображений.\n\n"
             f"💎 <b>Стоимость:</b> {settings.MODELS[user.img_model].cost} токенов")
 
-    if not user.tariff and user.img_model in (ImageModels.DALLE_2, ImageModels.STABLE_DIFFUSION):
-        num = user.dalle_2_daily_limit if user.img_model == ImageModels.DALLE_2 else user.sd_daily_limit
+    if not user.tariff_id and user.img_model in (ImageModels.KANDINSKY, ImageModels.STABLE_DIFFUSION):
+        num = user.kandinsky_daily_limit if user.img_model == ImageModels.KANDINSKY else user.sd_daily_limit
         text += f"\n└ У вас осталось {num} ежедневных запросов"
 
     return text

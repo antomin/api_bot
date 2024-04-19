@@ -7,10 +7,10 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import Message, URLInputFile
 from aiogram.utils.chat_action import ChatActionSender
 
-from common.db_api import get_last_invoice, get_messages, get_obj_by_id
+from common.db_api import get_last_invoice, get_messages
 from common.enums import ImageModels, ServiceModels, TextModels, VideoModels
-from common.models import Tariff, User
-from common.services import neiro_api, translator
+from common.models import User
+from common.services import neiro_api
 from common.settings import settings
 from tgbot_app.keyboards import gen_error_kb, gen_no_tokens_kb
 from tgbot_app.utils.enums import GenerationResult
@@ -35,23 +35,23 @@ def decl(num: int, titles: tuple) -> str:
 def delete_file(path: str) -> None:
     try:
         os.remove(path)
-    except:
+    except:  # noqa
         pass
 
 
 def can_send_query(user: User, model: ImageModels | TextModels | VideoModels) -> bool:  # TODO Review
     model_cost = settings.MODELS[model].cost
     if not user.tariff:
-        if model in (ImageModels.DALLE_2, ImageModels.STABLE_DIFFUSION, TextModels.GPT_3_TURBO):
-            if model == TextModels.GPT_3_TURBO:
-                return bool(user.chatgpt_daily_limit) or user.token_balance >= model_cost
-            if model == ImageModels.DALLE_2:
-                return bool(user.dalle_2_daily_limit) or user.token_balance >= model_cost
+        if model in (ImageModels.KANDINSKY, ImageModels.STABLE_DIFFUSION, TextModels.GEMINI):
+            if model == TextModels.GEMINI:
+                return bool(user.gemini_daily_limit) or user.token_balance >= model_cost
+            if model == ImageModels.KANDINSKY:
+                return bool(user.kandinsky_daily_limit) or user.token_balance >= model_cost
             if model == ImageModels.STABLE_DIFFUSION:
                 return bool(user.sd_daily_limit) or user.token_balance >= model_cost
         return user.token_balance >= model_cost
     else:
-        if model == TextModels.GPT_3_TURBO:
+        if model in (TextModels.GPT_3_TURBO, TextModels.GEMINI, ImageModels.STABLE_DIFFUSION, ImageModels.KANDINSKY):
             return True
         return user.token_balance >= model_cost
 

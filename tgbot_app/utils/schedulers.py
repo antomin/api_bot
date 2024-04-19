@@ -21,15 +21,15 @@ async def daily_limits_update() -> None:
         stmt_free_users = update(User).where(
             User.update_daily_limits_time < now, User.is_active, User.tariff_id.is_(None)).values(
             update_daily_limits_time=now + timedelta(hours=24),
-            chatgpt_daily_limit=settings.FREE_GPT_QUERIES,
-            dalle_2_daily_limit=settings.FREE_DALLE2_QUERIES,
+            gemini_daily_limit=settings.FREE_GEMINI_QUERIES,
+            kandinsky_daily_limit=settings.FREE_KANDINSKY_QUERIES,
             sd_daily_limit=settings.FREE_SD_QUERIES
         )
         stmt_premium_users = update(User).where(  # TODO Review
             User.update_daily_limits_time < now, User.is_active, User.tariff_id.is_not(None)).values(
             update_daily_limits_time=now + timedelta(hours=24),
-            chatgpt_daily_limit=select(Tariff.chatgpt_daily_limit).where(Tariff.id == User.tariff_id),
-            dalle_2_daily_limit=select(Tariff.dalle_2_daily_limit).where(Tariff.id == User.tariff_id),
+            gemini_daily_limit=select(Tariff.gemini_daily_limit).where(Tariff.id == User.tariff_id),
+            kandinsky_daily_limit=select(Tariff.kandinsky_daily_limit).where(Tariff.id == User.tariff_id),
             sd_daily_limit=select(Tariff.sd_daily_limit).where(Tariff.id == User.tariff_id),
         )
         result_free = await session.execute(stmt_free_users)
@@ -90,3 +90,7 @@ async def send_report(bot: Bot) -> None:
     #         logger.error(f"SCHEDULER | SendReport | ERROR sending to admin <{admin_id}>")
 
     logger.info(f"SCHEDULER | SendReport | FINISH ({len(admins)})")
+
+
+if __name__ == '__main__':
+    asyncio.run(daily_limits_update())

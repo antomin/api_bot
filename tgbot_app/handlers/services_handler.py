@@ -5,8 +5,8 @@ from aiogram.types import CallbackQuery, Message
 
 from tgbot_app.keyboards import (gen_learning_kb, gen_other_services_kb,
                                  gen_services_kb, gen_working_kb)
-from tgbot_app.utils.callbacks import ServicesCallback
-from tgbot_app.utils.enums import DefaultCommands, MainButtons, ServicesButtons
+from tgbot_app.utils.callbacks import ServicesCallback, CommonCallback
+from tgbot_app.utils.enums import DefaultCommands, MainButtons, ServicesButtons, CommonChapter
 from tgbot_app.utils.text_variables import (SERVICES_LEARNING_TEXT,
                                             SERVICES_MAIN_TEXT,
                                             SERVICES_OTHERS_TEXT,
@@ -17,7 +17,7 @@ router = Router()
 
 @router.message(Command(DefaultCommands.services.name))
 @router.message(F.text == MainButtons.SERVICES.value)
-@router.callback_query(F.data == "back_to_services")
+@router.callback_query(CommonCallback.filter(F.chapter == CommonChapter.SERVICES))
 async def services(message: Message | CallbackQuery, state: FSMContext):
     await state.clear()
 

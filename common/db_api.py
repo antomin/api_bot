@@ -7,7 +7,7 @@ from sqlalchemy import desc, select, update
 
 from common.enums import ImageModels, TextModels
 from common.models import (Invoice, ReferalLink, Tariff, TextGenerationRole,
-                           User, db)
+                           User, db, UserAdmin)
 from common.models.generations import (ImageQuery, ServiceQuery, TextQuery,
                                        TextSession, VideoQuery)
 from common.models.payments import Refund
@@ -22,9 +22,9 @@ async def get_or_create_user(tgid: int, username: str, first_name: str, last_nam
         if not user:
             user = User(id=tgid, username=username if username else str(tgid), first_name=first_name,
                         last_name=last_name, referal_link_id=link_id)
-            user.chatgpt_daily_limit = settings.FREE_GPT_QUERIES
+            user.gemini_daily_limit = settings.FREE_GEMINI_QUERIES
             user.sd_daily_limit = settings.FREE_SD_QUERIES
-            user.dalle_2_daily_limit = settings.FREE_DALLE2_QUERIES
+            user.kandinsky_daily_limit = settings.FREE_KANDINSKY_QUERIES
             text_session = TextSession()
             user.text_session = text_session
 
@@ -170,8 +170,8 @@ async def unsubscribe_user(user: User) -> None:
     user.voice_mode = None
     user.check_subscriptions = True
     user.update_daily_limits_time = datetime.now()
-    user.chatgpt_daily_limit = settings.FREE_GPT_QUERIES
-    user.dalle_2_daily_limit = settings.FREE_DALLE2_QUERIES
+    user.gemini_daily_limit = settings.FREE_GEMINI_QUERIES
+    user.kandinsky_daily_limit = settings.FREE_KANDINSKY_QUERIES
     user.sd_daily_limit = settings.FREE_SD_QUERIES
 
     async with db.async_session_factory() as session:
@@ -273,6 +273,12 @@ def update_subscription(user: User, invoice: Invoice, price: int) -> None:
     with db.session_factory() as session:
         session.add(user)
         session.commit()
+
+
+def get_admin_user(username: str) -> UserAdmin:
+    with db.session_factory() as session:
+        result = session.scalar(select(UserAdmin).where(UserAdmin.username == username))
+        return result
 
 
 async def get_users_for_recurring() -> list[User]:

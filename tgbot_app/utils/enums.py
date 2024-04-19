@@ -4,11 +4,10 @@ from common.services.neiro_api import ResponseResult
 
 
 class MainButtons(str, Enum):
-    PROFILE = "👨‍💼 Профиль"
+    PROFILE = "⚡️ Тарифы и токены"
     AIS = "🤖 Нейросети"
-    PREMIUM = "💎 Подписка"
     SERVICES = "📲 Сервисы"
-    FAQ = "❓ Часто задаваемые вопросы"
+    FAQ = "❓ Помощь"
 
 
 class DefaultCommands(Enum):
@@ -22,7 +21,6 @@ class DefaultCommands(Enum):
 
 
 class ProfileButtons(Enum):
-    AIS = "🤖 Нейросети"
     PREMIUM = "💳 Премиум"
     TOKENS = "💎 Купить Токены"
 
@@ -162,3 +160,8 @@ class AdminMainButtons(Enum):
 
 class AdminLinksButtons(Enum):
     CREATE = "Создать"
+
+
+class CommonChapter(Enum):
+    AIS = "ais"
+    SERVICES = "services"

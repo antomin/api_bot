@@ -14,8 +14,9 @@ from wtforms import PasswordField, StringField, SubmitField
 def get_json_data():
     with open('common/settings.json', 'r') as json_file:
         data = json.load(json_file)
-        
+
     return data
+
 
 def update_json(data):
     old_data = get_json_data()
@@ -24,9 +25,9 @@ def update_json(data):
         for key, info in settings.items():
             if new_value := data.get(key):
                 result[c][key]['value'] = new_value
-                
+
     with open('common/settings.json', 'w') as json_file:
-        json.dump(result, json_file, indent=4)
+        json.dump(result, json_file, indent=4, ensure_ascii=False)
 
 
 class MyAdminIndexView(AdminIndexView):
@@ -40,7 +41,7 @@ class MyAdminIndexView(AdminIndexView):
             update_json(request.form)
 
         data = get_json_data()
-        
+
         return self.render('admin/index.html', title='Admin Panel', data=data, form=form)
 
     @expose('/logout/')

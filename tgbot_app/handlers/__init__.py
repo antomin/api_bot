@@ -18,6 +18,7 @@ from .stt_handler import router as stt_router
 from .tokens_handler import router as tokens_router
 from .tts_handler import router as tts_router
 from .vision_handler import router as vision_router
+from .empty_handler import router as empty_router
 
 main_router = Router()
 
@@ -39,5 +40,6 @@ main_router.include_routers(
     # admin_router,
     image_router,
     text_router,
-    video_router
+    video_router,
+    empty_router,  # Mast be LAST!!!
 )
