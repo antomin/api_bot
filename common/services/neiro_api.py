@@ -29,8 +29,7 @@ class ResponseResult(BaseModel):
 class AsyncNeiroAPI:
     def __init__(self, token):
         self.headers = {"x-api-key": token}
-        self.base_url = "https://api.mindl.in/v1"
-        # self.base_url = "http://127.0.0.1:8000/v1"
+        self.base_url = "https://api.xn--e1aajcsinjk.com/v1"
         self.completion_urls = {
             TextModels.GPT_3_TURBO: f"{self.base_url}/openai/completion/",
             TextModels.GPT_4_TURBO: f"{self.base_url}/openai/completion/",
