@@ -9,6 +9,9 @@ services:
       - 'POSTGRES_PASSWORD=${DB_PASS}'
     volumes:
       - ./data/pg_data:/var/lib/postgresql/data
+#    ports:
+#      - "5432:5432"
+
 
   web:
     container_name: web
@@ -22,7 +25,6 @@ services:
       - ./logs/flask:/code/flask_app/logs
       - ./data/settings.json:/code/common/settings.json
     command: "gunicorn --bind 0.0.0.0:5000 --workers 5 wsgi:app"
-#    command: "python wsgi.py"
 
   bot:
     container_name: bot

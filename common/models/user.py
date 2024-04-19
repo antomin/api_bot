@@ -32,12 +32,13 @@ class User(Base):
     sd_daily_limit: Mapped[int] = mapped_column(default=0)
     token_balance: Mapped[int] = mapped_column(default=0)
 
-    txt_model: Mapped[TextModels] = mapped_column(String(), default=TextModels.GPT_3_TURBO)
+    txt_model: Mapped[TextModels] = mapped_column(String(), default=TextModels.GEMINI)
     txt_model_role_id: Mapped[int | None] = mapped_column(
         ForeignKey("text_generation_roles.id", ondelete="SET NULL"), default=None)
     img_model: Mapped[ImageModels] = mapped_column(String(), default=ImageModels.STABLE_DIFFUSION)
     tts_mode: Mapped[str] = mapped_column(default="")
-    text_session_id: Mapped[int | None] = mapped_column(ForeignKey("sessions.id", ondelete="SET NULL"))
+    text_session_id: Mapped[int | None] = mapped_column(ForeignKey("sessions.id", ondelete="SET NULL"),
+                                                        default=None, server_default=None)
 
     update_daily_limits_time: Mapped[datetime] = mapped_column(DateTime, default=now(), server_default=now())
     tariff_id: Mapped[int | None] = mapped_column(ForeignKey("tariffs.id", ondelete="SET NULL"), default=None)
