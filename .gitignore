@@ -191,6 +191,7 @@ cython_debug/
 # CUSTOM
 
 data/settings.json
+common/settings.json
 data/pg_data
 tgbot_app/tmp/*
 temp.py
