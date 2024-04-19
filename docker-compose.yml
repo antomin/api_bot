@@ -22,7 +22,8 @@ services:
     volumes:
       - ./data/templates:/code/flask_app/templates/user_templates
       - ./logs/flask:/code/flask_app/logs
-    command: "gunicorn --bind 0.0.0.0:5000 --workers 5 wsgi:app"
+#    command: "gunicorn --bind 0.0.0.0:5000 --workers 5 wsgi:app"
+    command: "python wsgi.py"
 
   bot:
     container_name: bot

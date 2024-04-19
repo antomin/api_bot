@@ -1,4 +1,5 @@
 from flask import Flask
+from loguru import logger
 
 from common.settings import settings
 from flask_app.admin.admin import admin
@@ -31,6 +32,8 @@ def __set_extensions(app: Flask) -> None:
 
 
 def create_app() -> Flask:
+    logger.add("logs/flask.log", rotation="00:00", level="ERROR", enqueue=True)
+
     app = Flask(__name__, static_url_path="/static", static_folder="flask_app/static")
 
     __set_settings(app)
