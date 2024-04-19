@@ -44,7 +44,8 @@ services:
     depends_on:
       - web
     volumes:
-      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/www/certbot:/var/www/certbot
+      - /etc/letsencrypt:/etc/letsencrypt
       - ./flask_app/static:/static:ro
       - ./data/tmp:/bot_tmp:ro
       - ./data/nginx.conf:/etc/nginx/conf.d/default.conf:ro
