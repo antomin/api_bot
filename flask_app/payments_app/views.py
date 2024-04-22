@@ -37,23 +37,31 @@ def result_view():
         inv_id = int(request.args.get("InvId"))
         signature = request.args.get("SignatureValue")
 
+        logger.debug(f"New result request | {price} | {inv_id} | {signature}")
+
         invoice: Invoice = sync_get_object_by_id(Invoice, inv_id)
+
+        logger.debug(f"New result request | {invoice.id} founded")
 
         if invoice.is_paid:
             return Response(f"OK{inv_id}", status=200)
 
-        # TODO Uncomment
         if not robokassa.check_signature(inv_id=inv_id, price=price, recv_signature=signature):
             logger.error(f"Check signature ERROR | {inv_id}")
             return Response("Check signature ERROR", status=403)
 
+        logger.debug(f"New result request | {invoice.id} sign success")
+
         user: User = invoice.user
         tariff: Tariff = invoice.tariff
+
+        logger.debug(f"New result request | {user.id} | {tariff.name}")
 
         if tariff.is_extra:
             sync_update_object(user, token_balance=user.token_balance + tariff.token_balance)
         else:
             update_subscription(user=user, invoice=invoice, price=price)
+            logger.debug(f"New result request | {user.id} | subscription updated")
 
         if user.referal_link_id:
             link = sync_get_object_by_id(ReferalLink, user.referal_link_id)  # noqa
