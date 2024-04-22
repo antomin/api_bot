@@ -34,8 +34,8 @@ def redirect_view(tariff_id: int, user_id: int):
 def result_view():
     logger.debug(f"New result request | {request.url}")
     try:
-        price = int(request.args.get("OutSum"))
         inv_id = int(request.args.get("InvId"))
+        price = int(float(request.args.get("OutSum")))
         signature = request.args.get("SignatureValue")
 
         logger.debug(f"New result request | {price} | {inv_id} | {signature}")
@@ -61,7 +61,7 @@ def result_view():
         if tariff.is_extra:
             sync_update_object(user, token_balance=user.token_balance + tariff.token_balance)
         else:
-            update_subscription(user=user, invoice=invoice, price=price)
+            update_subscription(user=user, invoice=invoice)
             logger.debug(f"New result request | {user.id} | subscription updated")
 
         if user.referal_link_id:

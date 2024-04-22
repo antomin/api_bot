@@ -248,7 +248,7 @@ def sync_update_object(obj: Any, **params) -> None:
         session.refresh(obj)
 
 
-def update_subscription(user: User, invoice: Invoice, price: int) -> None:
+def update_subscription(user: User, invoice: Invoice) -> None:
     tariff = invoice.tariff
     user.tariff = tariff
 
