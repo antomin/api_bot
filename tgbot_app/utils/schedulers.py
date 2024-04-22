@@ -8,7 +8,7 @@ from sqlalchemy import select, update
 
 from common.db_api import (create_invoice, get_admins_id,
                            get_users_for_recurring, unsubscribe_user,
-                           update_object, get_obj_by_id)
+                           update_object, get_obj_by_id, get_users_id)
 from common.models import Tariff, User, db
 from common.services import robokassa
 from common.settings import settings
@@ -96,5 +96,16 @@ async def send_report(bot: Bot) -> None:
     logger.info(f"SCHEDULER | SendReport | FINISH ({len(admins)})")
 
 
+async def update_users_files() -> None:
+    free_users_id = await get_users_id(premium=False)
+    premium_users_id = await get_users_id(premium=True)
+
+    with open(f"{settings.MEDIA_DIR}/users_files/free_users.txt", "w", encoding="utf-8") as file:
+        file.write("\n".join(map(str, free_users_id)))
+
+    with open(f"{settings.MEDIA_DIR}/users_files/premium_users.txt", "w", encoding="utf-8") as file:
+        file.write("\n".join(map(str, premium_users_id)))
+
+
 if __name__ == '__main__':
-    asyncio.run(daily_limits_update())
+    asyncio.run(update_users_files())

@@ -37,6 +37,14 @@ async def get_or_create_user(tgid: int, username: str, first_name: str, last_nam
             logger.info(f"New user <{tgid}>")
 
         else:
+            if not user.is_active:
+                user.is_active = True
+                user.gemini_daily_limit = settings.FREE_GEMINI_QUERIES
+                user.kandinsky_daily_limit = settings.FREE_KANDINSKY_QUERIES
+                user.sd_daily_limit = settings.FREE_SD_QUERIES
+                user.update_daily_limits_time = datetime.now()
+                session.add(user)
+
             if link and user.referal_link_id != link_id:
                 link.clicks += 1
 
@@ -309,3 +317,14 @@ async def get_admins_id() -> list[int]:
 
         return result.all()
 
+
+async def get_users_id(premium: bool = False) -> list[int]:
+    if premium:
+        stmt = select(User.id).where(User.is_active, User.tariff_id.is_not(None))
+    else:
+        stmt = select(User.id).where(User.is_active, User.tariff_id.is_(None))
+
+    async with db.async_session_factory() as session:
+        result = await session.scalars(stmt)
+
+    return result.all()
