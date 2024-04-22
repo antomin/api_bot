@@ -32,6 +32,7 @@ def redirect_view(tariff_id: int, user_id: int):
 
 @payments_app.get("/result/")
 def result_view():
+    logger.debug(f"New result request | {request.url}")
     try:
         price = int(request.args.get("OutSum"))
         inv_id = int(request.args.get("InvId"))
