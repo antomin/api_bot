@@ -10,6 +10,7 @@ from tgbot_app.utils.enums import (LearningButtons, OtherServicesButtons,
 async def gen_services_back_kb() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.button(text="↩️ Назад", callback_data=CommonCallback(chapter=CommonChapter.SERVICES))
+
     return builder.as_markup()
 
 
@@ -53,4 +54,3 @@ async def gen_other_services_kb() -> InlineKeyboardMarkup:
     builder.button(text="↩️ Назад", callback_data=CommonCallback(chapter=CommonChapter.SERVICES))
 
     return builder.adjust(1).as_markup()
-
