@@ -167,7 +167,7 @@ async def unsubscribe_user(user: User) -> None:
     user.recurring = True
     user.txt_model = TextModels.GPT_3_TURBO
     user.img_model = ImageModels.STABLE_DIFFUSION
-    user.voice_mode = ""
+    user.tts_mode = ""
     user.check_subscriptions = True
     user.update_daily_limits_time = datetime.now()
     user.gemini_daily_limit = settings.FREE_GEMINI_QUERIES
