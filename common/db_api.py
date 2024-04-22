@@ -115,14 +115,14 @@ async def change_balance(user: User, model: Model, add: bool = False) -> None:  
     cost = model.cost if add else -model.cost
 
     if user.tariff:
-        if model.name == "ChatGPT 3.5 Turbo":
+        if model.name in ("ChatGPT 3.5 Turbo", "Kandinsky", "Gemini", "Stable Diffusion"):
             return
         user.token_balance += cost
     else:
-        if model.name == "ChatGPT 3.5 Turbo" and (user.chatgpt_daily_limit > 0 or (add and user.token_balance < model.cost)):
-            user.chatgpt_daily_limit += 1 if add else -1
-        elif model.name == "Dall-E 2" and (user.dalle_2_daily_limit > 0 or (add and user.token_balance < model.cost)):
-            user.dalle_2_daily_limit += 1 if add else -1
+        if model.name == "Gemini" and (user.gemini_daily_limit > 0 or (add and user.token_balance < model.cost)):
+            user.gemini_daily_limit += 1 if add else -1
+        elif model.name == "Kandinsky" and (user.kandinsky_daily_limit > 0 or (add and user.token_balance < model.cost)):
+            user.kandinsky_daily_limit += 1 if add else -1
         elif model.name == "Stable Diffusion" and (user.sd_daily_limit > 0 or (add and user.token_balance < model.cost)):
             user.sd_daily_limit += 1 if add else -1
         else:
