@@ -8,7 +8,7 @@ from sqlalchemy import select, update
 
 from common.db_api import (create_invoice, get_admins_id,
                            get_users_for_recurring, unsubscribe_user,
-                           update_object)
+                           update_object, get_obj_by_id)
 from common.models import Tariff, User, db
 from common.services import robokassa
 from common.settings import settings
@@ -61,7 +61,11 @@ async def recurrent_payments() -> None:
                           payment_tries=user.payment_tries + 1)
         ))
 
-        tariff: Tariff = user.tariff.main_tariff if user.tariff.is_trial else user.tariff
+        if user.tariff.is_trial:
+            tariff = await get_obj_by_id(Tariff, user.tariff.main_tariff_id)
+        else:
+            tariff = user.tariff
+
         invoice = await create_invoice(user_id=user.id, mother_invoice_id=user.mother_invoice_id, tariff_id=tariff.id)
 
         tasks_for_recurring.append(asyncio.create_task(
