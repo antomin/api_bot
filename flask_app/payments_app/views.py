@@ -34,15 +34,11 @@ def redirect_view(tariff_id: int, user_id: int):
 def result_view():
     logger.debug(f"New result request | {request.url}")
     try:
-        inv_id = int(request.args.get("InvId"))
-        price = int(float(request.args.get("OutSum")))
+        inv_id = request.args.get("InvId")
+        price = request.args.get("OutSum")
         signature = request.args.get("SignatureValue")
 
-        logger.debug(f"New result request | {price} | {inv_id} | {signature}")
-
-        invoice: Invoice = sync_get_object_by_id(Invoice, inv_id)
-
-        logger.debug(f"New result request | {invoice.id} founded")
+        invoice: Invoice = sync_get_object_by_id(Invoice, int(inv_id))
 
         if invoice.is_paid:
             return Response(f"OK{inv_id}", status=200)
@@ -66,11 +62,11 @@ def result_view():
 
         if user.referal_link_id:
             link = sync_get_object_by_id(ReferalLink, user.referal_link_id)  # noqa
-            sync_update_object(link, buys_cnt=link.buys_cnt + 1, buys_sum=link.buys_sum + price)
+            sync_update_object(link, buys_cnt=link.buys_cnt + 1, buys_sum=link.buys_sum + int(float(price)))
 
         logger.info(f"Success payment <{user.id}> | <{price}>")
 
-        sync_update_object(invoice, sum=price, is_paid=True)
+        sync_update_object(invoice, sum=int(float(price)), is_paid=True)
 
         return Response(f"OK{inv_id}", status=200)
 
