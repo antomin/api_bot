@@ -55,7 +55,7 @@ async def image_generation(message: Message, user: User, state: FSMContext):
     match model:
         case ImageModels.MIDJOURNEY:
             result = await run_mj_generation(action=ImageAction.IMAGINE, status=status, prompt=prompt)
-        case ImageModels.DALLE_2 | ImageModels.DALLE_3:
+        case ImageModels.DALLE_3:
             await status.edit_text(IMAGE_GEN_TEXT)
             img_query = await create_image_query(id=str(uuid.uuid4()), user_id=user.id, model=model,
                                                  status=GenerationStatus.IN_PROCESS)

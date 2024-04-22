@@ -44,7 +44,7 @@ class ImageQuery(Base):
 
     id: Mapped[str] = mapped_column(String(50), primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    model: Mapped[ImageModels] = mapped_column(String(20), default=ImageModels.STABLE_DIFFUSION)
+    model: Mapped[ImageModels] = mapped_column(String(20), default=ImageModels.KANDINSKY)
     prompt: Mapped[str] = mapped_column(default="")
     result: Mapped[str] = mapped_column(default="")
     action: Mapped[ImageAction] = mapped_column(String(20), default=ImageAction.IMAGINE)

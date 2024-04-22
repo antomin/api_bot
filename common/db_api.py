@@ -174,7 +174,7 @@ async def unsubscribe_user(user: User) -> None:
     user.payment_time = None
     user.recurring = True
     user.txt_model = TextModels.GPT_3_TURBO
-    user.img_model = ImageModels.STABLE_DIFFUSION
+    user.img_model = ImageModels.KANDINSKY
     user.tts_mode = ""
     user.check_subscriptions = True
     user.update_daily_limits_time = datetime.now()

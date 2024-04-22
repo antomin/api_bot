@@ -35,7 +35,7 @@ class User(Base):
     txt_model: Mapped[TextModels] = mapped_column(String(), default=TextModels.GEMINI)
     txt_model_role_id: Mapped[int | None] = mapped_column(
         ForeignKey("text_generation_roles.id", ondelete="SET NULL"), default=None)
-    img_model: Mapped[ImageModels] = mapped_column(String(), default=ImageModels.STABLE_DIFFUSION)
+    img_model: Mapped[ImageModels] = mapped_column(String(), default=ImageModels.KANDINSKY)
     tts_mode: Mapped[str] = mapped_column(default="")
     text_session_id: Mapped[int | None] = mapped_column(ForeignKey("sessions.id", ondelete="SET NULL"),
                                                         default=None, server_default=None)

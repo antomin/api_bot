@@ -42,16 +42,16 @@ def delete_file(path: str) -> None:
 def can_send_query(user: User, model: ImageModels | TextModels | VideoModels) -> bool:  # TODO Review
     model_cost = settings.MODELS[model].cost
     if not user.tariff:
-        if model in (ImageModels.KANDINSKY, ImageModels.STABLE_DIFFUSION, TextModels.GEMINI):
+        if model in (ImageModels.KANDINSKY, TextModels.GEMINI):
             if model == TextModels.GEMINI:
                 return bool(user.gemini_daily_limit) or user.token_balance >= model_cost
             if model == ImageModels.KANDINSKY:
                 return bool(user.kandinsky_daily_limit) or user.token_balance >= model_cost
-            if model == ImageModels.STABLE_DIFFUSION:
-                return bool(user.sd_daily_limit) or user.token_balance >= model_cost
+            # if model == ImageModels.STABLE_DIFFUSION:
+            #     return bool(user.sd_daily_limit) or user.token_balance >= model_cost
         return user.token_balance >= model_cost
     else:
-        if model in (TextModels.GPT_3_TURBO, TextModels.GEMINI, ImageModels.STABLE_DIFFUSION, ImageModels.KANDINSKY):
+        if model in (TextModels.GPT_3_TURBO, TextModels.GEMINI, ImageModels.KANDINSKY):
             return True
         return user.token_balance >= model_cost
 

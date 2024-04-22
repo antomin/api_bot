@@ -6,11 +6,11 @@ from common.enums import ImageModels, TextModels, VideoModels
 from common.models import User
 from common.settings import settings
 from tgbot_app.utils.callbacks import (AiTypeCallback, ImageModelCallback,
-                                       ProfileCallback, RoleCallback,
-                                       TextModelCallback, TextSettingsCallback,
-                                       VideoModelCallback, CommonCallback)
-from tgbot_app.utils.enums import (AiTypeButtons, ProfileButtons,
-                                   TextSettingsButtons, CommonChapter)
+                                       RoleCallback, TextModelCallback,
+                                       TextSettingsCallback, VideoModelCallback,
+                                       CommonCallback, OtherServicesCallback)
+from tgbot_app.utils.enums import (AiTypeButtons, TextSettingsButtons,
+                                   CommonChapter, OtherServicesButtons)
 
 
 async def gen_ai_types_kb() -> InlineKeyboardMarkup:
@@ -58,6 +58,9 @@ async def gen_img_model_kb(user: User) -> InlineKeyboardMarkup:
             text=("✅ " if user.img_model == model else "") + str(settings.MODELS[model].name),
             callback_data=ImageModelCallback(model=model)
         )
+
+    builder.button(text=OtherServicesButtons.REMOVE_BACK.value,
+                   callback_data=OtherServicesCallback(type=OtherServicesButtons.REMOVE_BACK))
 
     builder.button(text="↩️ Назад", callback_data=CommonCallback(chapter=CommonChapter.AIS))
 

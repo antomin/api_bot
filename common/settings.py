@@ -47,9 +47,9 @@ models_data = {
     TextModels.CLAUDE: Model(name="Claude", cost=int(settings_data["cost_claude"])),
     TextModels.GEMINI: Model(name="Gemini", cost=int(settings_data["cost_gemini"])),
 
-    ImageModels.STABLE_DIFFUSION: Model(name="Stable Diffusion", cost=int(settings_data["cost_sd"])),
+    # ImageModels.STABLE_DIFFUSION: Model(name="Stable Diffusion", cost=int(settings_data["cost_sd"])),
     ImageModels.MIDJOURNEY: Model(name="Midjourney", cost=int(settings_data["cost_midjourney"])),
-    ImageModels.DALLE_2: Model(name="Dall-E 2", cost=int(settings_data["cost_dalle_2"])),
+    # ImageModels.DALLE_2: Model(name="Dall-E 2", cost=int(settings_data["cost_dalle_2"])),
     ImageModels.DALLE_3: Model(name="Dall-E 3", cost=int(settings_data["cost_dalle_3"])),
     ImageModels.KANDINSKY: Model(name="Kandinsky", cost=int(settings_data["cost_kandinsky"])),
 

@@ -43,10 +43,14 @@ async def text_generation_handler(callback: CallbackQuery, user: User, state: FS
     await state.set_state(GenerationState.TEXT)
 
 
+@router.message(F.text == MainButtons.GEN_IMG.value)
 @router.callback_query(AiTypeCallback.filter(F.type == AiTypeButtons.IMAGE))
-async def image_generation_handler(callback: CallbackQuery, user: User, state: FSMContext):
-    await callback.message.answer(text=gen_img_settings_text(user), reply_markup=await gen_img_model_kb(user))
-    await callback.answer()
+async def image_generation_handler(message: Message | CallbackQuery, user: User, state: FSMContext):
+    if isinstance(message, CallbackQuery):
+        await message.answer()
+        message = message.message
+
+    await message.answer(text=gen_img_settings_text(user), reply_markup=await gen_img_model_kb(user))
 
     await state.set_state(GenerationState.IMAGE)
 

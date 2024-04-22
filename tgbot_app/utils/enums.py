@@ -6,8 +6,9 @@ from common.services.neiro_api import ResponseResult
 class MainButtons(str, Enum):
     PROFILE = "⚡️ Тарифы и токены"
     AIS = "🤖 Нейросети"
-    SERVICES = "📲 Сервисы"
     FAQ = "❓ Помощь"
+    SERVICES = "📲 Сервисы"
+    GEN_IMG = "🏞 Генерация изображений"
 
 
 class DefaultCommands(Enum):

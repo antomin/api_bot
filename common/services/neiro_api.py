@@ -41,14 +41,15 @@ class AsyncNeiroAPI:
         self.imagine_urls = {
             ImageModels.MIDJOURNEY: f"{self.base_url}/midjourney/imagine/",
             ImageModels.KANDINSKY: f"{self.base_url}/kandinsky/generate/",
-            ImageModels.STABLE_DIFFUSION: f"{self.base_url}/stablediffusion/text2img/",
+            # ImageModels.STABLE_DIFFUSION: f"{self.base_url}/stablediffusion/text2img/",
         }
         self.status_urls = {
             ImageModels.MIDJOURNEY: f"{self.base_url}/midjourney/check-task/",
             ImageModels.KANDINSKY: f"{self.base_url}/kandinsky/check-task/",
-            ImageModels.STABLE_DIFFUSION: f"{self.base_url}/stablediffusion/check-task/",
+            # ImageModels.STABLE_DIFFUSION: f"{self.base_url}/stablediffusion/check-task/",
         }
         self.status_urls.update({model: f"{self.base_url}/services/check-task/" for model in ServiceModels})
+        self.status_urls.update({model: f"{self.base_url}/stablediffusion/check-task/" for model in VideoModels})
 
     async def imagine(self, model: ImageModels, prompt: str) -> ResponseResult:
         url = self.imagine_urls[model]

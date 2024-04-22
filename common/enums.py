@@ -12,8 +12,8 @@ class TextModels(str, Enum):
 
 class ImageModels(str, Enum):
     MIDJOURNEY = "midjourney"
-    STABLE_DIFFUSION = "sd"
-    DALLE_2 = "dall-e-2"
+    # STABLE_DIFFUSION = "sd"
+    # DALLE_2 = "dall-e-2"
     DALLE_3 = "dall-e-3"
     KANDINSKY = "kandinsky"
 

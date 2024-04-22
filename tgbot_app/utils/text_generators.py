@@ -67,8 +67,8 @@ def gen_img_settings_text(user: User) -> str:
             f"Ежедневно мы продолжаем работать над добавлением других нейросетей для генерации изображений.\n\n"
             f"💎 <b>Стоимость:</b> {settings.MODELS[user.img_model].cost} токенов")
 
-    if not user.tariff_id and user.img_model in (ImageModels.KANDINSKY, ImageModels.STABLE_DIFFUSION):
-        num = user.kandinsky_daily_limit if user.img_model == ImageModels.KANDINSKY else user.sd_daily_limit
+    if not user.tariff_id and user.img_model == ImageModels.KANDINSKY:
+        num = user.kandinsky_daily_limit  # if user.img_model == ImageModels.KANDINSKY else user.sd_daily_limit
         text += f"\n└ У вас осталось {num} ежедневных запросов"
 
     return text

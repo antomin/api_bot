@@ -41,7 +41,7 @@ async def wait_image_result(model: ImageModels, task_id: str, status: Message, i
             continue
 
         if result.status == GenerationStatus.READY:
-            result = result.result[0] if model == ImageModels.STABLE_DIFFUSION else result.result
+            result = result.result
             await update_object(img_query, status=GenerationStatus.READY, result=result)
             return GenerationResult(result=result, task_id=img_query.id)
 
@@ -95,7 +95,7 @@ async def run_video_generation(model: VideoModels, **params) -> GenerationResult
     for _ in range(60):
         await asyncio.sleep(10)
 
-        result = await neiro_api.get_status(task_id=task_id, model=ImageModels.STABLE_DIFFUSION)
+        result = await neiro_api.get_status(task_id=task_id, model=model)
 
         if not result.success:
             continue
