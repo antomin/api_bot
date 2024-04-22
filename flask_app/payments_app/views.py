@@ -54,15 +54,14 @@ def result_view():
             sync_update_object(user, token_balance=user.token_balance + tariff.token_balance)
         else:
             update_subscription(user=user, invoice=invoice)
-            logger.debug(f"New result request | {user.id} | subscription updated")
 
         if user.referal_link_id:
             link = sync_get_object_by_id(ReferalLink, user.referal_link_id)  # noqa
             sync_update_object(link, buys_cnt=link.buys_cnt + 1, buys_sum=link.buys_sum + int(float(price)))
 
-        logger.info(f"Success payment <{user.id}> | <{price}>")
-
         sync_update_object(invoice, sum=int(float(price)), is_paid=True)
+
+        logger.info(f"Success payment <{user.id}> | <{price}>")
 
         return Response(f"OK{inv_id}", status=200)
 
