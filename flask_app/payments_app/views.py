@@ -47,12 +47,8 @@ def result_view():
             logger.error(f"Check signature ERROR | {inv_id}")
             return Response("Check signature ERROR", status=403)
 
-        logger.debug(f"New result request | {invoice.id} sign success")
-
         user: User = invoice.user
         tariff: Tariff = invoice.tariff
-
-        logger.debug(f"New result request | {user.id} | {tariff.name}")
 
         if tariff.is_extra:
             sync_update_object(user, token_balance=user.token_balance + tariff.token_balance)

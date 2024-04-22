@@ -249,15 +249,15 @@ def sync_update_object(obj: Any, **params) -> None:
 
 
 def update_subscription(user: User, invoice: Invoice) -> None:
-    tariff = invoice.tariff
+    tariff: Tariff = invoice.tariff
     user.tariff = tariff
 
     if user.payment_time:  # Recurring update
         user.payment_time += timedelta(days=tariff.days)
     else:  # First payment
         user.payment_time = datetime.now() + timedelta(days=tariff.days)
-        user.chatgpt_daily_limit = tariff.chatgpt_daily_limit
-        user.dalle_2_daily_limit = tariff.dalle_2_daily_limit
+        user.gemini_daily_limit = tariff.gemini_daily_limit
+        user.kandinsky_daily_limit = tariff.kandinsky_daily_limit
         user.sd_daily_limit = tariff.sd_daily_limit
         user.check_subscriptions = False
         user.update_daily_limits_time = datetime.now() + timedelta(hours=24)
