@@ -51,7 +51,7 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - ./flask_app/static:/static:ro
       - ./data/tmp:/bot_tmp:ro
-      - ./data/users_files:/code/users_files:ro
+      - ./data/users_files:/users_files:ro
       - ./data/nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - ./logs/nginx:/var/log/nginx/
     ports:
