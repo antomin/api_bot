@@ -95,8 +95,8 @@ class ReferalLink(Base):
     buys_cnt: Mapped[int] = mapped_column(default=0)
     buys_sum: Mapped[int] = mapped_column(default=0)
     new_users: Mapped[int] = mapped_column(default=0)
-    bot_link: Mapped[str] = mapped_column(unique=True)
-    site_link: Mapped[str] = mapped_column(unique=True)
+    bot_link: Mapped[str] = mapped_column(unique=True, default="")
+    site_link: Mapped[str] = mapped_column(unique=True, default="")
 
     def __str__(self):
         return f"<RefLink: {self.id}>"

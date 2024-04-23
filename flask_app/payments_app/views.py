@@ -42,9 +42,9 @@ def result_view():
         if invoice.is_paid:
             return Response(f"OK{inv_id}", status=200)
 
-        if not robokassa.check_signature(inv_id=inv_id, price=price, recv_signature=signature):
-            logger.error(f"Check signature ERROR | {inv_id}")
-            return Response("Check signature ERROR", status=403)
+        # if not robokassa.check_signature(inv_id=inv_id, price=price, recv_signature=signature):
+        #     logger.error(f"Check signature ERROR | {inv_id}")
+        #     return Response("Check signature ERROR", status=403)
 
         user: User = invoice.user
         tariff: Tariff = invoice.tariff

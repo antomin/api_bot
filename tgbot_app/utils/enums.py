@@ -155,11 +155,11 @@ class PaymentAction(Enum):
 
 
 class AdminMainButtons(Enum):
-    LINKS = "Генерация ссылок"
+    LINKS = "🔗 Генерация ссылок"
 
 
 class AdminLinksButtons(Enum):
-    CREATE = "Создать"
+    CREATE = "➕ Создать"
 
 
 class CommonChapter(Enum):
