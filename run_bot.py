@@ -28,7 +28,8 @@ def _set_loggers() -> None:
 
 
 def _connect_middlewares(dp: Dispatcher) -> None:
-    dp.update.middleware.register(UserMiddleware())
+    dp.message.middleware.register(UserMiddleware())
+    dp.callback_query.middleware.register(UserMiddleware())
     dp.message.middleware.register(ChannelMiddleware())
     dp.callback_query.middleware.register(ChannelMiddleware())
 
