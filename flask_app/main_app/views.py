@@ -23,5 +23,5 @@ def offer():
 
 
 @main_app.get("/redirect/<int:link_id>/")
-def redirect(link_id: int):
+def redirect_view(link_id: int):
     return redirect(f"https://t.me/{settings.BOT_USERNAME}?start={link_id}")
