@@ -1,9 +1,8 @@
-import asyncio
 from datetime import datetime, timedelta
 from typing import Any
 
 from loguru import logger
-from sqlalchemy import desc, select, update
+from sqlalchemy import desc, select
 
 from common.enums import ImageModels, TextModels
 from common.models import (Invoice, ReferalLink, Tariff, TextGenerationRole,
@@ -17,7 +16,7 @@ from common.settings import Model, settings
 async def get_or_create_user(tgid: int, username: str, first_name: str, last_name: str, link_id: int | None) -> User:
     async with db.async_session_factory() as session:
         user: User = await session.get(User, tgid)
-        link: ReferalLink = session.get(ReferalLink, link_id) if link_id else None
+        link: ReferalLink = await session.get(ReferalLink, int(link_id)) if link_id else None
 
         if not user:
             user = User(id=tgid, username=username if username else str(tgid), first_name=first_name,
@@ -30,7 +29,7 @@ async def get_or_create_user(tgid: int, username: str, first_name: str, last_nam
 
             session.add(user)
 
-            if link_id:
+            if link:
                 link.new_users += 1
                 link.clicks += 1
 
@@ -48,6 +47,9 @@ async def get_or_create_user(tgid: int, username: str, first_name: str, last_nam
             if link and user.referal_link_id != link_id:
                 link.clicks += 1
 
+        if link:
+            session.add(link)
+          
         await session.commit()
 
         return user
@@ -254,6 +256,7 @@ def sync_update_object(obj: Any, **params) -> None:
         session.add(obj)
         session.commit()
         session.refresh(obj)
+        session.close()
 
 
 def update_subscription(user: User, invoice: Invoice) -> None:
@@ -328,3 +331,17 @@ async def get_users_id(premium: bool = False) -> list[int]:
         result = await session.scalars(stmt)
 
     return result.all()
+
+
+def sync_get_links(user_id: int) -> list[ReferalLink]:
+    with db.session_factory() as session:
+        return session.scalars(select(ReferalLink).where(ReferalLink.owner_id == user_id)).all()
+
+
+async def create_object(obj: Any, **params) -> Any:
+    new_obj = obj(**params)
+    async with db.async_session_factory() as session:
+        session.add(new_obj)
+        await session.commit()
+
+    return new_obj
