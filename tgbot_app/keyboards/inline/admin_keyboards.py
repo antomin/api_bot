@@ -11,7 +11,6 @@ async def gen_admin_main_kb(user_id: int) -> InlineKeyboardMarkup:
 
     for btn in AdminMainButtons:
         builder.button(text=btn.value, callback_data=AdminCallback(chapter=btn))
-    builder.button(text="📈 Статистика бота", web_app=WebAppInfo(url=f"{settings.DOMAIN}/reports/current/{user_id}/"))
 
     return builder.adjust(1).as_markup()
 

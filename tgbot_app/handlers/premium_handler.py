@@ -7,7 +7,7 @@ from common.models import Tariff, User
 from tgbot_app.keyboards import (gen_confirm_premium_kb, gen_premium_cancel_kb,
                                  gen_premium_kb, main_kb)
 from tgbot_app.utils.callbacks import PaymentCallback, ProfileCallback
-from tgbot_app.utils.enums import (DefaultCommands, MainButtons, PaymentAction,
+from tgbot_app.utils.enums import (DefaultCommands, PaymentAction,
                                    ProfileButtons)
 from tgbot_app.utils.misc import can_create_refund
 from tgbot_app.utils.text_generators import (gen_confirm_tariff_text,

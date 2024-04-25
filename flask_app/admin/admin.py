@@ -32,7 +32,7 @@ class ReferalLinkView(AdminView):
 
 
 class InvoiceView(AdminView):
-    pass
+    column_display_pk = True
 
 
 class TextQueryView(AdminView):
