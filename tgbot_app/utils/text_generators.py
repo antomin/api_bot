@@ -170,7 +170,7 @@ def gen_report_text(report: Report) -> str:
         f"💰 <b>Платежи за сутки:</b>\n"
         f"├ Всего активных подписок: {report.prem_users_cnt}\n"
         f"├ Новых подписок: {report.new_prem_invoices_cnt}шт на сумму {report.new_prem_invoices_sum}₽\n"
-        f"├ Продаж токенов: {report.new_token_invoices_cnt} шт на сумму{report.new_token_invoices_sum}₽\n"
+        f"├ Продаж токенов: {report.new_token_invoices_cnt}шт на сумму {report.new_token_invoices_sum}₽\n"
         f"├ Всего: {report.new_invoices_cnt} платежей\n"
         f"├ Общий оборот: {report.new_invoices_sum}\n"
         f"├ Средний чек: {report.avg_bill}\n"

@@ -363,10 +363,10 @@ async def create_report(auto: bool = False) -> Report:
         users_with_link_cnt = await session.scalar(select(func.count()).select_from(User).where(User.referal_link_id.is_not(None)))
         new_users_cnt = await session.scalar(select(func.count()).select_from(User).where(User.created_at.between(*time_range)))
         new_users_with_link_cnt = await session.scalar(select(func.count()).select_from(User).where(User.created_at.between(*time_range), User.referal_link_id.is_not(None)))
-        _text_result = await session.execute(select(TextQuery.model, func.count(TextQuery.id)).where(TextQuery.created_at.between(*time_range)).group_by(TextQuery.model))
-        _img_result = await session.execute(select(ImageQuery.model, func.count(ImageQuery.id)).where(TextQuery.created_at.between(*time_range)).group_by(ImageQuery.model))
-        _video_result = await session.execute(select(VideoQuery.type, func.count(VideoQuery.id)).where(TextQuery.created_at.between(*time_range)).group_by(VideoQuery.type))
-        _services_result = await session.execute(select(ServiceQuery.type, func.count(ServiceQuery.id)).where(TextQuery.created_at.between(*time_range)).group_by(ServiceQuery.type))
+        _text_result = await session.execute(select(TextQuery.model, func.count()).select_from(TextQuery).where(TextQuery.created_at.between(*time_range)).group_by(TextQuery.model))
+        _img_result = await session.execute(select(ImageQuery.model, func.count()).select_from(ImageQuery).where(ImageQuery.created_at.between(*time_range)).group_by(ImageQuery.model))
+        _video_result = await session.execute(select(VideoQuery.type, func.count()).select_from(VideoQuery).where(VideoQuery.created_at.between(*time_range)).group_by(VideoQuery.type))
+        _services_result = await session.execute(select(ServiceQuery.type, func.count()).select_from(ServiceQuery).where(ServiceQuery.created_at.between(*time_range)).group_by(ServiceQuery.type))
         text_queries_cnt = {model: count for model, count in _text_result}
         img_queries_cnt = {model: count for model, count in _img_result}
         video_queries_cnt = {model: count for model, count in _video_result}
@@ -390,7 +390,7 @@ async def create_report(auto: bool = False) -> Report:
             new_users_cnt=new_users_cnt,
             new_users_with_link_cnt=new_users_with_link_cnt,
             new_users_from_search_cnt=new_users_cnt - new_users_with_link_cnt,
-            queries_cnt=sum(count for count in (text_queries_cnt | video_queries_cnt | img_queries_cnt |services_queries_cnt).values()),
+            queries_cnt=sum(count for count in (text_queries_cnt | video_queries_cnt | img_queries_cnt | services_queries_cnt).values()),
             queries_gpt_3_turbo_cnt=text_queries_cnt.get(TextModels.GPT_3_TURBO.value, 0),
             queries_gpt_4_turbo_cnt=text_queries_cnt.get(TextModels.GPT_4_TURBO.value, 0),
             queries_yagpt_cnt=text_queries_cnt.get(TextModels.YAGPT.value, 0),
@@ -416,9 +416,9 @@ async def create_report(auto: bool = False) -> Report:
             rembg_cnt=0,  # TODO
             prem_users_cnt=prem_users_cnt,
             new_prem_invoices_cnt=new_prem_invoices_cnt,
-            new_prem_invoices_sum=new_invoices_sum,
+            new_prem_invoices_sum=new_prem_invoices_sum if new_prem_invoices_sum is not None else 0,
             new_token_invoices_cnt=new_token_invoices_cnt,
-            new_token_invoices_sum=new_token_invoices_sum,
+            new_token_invoices_sum=new_token_invoices_sum if new_token_invoices_sum is not None else 0,
             new_invoices_cnt=new_invoices_cnt,
             new_invoices_sum=new_invoices_sum,
             avg_bill=avg_bill,
@@ -436,5 +436,5 @@ async def create_report(auto: bool = False) -> Report:
     return report
 
 
-# if __name__ == '__main__':
-#     asyncio.run(create_report(False))
+if __name__ == '__main__':
+    asyncio.run(create_report(True))
