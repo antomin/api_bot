@@ -10,7 +10,7 @@ class AdminView(ModelView):
 
 
 class TariffView(AdminView):
-    pass
+    form_excluded_columns = ("invoices", "users")
 
 
 class UserAdminView(AdminView):
@@ -33,6 +33,7 @@ class ReferalLinkView(AdminView):
 
 class InvoiceView(AdminView):
     column_display_pk = True
+    form_excluded_columns = ("invoices", "users")
 
 
 class TextGenerationRoleView(AdminView):
