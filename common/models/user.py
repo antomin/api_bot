@@ -27,6 +27,7 @@ class User(Base):
     is_active: Mapped[bool] = mapped_column(Boolean(), default=True)
     is_admin: Mapped[bool] = mapped_column(Boolean(), default=False)
 
+    chatgpt_daily_limit: Mapped[int | None] = mapped_column(default=0)
     gemini_daily_limit: Mapped[int] = mapped_column(default=0)
     kandinsky_daily_limit: Mapped[int] = mapped_column(default=0)
     sd_daily_limit: Mapped[int] = mapped_column(default=0)
