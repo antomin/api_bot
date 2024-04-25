@@ -157,6 +157,7 @@ class PaymentAction(Enum):
 
 class AdminMainButtons(Enum):
     LINKS = "🔗 Генерация ссылок"
+    REPORT = "📈 Статистика бота"
 
 
 class AdminLinksButtons(Enum):

@@ -4,11 +4,8 @@ import json
 import flask_login as login
 from flask import redirect, request, url_for
 from flask_admin import AdminIndexView, expose
-from flask_admin.form import rules
 from flask_app.forms import EditForm
-from flask_login import current_user, logout_user
-from flask_wtf import FlaskForm
-from wtforms import PasswordField, StringField, SubmitField
+from flask_login import current_user
 
 
 def get_json_data():

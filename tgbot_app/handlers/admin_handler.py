@@ -2,13 +2,14 @@ from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
-from common.db_api import create_object, update_object
+from common.db_api import create_object, update_object, create_report
 from common.models import ReferalLink, User
 from common.settings import settings
 from tgbot_app.keyboards import gen_admin_links_kb, gen_admin_main_kb
 from tgbot_app.utils.callbacks import AdminCallback, AdminLinksCallback
 from tgbot_app.utils.enums import AdminLinksButtons, AdminMainButtons
 from tgbot_app.utils.states import CommonState
+from tgbot_app.utils.text_generators import gen_report_text
 
 router = Router()
 
@@ -59,3 +60,13 @@ async def admin_links_create(message: Message, user: User, state: FSMContext):
     await message.answer(text)
 
     await state.clear()
+
+
+@router.callback_query(AdminCallback.filter(F.chapter == AdminMainButtons.REPORT))
+async def admin_report(callback: CallbackQuery):
+    status = await callback.message.answer("📈 Собираем информацию...")
+    await callback.answer()
+
+    report = await create_report(auto=False)
+
+    await status.edit_text(text=gen_report_text(report))

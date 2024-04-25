@@ -48,6 +48,9 @@ class Invoice(Base):
     def __str__(self):
         return f"<Invoice: {self.id} | User: {self.user_id}>"
 
+    def __repr__(self):
+        return str(self)
+
 
 class Refund(Base):
     __tablename__ = "refunds"
