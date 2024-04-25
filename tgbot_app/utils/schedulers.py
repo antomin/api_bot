@@ -85,7 +85,7 @@ async def send_report(bot: Bot) -> None:
     logger.info("SCHEDULER | SendReport | START")
 
     admins = await get_admins_id()
-    report = await create_report()
+    report = await create_report(auto=True)
     text = gen_report_text(report)
 
     for admin in admins:
