@@ -382,7 +382,7 @@ async def create_report(auto: bool = False) -> Report:
         trial_buys_cnt = await session.scalar(select(func.count()).select_from(Invoice).where(Invoice.tariff.has(Tariff.is_trial), Invoice.is_paid, Invoice.created_at.between(*time_range)))
         _tariffs_buys_result = await session.execute(select(Invoice.sum, func.count(Invoice.id)).where(Invoice.is_paid, Invoice.created_at.between(*time_range)).group_by(Invoice.sum))
         tariffs_buys_dict = {price: count for price, count in _tariffs_buys_result}
-        recurring_invoices_cnt = await session.scalar(select(func.count()).select_from(Invoice).where(Invoice.mother_invoice_id.is_not(None)))
+        recurring_invoices_cnt = await session.scalar(select(func.count()).select_from(Invoice).where(Invoice.mother_invoice_id.is_not(None), Invoice.created_at.between(*time_range)))
 
         report = Report(
             users_cnt=users_cnt,
