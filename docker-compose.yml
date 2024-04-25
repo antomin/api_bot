@@ -11,6 +11,8 @@ services:
       - 'POSTGRES_PASSWORD=${DB_PASS}'
     volumes:
       - ./data/pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
   web:
     container_name: web
