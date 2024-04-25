@@ -380,7 +380,7 @@ async def create_report(auto: bool = False) -> Report:
         new_invoices_sum = sum(i for i in [new_prem_invoices_sum, new_token_invoices_sum] if i is not None)
         avg_bill = int(new_invoices_sum / new_invoices_cnt) if new_invoices_cnt else 0
         trial_buys_cnt = await session.scalar(select(func.count()).select_from(Invoice).where(Invoice.tariff.has(Tariff.is_trial), Invoice.is_paid, Invoice.created_at.between(*time_range)))
-        _tariffs_buys_result = await session.execute(select(Invoice.sum, func.count(Invoice.id)).where(Invoice.is_paid, Invoice.created_at.between(*time_range)).group_by(Invoice.sum))
+        _tariffs_buys_result = await session.execute(select(Invoice.sum, func.count(Invoice.id)).where(Invoice.is_paid, Invoice.tariff.has(~Tariff.is_extra), Invoice.created_at.between(*time_range)).group_by(Invoice.sum))
         tariffs_buys_dict = {price: count for price, count in _tariffs_buys_result}
         recurring_invoices_cnt = await session.scalar(select(func.count()).select_from(Invoice).where(Invoice.mother_invoice_id.is_not(None), Invoice.created_at.between(*time_range)))
 
