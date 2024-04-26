@@ -48,7 +48,7 @@ class ReportView(AdminView):
 class RefundView(AdminView):
     form_widget_args = {
         'user': {
-            'readonly': True
+            'disabled': True
         }
     }
 
