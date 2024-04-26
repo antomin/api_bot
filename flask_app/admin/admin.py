@@ -1,5 +1,5 @@
 from common.models import (ImageQuery, Invoice, ReferalLink, Tariff,
-                           TextGenerationRole, TextQuery, User, VideoQuery, Report)
+                           TextGenerationRole, TextQuery, User, VideoQuery, Report, Refund)
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.contrib.sqla.filters import BooleanEqualFilter
 from flask_app.extensions import admin, db
@@ -45,8 +45,13 @@ class ReportView(AdminView):
     form_excluded_columns = ("id", )
 
 
+class RefundView(AdminView):
+    pass
+
+
 admin.add_view(UserAdminView(User, db.session, name='Пользователи'))
 admin.add_view(TariffView(Tariff, db.session, name='Тарифы'))
 admin.add_view(InvoiceView(Invoice, db.session, name='Счета'))
 admin.add_view(TextGenerationRoleView(TextGenerationRole, db.session, name='Роли'))
 admin.add_view(ReportView(Report, db.session, name='Отчёты'))
+admin.add_view(RefundView(Refund, db.session, name='Возвраты'))
