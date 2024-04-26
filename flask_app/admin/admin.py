@@ -46,7 +46,11 @@ class ReportView(AdminView):
 
 
 class RefundView(AdminView):
-    pass
+    form_widget_args = {
+        'user': {
+            'readonly': True
+        }
+    }
 
 
 admin.add_view(UserAdminView(User, db.session, name='Пользователи'))
