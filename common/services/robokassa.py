@@ -43,14 +43,15 @@ class Robokassa:
             "invoiceID": inv_id,
             "Description": f"{tariff_desc} | {user_id}",
             "SignatureValue": self.calc_signature(self.login, price, inv_id, receipt, self.password_1),
-            "Recurring": recurring,
             "Receipt": receipt,
         }
+
+        if recurring:
+            data["Recurring"] = "true"
 
         if mother_inv_id:
             data["PreviousInvoiceID"] = mother_inv_id
             data["Description"] = "Продление " + data["Description"]
-            del data["Recurring"]
 
         return data
 
