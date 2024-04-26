@@ -25,7 +25,7 @@ def redirect_view(tariff_id: int, user_id: int):
     invoice: Invoice = sync_create_obj(Invoice, user_id=user_id, tariff_id=tariff_id, sum=price)
 
     redirect_url = robokassa.gen_pay_url(user_id=user_id, inv_id=invoice.id, price=price,
-                                         tariff_desc=tariff.description)
+                                         tariff_desc=tariff.description, recurring=not tariff.is_extra)
 
     return redirect(redirect_url)
 
