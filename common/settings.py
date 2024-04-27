@@ -80,7 +80,7 @@ class Settings(BaseSettings):
     TG_TOKEN: str = settings_data["tgbot_token"]
     BOT_USERNAME: str = settings_data["bot_username"]
     SUPPORT_USERNAME: str = settings_data["support_username"]
-    TARGET_CHAT: int = int(settings_data["target_chat"])
+    TARGET_CHAT: str = settings_data["target_chat"]
 
     NEIRO_TOKEN: str = settings_data["api_token"]
 
