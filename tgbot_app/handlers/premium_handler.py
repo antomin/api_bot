@@ -7,13 +7,13 @@ from common.models import Tariff, User
 from tgbot_app.keyboards import (gen_confirm_premium_kb, gen_premium_cancel_kb,
                                  gen_premium_kb, main_kb)
 from tgbot_app.utils.callbacks import PaymentCallback, ProfileCallback
-from tgbot_app.utils.enums import (DefaultCommands, MainButtons, PaymentAction,
+from tgbot_app.utils.enums import (DefaultCommands, PaymentAction,
                                    ProfileButtons)
 from tgbot_app.utils.misc import can_create_refund
 from tgbot_app.utils.text_generators import (gen_confirm_tariff_text,
                                              gen_premium_canceled_text,
                                              gen_refund_text)
-from tgbot_app.utils.text_variables import PREMIUM_TEXT
+from tgbot_app.utils.text_variables import PREMIUM_TEXT, REACTIVATE_RECURRING_TEXT
 
 router = Router()
 
@@ -66,11 +66,8 @@ async def premium_cancel_confirm(callback: CallbackQuery, callback_data: Payment
 
 @router.callback_query(PaymentCallback.filter(F.action == PaymentAction.REACTIVATE))
 async def reactivate_recurring(callback: CallbackQuery, user: User):
-    profile.recurring = True
-    await profile.asave()
 
-    text = "Вы успешно восстановили автоматическое продление вашей подписки!"
-    markup = await main_kb(user)
+    await update_object(user, recurring=True)
 
-    await callback.message.answer(text=text, reply_markup=markup)
+    await callback.message.answer(text=REACTIVATE_RECURRING_TEXT, reply_markup=await main_kb(user))
     await callback.answer()

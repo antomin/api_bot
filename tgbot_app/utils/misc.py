@@ -1,4 +1,5 @@
 import os
+from datetime import datetime, timedelta
 
 from aiogram import Bot
 from aiogram.dispatcher.event.bases import CancelHandler
@@ -168,9 +169,12 @@ def parse_user_work_struct(raw_struct: str) -> dict | None:
 
 
 async def can_create_refund(user: User) -> bool:
-    if not user.tariff:
+    if user.tariff.is_trial or not user.tariff:
         return False
 
     last_invoice = await get_last_invoice(user.id)
-    if not last_invoice:
-        return False
+
+    if last_invoice:
+        return (datetime.now() < last_invoice.created_at + timedelta(hours=48) and
+                user.token_balance >= user.tariff.token_balance)
+    return False

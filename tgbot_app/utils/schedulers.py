@@ -8,10 +8,11 @@ from sqlalchemy import select, update
 
 from common.db_api import (create_invoice, get_admins_id,
                            get_users_for_recurring, unsubscribe_user,
-                           update_object, get_obj_by_id, get_users_id)
+                           update_object, get_obj_by_id, get_users_id, create_report)
 from common.models import Tariff, User, db
 from common.services import robokassa
 from common.settings import settings
+from tgbot_app.utils.text_generators import gen_report_text
 
 
 async def daily_limits_update() -> None:
@@ -84,14 +85,11 @@ async def send_report(bot: Bot) -> None:
     logger.info("SCHEDULER | SendReport | START")
 
     admins = await get_admins_id()
-    # report = ""
-    # text = ""
-    #
-    # for admin_id in admins:
-    #     try:
-    #         await bot.send_message(chat_id=admin_id, text=text, disable_notification=True)
-    #     except TelegramBadRequest:
-    #         logger.error(f"SCHEDULER | SendReport | ERROR sending to admin <{admin_id}>")
+    report = await create_report()
+    text = gen_report_text(report)
+
+    for admin in admins:
+        await bot.send_message(chat_id=admin, text=text)
 
     logger.info(f"SCHEDULER | SendReport | FINISH ({len(admins)})")
 

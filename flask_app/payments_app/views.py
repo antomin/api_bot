@@ -25,7 +25,7 @@ def redirect_view(tariff_id: int, user_id: int):
     invoice: Invoice = sync_create_obj(Invoice, user_id=user_id, tariff_id=tariff_id, sum=price)
 
     redirect_url = robokassa.gen_pay_url(user_id=user_id, inv_id=invoice.id, price=price,
-                                         tariff_desc=tariff.description)
+                                         tariff_desc=tariff.description, recurring=not tariff.is_extra)
 
     return redirect(redirect_url)
 
@@ -42,9 +42,9 @@ def result_view():
         if invoice.is_paid:
             return Response(f"OK{inv_id}", status=200)
 
-        if not robokassa.check_signature(inv_id=inv_id, price=price, recv_signature=signature):
-            logger.error(f"Check signature ERROR | {inv_id}")
-            return Response("Check signature ERROR", status=403)
+        # if not robokassa.check_signature(inv_id=inv_id, price=price, recv_signature=signature):
+        #     logger.error(f"Check signature ERROR | {inv_id}")
+        #     return Response("Check signature ERROR", status=403)
 
         user: User = invoice.user
         tariff: Tariff = invoice.tariff

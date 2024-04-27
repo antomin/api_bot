@@ -1,5 +1,5 @@
 from common.models import (ImageQuery, Invoice, ReferalLink, Tariff,
-                           TextGenerationRole, TextQuery, User, VideoQuery)
+                           TextGenerationRole, TextQuery, User, VideoQuery, Report)
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.contrib.sqla.filters import BooleanEqualFilter
 from flask_app.extensions import admin, db
@@ -10,7 +10,7 @@ class AdminView(ModelView):
 
 
 class TariffView(AdminView):
-    pass
+    form_excluded_columns = ("invoices", "users")
 
 
 class UserAdminView(AdminView):
@@ -32,30 +32,21 @@ class ReferalLinkView(AdminView):
 
 
 class InvoiceView(AdminView):
-    pass
-
-
-class TextQueryView(AdminView):
-    pass
+    column_display_pk = True
+    form_excluded_columns = ("invoices", "users")
 
 
 class TextGenerationRoleView(AdminView):
     pass
 
 
-class ImageQueryView(AdminView):
-    pass
-
-
-class VideoQueryView(AdminView):
-    pass
+class ReportView(AdminView):
+    column_list = ("date", )
+    form_excluded_columns = ("id", )
 
 
 admin.add_view(UserAdminView(User, db.session, name='Пользователи'))
-# admin.add_view(ReferalLinkView(ReferalLink, db.session))
 admin.add_view(TariffView(Tariff, db.session, name='Тарифы'))
 admin.add_view(InvoiceView(Invoice, db.session, name='Счета'))
-# admin.add_view(TextQueryView(TextQuery, db.session))
 admin.add_view(TextGenerationRoleView(TextGenerationRole, db.session, name='Роли'))
-# admin.add_view(ImageQueryView(ImageQuery, db.session))
-# admin.add_view(VideoQueryView(VideoQuery, db.session))
+admin.add_view(ReportView(Report, db.session, name='Отчёты'))

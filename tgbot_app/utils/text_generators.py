@@ -1,6 +1,6 @@
 from common.db_api import get_obj_by_id
 from common.enums import ImageModels, TextModels
-from common.models import Tariff, User
+from common.models import Tariff, User, Report
 from common.settings import settings
 from tgbot_app.utils.misc import decl
 
@@ -125,5 +125,60 @@ def gen_token_text(user: User) -> str:
 
     if not user.tariff or user.tariff.is_trial:
         text += "❤️‍🔥С премиум подпиской стоимость токенов будет в 2 раза дешевле."
+
+    return text
+
+
+def gen_report_text(report: Report) -> str:
+    text = (
+        f"👥 <b>Пользователи:</b>\n"
+        f"├ Всего: {report.users_cnt}\n"
+        f"└ Реф. ссылки: {report.users_with_link_cnt}\n\n"
+        f"📈 <b>Новые за сутки:</b>\n"
+        f"├ Всего: {report.new_users_cnt}\n"
+        f"├ С реф. ссылок: {report.new_users_with_link_cnt}\n"
+        f"└ С поиска: {report.new_users_from_search_cnt}\n\n"
+        f"🏃 <b>Статистика за сутки по нейросетям:</b>\n"
+        f"├ Всего запросов: {report.queries_cnt}\n"
+        f"├ ChatGPT 3.5: {report.queries_gpt_3_turbo_cnt}\n"
+        f"├ ChatGPT 4 turbo: {report.queries_gpt_4_turbo_cnt}\n"
+        f"├ ЯндексGPT: {report.queries_yagpt_cnt}\n"
+        f"├ ЯндексGPT Lite: {report.queries_yagpt_lite_cnt}\n"
+        f"├ Gemini: {report.queries_gemini_cnt}\n"
+        f"├ Claude: {report.queries_claude_cnt}\n"
+        f"├ StableDiffusion: {report.queries_sd_cnt}\n"
+        f"├ DallE-2: {report.queries_dalle_2_cnt}\n"
+        f"├ DallE-3: {report.queries_dalle_3_cnt}\n"
+        f"├ Midjourney: {report.queries_mj_cnt}\n"
+        f"├ Kandinsky: {report.queries_kandinsky_cnt}\n"
+        f"├ Текст в видео: {report.txt_to_video_cnt}\n"
+        f"├ Изображение в видео: {report.img_to_video_cnt}\n"
+        f"├ Удаление фона видео: {report.rembg_cnt}\n"
+        f"├ Видео в мульт: {report.cartoon_video_cnt}\n"
+        f"└ PicaArt: {report.pica_video_cnt}\n\n"
+        f"👨‍🎓 <b>Статистика за сутки по сервисам:</b>\n"
+        f"├ Для учебы: {report.diploma_cnt + report.rewrite_cnt + report.vision_cnt}\n"
+        f"│ ├ Генерация работ: {report.diploma_cnt}\n"
+        f"│ ├ Рерайтинг: {report.rewrite_cnt}\n"
+        f"│ └ Решение по фото: {report.vision_cnt}\n"
+        f"├ Для работы: {report.articles_cnt}\n"
+        f"│ └ Генерация статьи: {report.articles_cnt}\n"
+        f"├ Другие: {report.tts_cnt + report.stt_cnt + report.rembg_cnt}\n"
+        f"│ ├ Текст в речь: {report.tts_cnt}\n"
+        f"│ ├ Речь в текст: {report.stt_cnt}\n"
+        f"└─┴ Удаление фона: {report.rembg_cnt}\n\n"
+        f"💰 <b>Платежи за сутки:</b>\n"
+        f"├ Всего активных подписок: {report.prem_users_cnt}\n"
+        f"├ Новых подписок: {report.new_prem_invoices_cnt}шт на сумму {report.new_prem_invoices_sum}₽\n"
+        f"├ Продаж токенов: {report.new_token_invoices_cnt}шт на сумму {report.new_token_invoices_sum}₽\n"
+        f"├ Всего: {report.new_invoices_cnt} платежей\n"
+        f"├ Общий оборот: {report.new_invoices_sum}\n"
+        f"├ Средний чек: {report.avg_bill}\n"
+    )
+
+    for price, count in report.tariffs_buys_dict.items():
+        text += f"├ Покупок за {price}₽: {count}\n"
+
+    text += f"└ Продлений: {report.recurring_invoices_cnt}"
 
     return text

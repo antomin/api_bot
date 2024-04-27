@@ -27,6 +27,7 @@ class User(Base):
     is_active: Mapped[bool] = mapped_column(Boolean(), default=True)
     is_admin: Mapped[bool] = mapped_column(Boolean(), default=False)
 
+    chatgpt_daily_limit: Mapped[int | None] = mapped_column(default=0)
     gemini_daily_limit: Mapped[int] = mapped_column(default=0)
     kandinsky_daily_limit: Mapped[int] = mapped_column(default=0)
     sd_daily_limit: Mapped[int] = mapped_column(default=0)
@@ -95,8 +96,8 @@ class ReferalLink(Base):
     buys_cnt: Mapped[int] = mapped_column(default=0)
     buys_sum: Mapped[int] = mapped_column(default=0)
     new_users: Mapped[int] = mapped_column(default=0)
-    bot_link: Mapped[str] = mapped_column(unique=True)
-    site_link: Mapped[str] = mapped_column(unique=True)
+    bot_link: Mapped[str] = mapped_column(unique=True, default="")
+    site_link: Mapped[str] = mapped_column(unique=True, default="")
 
     def __str__(self):
         return f"<RefLink: {self.id}>"
