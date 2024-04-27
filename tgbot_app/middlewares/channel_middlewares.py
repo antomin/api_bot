@@ -30,7 +30,7 @@ class ChannelMiddleware(BaseMiddleware):
 
         text = "Чтобы пользоваться самым лучшим ботом необходимо подписаться на наш канал!"
         markup = InlineKeyboardMarkup(
-            inline_keyboard=[[InlineKeyboardButton(text="Подписаться", url=f"https://t.me/{settings.TARGET_CHAT}")]]
+            inline_keyboard=[[InlineKeyboardButton(text="Подписаться", url=f"https://t.me/+8IjJADl9yaA2NTMy")]]
         )
 
         if isinstance(event, CallbackQuery):
