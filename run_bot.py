@@ -16,7 +16,7 @@ from tgbot_app.handlers import main_router
 from tgbot_app.middlewares import ChannelMiddleware, UserMiddleware
 from tgbot_app.utils.enums import DefaultCommands
 from tgbot_app.utils.schedulers import (daily_limits_update,
-                                        recurrent_payments, send_report)
+                                        recurrent_payments, send_report, update_users_files)
 
 
 def _set_loggers() -> None:
@@ -28,7 +28,8 @@ def _set_loggers() -> None:
 
 
 def _connect_middlewares(dp: Dispatcher) -> None:
-    dp.update.middleware.register(UserMiddleware())
+    dp.message.middleware.register(UserMiddleware())
+    dp.callback_query.middleware.register(UserMiddleware())
     dp.message.middleware.register(ChannelMiddleware())
     dp.callback_query.middleware.register(ChannelMiddleware())
 
@@ -38,6 +39,7 @@ def _set_schedulers(bot: Bot) -> None:
     scheduler.add_job(daily_limits_update, trigger=IntervalTrigger(minutes=5))
     scheduler.add_job(recurrent_payments, trigger=IntervalTrigger(minutes=15))
     scheduler.add_job(send_report, trigger=CronTrigger(hour=0, minute=5), kwargs={"bot": bot})
+    scheduler.add_job(update_users_files, trigger=CronTrigger(hour=0, minute=0))
     scheduler.start()
 
 

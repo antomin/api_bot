@@ -15,6 +15,7 @@ class Tariff(Base):
     name: Mapped[str] = mapped_column(String(50))
     code: Mapped[str] = mapped_column(String(50), unique=True)
     description: Mapped[str]
+    chatgpt_daily_limit: Mapped[int | None] = mapped_column(default=0)
     gemini_daily_limit: Mapped[int] = mapped_column(default=0)
     kandinsky_daily_limit: Mapped[int] = mapped_column(default=0)
     sd_daily_limit: Mapped[int] = mapped_column(default=0)
@@ -47,6 +48,9 @@ class Invoice(Base):
 
     def __str__(self):
         return f"<Invoice: {self.id} | User: {self.user_id}>"
+
+    def __repr__(self):
+        return str(self)
 
 
 class Refund(Base):

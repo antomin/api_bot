@@ -33,7 +33,7 @@ class Robokassa:
         )
 
     def gen_payment_data(
-        self, user_id: int | str, inv_id: int, price: int, tariff_desc, mother_inv_id: int = None
+        self, user_id: int | str, inv_id: int, price: int, tariff_desc, recurring: bool, mother_inv_id: int = None
     ) -> dict:
         receipt = self.gen_receipt(price=price, tariff_desc=tariff_desc)
 
@@ -43,7 +43,7 @@ class Robokassa:
             "invoiceID": inv_id,
             "Description": f"{tariff_desc} | {user_id}",
             "SignatureValue": self.calc_signature(self.login, price, inv_id, receipt, self.password_1),
-            "Recurring": "true",
+            "Recurring": recurring,
             "Receipt": receipt,
         }
 
@@ -54,15 +54,16 @@ class Robokassa:
 
         return data
 
-    def gen_pay_url(self, user_id: int, inv_id: int, price: int, tariff_desc: str) -> str:
-        data = self.gen_payment_data(user_id=user_id, inv_id=inv_id, price=price, tariff_desc=tariff_desc)
+    def gen_pay_url(self, user_id: int, inv_id: int, price: int, tariff_desc: str, recurring: bool) -> str:
+        data = self.gen_payment_data(user_id=user_id, inv_id=inv_id, price=price, tariff_desc=tariff_desc,
+                                     recurring=recurring)
 
         return f"{self.payment_url}?{urlencode(data)}"
 
     def recurring_request(self, user_id: int | str, inv_id: int, price: int, tariff_desc,
                           mother_inv_id: int = None) -> None:
         data = self.gen_payment_data(user_id=user_id, inv_id=inv_id, price=price, tariff_desc=tariff_desc,
-                                     mother_inv_id=mother_inv_id)
+                                     mother_inv_id=mother_inv_id, recurring=True)
 
         response = requests.post(url=self.recurring_url, data=data)
 
@@ -74,7 +75,7 @@ class Robokassa:
     async def async_recurring_request(self, user_id: int, inv_id: int, price: int, desc: str, mother_inv_id: int
                                       ) -> None:
         data = self.gen_payment_data(user_id=user_id, inv_id=inv_id, price=price, tariff_desc=desc,
-                                     mother_inv_id=mother_inv_id)
+                                     mother_inv_id=mother_inv_id, recurring=True)
 
         async with ClientSession() as session:
             async with session.post(url=self.recurring_url, data=data) as response:

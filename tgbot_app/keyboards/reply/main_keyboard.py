@@ -11,7 +11,7 @@ async def main_kb(user: User) -> ReplyKeyboardMarkup:
     for btn in MainButtons:
         builder.button(text=btn)
 
-    # if user.is_admin:
-    #     builder.button(text="Панель администратора")
+    if user.is_admin:
+        builder.button(text="⚒️ Панель администратора")
 
     return builder.adjust(2, 2, 1).as_markup(resize_keyboard=True)

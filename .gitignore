@@ -190,12 +190,12 @@ cython_debug/
 
 # CUSTOM
 
-data/settings.json
-data/users_files
-
-common/settings.json
-data/pg_data
 tgbot_app/tmp/*
+data/pg_data
+data/users_files
+common/settings.json
+tgbot_app/media/tmp/*
+!tgbot_app/media/tmp/.gitkeep
 tgbot_app/media/users_files/*
 !tgbot_app/media/users_files/.gitkeep
 temp.py

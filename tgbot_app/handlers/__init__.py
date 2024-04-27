@@ -37,7 +37,7 @@ main_router.include_routers(
     stt_router,
     tts_router,
     premium_router,
-    # admin_router,
+    admin_router,
     image_router,
     text_router,
     video_router,

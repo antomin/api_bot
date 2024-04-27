@@ -5,7 +5,7 @@ class TextModels(str, Enum):
     GPT_3_TURBO = "gpt-3.5-turbo-1106"
     GPT_4_TURBO = "gpt-4-1106-preview"
     CLAUDE = "claude-2.1"
-    GEMINI = "gemini-1.0-pro-latest"
+    GEMINI = "gemini-1.0-pro"
     YAGPT = "yandexgpt"
     YAGPT_LITE = "yandexgpt-lite"
 

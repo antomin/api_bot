@@ -2,9 +2,9 @@ from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from tgbot_app.utils.callbacks import (DiplomaCallback, LearningCallback,
-                                       ServicesCallback)
+                                       ServicesCallback, CommonCallback)
 from tgbot_app.utils.enums import (DiplomaAction, DiplomaStructButtons,
-                                   LearningButtons, ServicesButtons, WorkTypes)
+                                   LearningButtons, ServicesButtons, WorkTypes, CommonChapter)
 
 
 async def gen_type_work_kb() -> InlineKeyboardMarkup:
@@ -32,6 +32,6 @@ async def gen_diploma_struct_kb() -> InlineKeyboardMarkup:
 async def gen_confirm_start_work_kb() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.button(text="✅ Да", callback_data=DiplomaCallback(action=DiplomaAction.START))
-    builder.button(text="❌Нет", callback_data="back_to_services")
+    builder.button(text="❌Нет", callback_data=CommonCallback(chapter=CommonChapter.SERVICES))
 
     return builder.adjust(2).as_markup()
