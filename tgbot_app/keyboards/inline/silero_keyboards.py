@@ -46,8 +46,8 @@ async def gen_main_speaker_kb(cur_speaker: str | None, is_service: bool = False)
     return builder.adjust(*sizes).as_markup()
 
 
-async def gen_speaker_category_kb(
-        cur_speaker: str, category: str, cur_subcategory: str = "0", is_service: bool = False) -> InlineKeyboardMarkup:
+async def gen_speaker_category_kb(cur_speaker: str, category: str, cur_subcategory: str = "0",
+                                  is_service: bool = False) -> InlineKeyboardMarkup:
     speakers = SPEAKERS[category]
     builder = InlineKeyboardBuilder()
     sizes = [1]

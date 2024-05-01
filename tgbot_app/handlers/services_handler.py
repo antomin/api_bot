@@ -7,10 +7,7 @@ from tgbot_app.keyboards import (gen_learning_kb, gen_other_services_kb,
                                  gen_services_kb, gen_working_kb)
 from tgbot_app.utils.callbacks import ServicesCallback, CommonCallback
 from tgbot_app.utils.enums import DefaultCommands, MainButtons, ServicesButtons, CommonChapter
-from tgbot_app.utils.text_variables import (SERVICES_LEARNING_TEXT,
-                                            SERVICES_MAIN_TEXT,
-                                            SERVICES_OTHERS_TEXT,
-                                            SERVICES_WORKING_TEXT)
+from tgbot_app.utils.text_variables import SERVICES_CHOICE_TEXT, SERVICES_MAIN_TEXT
 
 router = Router()
 
@@ -31,19 +28,19 @@ async def services(message: Message | CallbackQuery, state: FSMContext):
 @router.callback_query(ServicesCallback.filter(F.type == ServicesButtons.LEARN))
 async def choice_learning_service(callback: CallbackQuery):
     await callback.answer()
-    await callback.message.answer(text=SERVICES_LEARNING_TEXT, reply_markup=await gen_learning_kb())
+    await callback.message.answer(text=SERVICES_CHOICE_TEXT, reply_markup=await gen_learning_kb())
 
 
 @router.callback_query(ServicesCallback.filter(F.type == ServicesButtons.WORK))
 async def choice_working_service(callback: CallbackQuery):
     await callback.answer()
-    await callback.message.answer(text=SERVICES_WORKING_TEXT, reply_markup=await gen_working_kb())
+    await callback.message.answer(text=SERVICES_CHOICE_TEXT, reply_markup=await gen_working_kb())
 
 
 @router.callback_query(ServicesCallback.filter(F.type == ServicesButtons.OTHER))
 async def choice_other_service(callback: CallbackQuery):
     await callback.answer()
-    await callback.message.answer(text=SERVICES_OTHERS_TEXT, reply_markup=await gen_other_services_kb())
+    await callback.message.answer(text=SERVICES_CHOICE_TEXT, reply_markup=await gen_other_services_kb())
 
 
 

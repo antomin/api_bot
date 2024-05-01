@@ -12,8 +12,8 @@ from tgbot_app.utils.enums import (DefaultCommands, PaymentAction,
 from tgbot_app.utils.misc import can_create_refund
 from tgbot_app.utils.text_generators import (gen_confirm_tariff_text,
                                              gen_premium_canceled_text,
-                                             gen_refund_text)
-from tgbot_app.utils.text_variables import PREMIUM_TEXT, REACTIVATE_RECURRING_TEXT
+                                             gen_refund_text, gen_premium_text)
+from tgbot_app.utils.text_variables import REACTIVATE_RECURRING_TEXT
 
 router = Router()
 
@@ -25,7 +25,7 @@ async def premium_handler(message: Message | CallbackQuery, user: User):
         await message.answer()
         message = message.message
 
-    await message.answer(text=PREMIUM_TEXT, reply_markup=await gen_premium_kb(user))
+    await message.answer(text=gen_premium_text(user), reply_markup=await gen_premium_kb(user))
 
 
 @router.callback_query(PaymentCallback.filter(F.action == PaymentAction.SUBSCRIBE))

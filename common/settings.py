@@ -23,6 +23,7 @@ _db_pass: str = env.str("DB_PASS")
 class Model:
     name: str
     cost: int
+    desc: str
 
 
 def get_settings():
@@ -40,30 +41,51 @@ def get_settings():
 settings_data = get_settings()
 
 models_data = {
-    TextModels.GPT_3_TURBO: Model(name="ChatGPT 3.5 Turbo", cost=int(settings_data["cost_gpt_3"])),
-    TextModels.GPT_4_TURBO: Model(name="ChatGPT 4 Turbo", cost=int(settings_data["cost_gpt_4"])),
-    TextModels.YAGPT: Model(name="Яндекс GPT", cost=int(settings_data["cost_yagpt"])),
-    TextModels.YAGPT_LITE: Model(name="Яндекс GPT Lite", cost=int(settings_data["cost_yagpt_lite"])),
-    TextModels.CLAUDE: Model(name="Claude", cost=int(settings_data["cost_claude"])),
-    TextModels.GEMINI: Model(name="Gemini", cost=int(settings_data["cost_gemini"])),
+    TextModels.GPT_3_TURBO: Model(name="ChatGPT 3.5 Turbo", cost=int(settings_data["cost_gpt_3"]),
+                                  desc="Это мощная модель от OpenAI с хорошей скоростью и качеством генерации. "
+                                       "Нейросеть решает все текстовые задачи на достойном уровне"),
+    TextModels.GPT_4_TURBO: Model(name="ChatGPT 4 Turbo", cost=int(settings_data["cost_gpt_4"]),
+                                  desc="Это самая мощная версия GPT с невероятно высокой производительностью и лучшей "
+                                       "точностью ответов. Статьи, копирайтинг, код, продающие слоганы – ChatGPT 4 "
+                                       "Turbo выдает превосходный результат в очень широком спектре задач."),
+    TextModels.YAGPT: Model(name="Яндекс GPT", cost=int(settings_data["cost_yagpt"]),
+                            desc="Это российская версия модели GPT с акцентом на русский язык и адаптацию под "
+                                 "специфику региона. Модель слегка уступает аналогам в креативности, но при этом "
+                                 "крайне точна и быстра в генерации текста, кода и переводе."),
+    TextModels.YAGPT_LITE: Model(name="Яндекс GPT Lite", cost=int(settings_data["cost_yagpt_lite"]),
+                                 desc="Это легковесная версия модели Яндекс GPT. По качеству немного уступает своему "
+                                      "старшему предшественнику, но может похвастаться скоростью и дешевой ценой "
+                                      "запроса."),
+    TextModels.CLAUDE: Model(name="Claude", cost=int(settings_data["cost_claude"]),
+                             desc="Это модель, обладающая способностью к творчеству. Хорошо работает с текстом и "
+                                  "общается более человечно, т.к. обучалась на данных реальных пользователей. Можно "
+                                  "использовать, чтобы вести деловую переписку."),
+    TextModels.GEMINI: Model(name="Gemini", cost=int(settings_data["cost_gemini"]),
+                             desc="Это слегка упрощенный аналог ChatGPT от Google. Модель хороша в рутинных задачах. "
+                                  "Владельцы онлайн-магазинов заполняют ей содержания карточек товаров."),
 
-    # ImageModels.STABLE_DIFFUSION: Model(name="Stable Diffusion", cost=int(settings_data["cost_sd"])),
-    ImageModels.MIDJOURNEY: Model(name="Midjourney", cost=int(settings_data["cost_midjourney"])),
-    # ImageModels.DALLE_2: Model(name="Dall-E 2", cost=int(settings_data["cost_dalle_2"])),
-    ImageModels.DALLE_3: Model(name="Dall-E 3", cost=int(settings_data["cost_dalle_3"])),
-    ImageModels.KANDINSKY: Model(name="Kandinsky", cost=int(settings_data["cost_kandinsky"])),
+    ImageModels.MIDJOURNEY: Model(name="Midjourney", cost=int(settings_data["cost_midjourney"]),
+                                  desc="Это самая крутая нейросеть для генерации картинок. Именно этой моделью "
+                                       "создавались наиболее вирусные и запоминающиеся ИИ-картинки в интернете."),
+    ImageModels.DALLE_3: Model(name="Dall-E 3", cost=int(settings_data["cost_dalle_3"]),
+                               desc="Эта нейросеть входит в топ-3 самых мощных в мире. Она слегка уступает Midjourney "
+                                    "в качестве генераций, но при этом лучше понимает человеческие запросы."),
+    ImageModels.KANDINSKY: Model(name="Kandinsky", cost=int(settings_data["cost_kandinsky"]),
+                                 desc="Это отечественная нейронка, которая лучше всех понимает запросы на русском. "
+                                      "Модели достаточно написать буквально пару слов, остальное она додумает сама и "
+                                      "выдаст потрясное, детализированное изображение."),
 
-    VideoModels.TEXT_TO_VIDEO: Model(name="Текст в видео", cost=int(settings_data["cost_text_to_video"])),
-    VideoModels.IMG_TO_VIDEO: Model(name="Фото в видео", cost=int(settings_data["cost_img_to_video"])),
-    VideoModels.RMBG_VIDEO: Model(name="Удалить фон на видео", cost=int(settings_data["cost_rembg_video"])),
-    VideoModels.CARTOON_VIDEO: Model(name="Видео в мультик", cost=int(settings_data["cost_cartoon_video"])),
+    VideoModels.TEXT_TO_VIDEO: Model(name="Текст в видео", cost=int(settings_data["cost_text_to_video"]), desc=""),
+    VideoModels.IMG_TO_VIDEO: Model(name="Фото в видео", cost=int(settings_data["cost_img_to_video"]), desc=""),
+    VideoModels.RMBG_VIDEO: Model(name="Удалить фон на видео", cost=int(settings_data["cost_rembg_video"]), desc=""),
+    VideoModels.CARTOON_VIDEO: Model(name="Видео в мультик", cost=int(settings_data["cost_cartoon_video"]), desc=""),
 
-    ServiceModels.DIPLOMA: Model(name="Учебные работы", cost=int(settings_data["cost_diploma"])),
-    ServiceModels.REWRITE: Model(name="Рерайт", cost=int(settings_data["cost_rewrite"])),
-    ServiceModels.VISION: Model(name="Решение по фото", cost=int(settings_data["cost_vision"])),
-    ServiceModels.ARTICLE: Model(name="Статьи", cost=int(settings_data["cost_article"])),
-    ServiceModels.STT: Model(name="STT", cost=int(settings_data["cost_stt"])),
-    ServiceModels.TTS: Model(name="TTS", cost=int(settings_data["cost_stt"])),
+    ServiceModels.DIPLOMA: Model(name="Учебные работы", cost=int(settings_data["cost_diploma"]), desc=""),
+    ServiceModels.REWRITE: Model(name="Рерайт", cost=int(settings_data["cost_rewrite"]), desc=""),
+    ServiceModels.VISION: Model(name="Решение по фото", cost=int(settings_data["cost_vision"]), desc=""),
+    ServiceModels.ARTICLE: Model(name="Статьи", cost=int(settings_data["cost_article"]), desc=""),
+    ServiceModels.STT: Model(name="STT", cost=int(settings_data["cost_stt"]), desc=""),
+    ServiceModels.TTS: Model(name="TTS", cost=int(settings_data["cost_stt"]), desc=""),
 }
 
 
@@ -81,6 +103,7 @@ class Settings(BaseSettings):
     BOT_USERNAME: str = settings_data["bot_username"]
     SUPPORT_USERNAME: str = settings_data["support_username"]
     TARGET_CHAT: str = settings_data["target_chat"]
+    TARGET_CHAT_LINK: str = settings_data["target_chat_link"]
 
     NEIRO_TOKEN: str = settings_data["api_token"]
 

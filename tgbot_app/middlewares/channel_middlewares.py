@@ -20,17 +20,18 @@ class ChannelMiddleware(BaseMiddleware):
 
         user: User = data["user"]
 
-        if user.is_admin or user.tariff_id or (command and command.command == "start") or not settings.TARGET_CHAT:
+        if (user.is_admin or user.tariff_id or (command and command.command == "start") or not settings.TARGET_CHAT or
+                not settings.TARGET_CHAT_LINK):
             return await handler(event, data)
 
-        status = await event.bot.get_chat_member(chat_id=f"@{settings.TARGET_CHAT}", user_id=event.from_user.id)
+        status = await event.bot.get_chat_member(chat_id=int(settings.TARGET_CHAT), user_id=event.from_user.id)
 
         if status.status in (ChatMemberStatus.MEMBER, ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR):
             return await handler(event, data)
 
         text = "Чтобы пользоваться самым лучшим ботом необходимо подписаться на наш канал!"
         markup = InlineKeyboardMarkup(
-            inline_keyboard=[[InlineKeyboardButton(text="Подписаться", url=f"https://t.me/{settings.TARGET_CHAT}")]]
+            inline_keyboard=[[InlineKeyboardButton(text="Подписаться", url=settings.TARGET_CHAT_LINK)]]
         )
 
         if isinstance(event, CallbackQuery):

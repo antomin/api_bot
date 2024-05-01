@@ -12,8 +12,7 @@ from tgbot_app.keyboards import (gen_ai_types_kb, gen_img_model_kb,
 from tgbot_app.utils.callbacks import AiTypeCallback, CommonCallback
 from tgbot_app.utils.enums import AiTypeButtons, DefaultCommands, MainButtons, CommonChapter
 from tgbot_app.utils.states import GenerationState
-from tgbot_app.utils.text_generators import (gen_img_settings_text,
-                                             gen_txt_settings_text)
+from tgbot_app.utils.text_generators import gen_img_settings_text, gen_txt_settings_text
 from tgbot_app.utils.text_variables import (AIS_TEXT, RECONSTRUCTION_TEXT,
                                             VIDEO_MAIN_TEXT)
 
@@ -50,7 +49,8 @@ async def image_generation_handler(message: Message | CallbackQuery, user: User,
         await message.answer()
         message = message.message
 
-    await message.answer(text=gen_img_settings_text(user), reply_markup=await gen_img_model_kb(user))
+    await message.answer(text=gen_img_settings_text(user), reply_markup=await gen_img_model_kb(user),
+                         disable_web_page_preview=True)
 
     await state.set_state(GenerationState.IMAGE)
 

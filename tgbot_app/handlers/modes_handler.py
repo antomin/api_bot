@@ -1,6 +1,6 @@
 from aiogram import F, Router
 from aiogram.exceptions import TelegramBadRequest
-from aiogram.types import CallbackQuery, FSInputFile
+from aiogram.types import CallbackQuery
 
 from common.db_api import reset_session, switch_context, update_object
 from common.models import User
@@ -13,7 +13,7 @@ from tgbot_app.utils.callbacks import (ImageModelCallback, RoleCallback,
 from tgbot_app.utils.enums import SileroAction, TextSettingsButtons
 from tgbot_app.utils.text_generators import (gen_img_settings_text,
                                              gen_txt_settings_text)
-from tgbot_app.utils.text_variables import VOICE_NO_PREMIUM_TEXT
+from tgbot_app.utils.text_variables import VOICE_NO_PREMIUM_TEXT, ROLE_TEXT, CHOICE_SPEAKER_TEXT
 
 router = Router()
 
@@ -51,9 +51,7 @@ async def set_text_model(callback: CallbackQuery, callback_data: TextModelCallba
 
 @router.callback_query(TextSettingsCallback.filter(F.action == TextSettingsButtons.ROLE))
 async def text_settings_role(callback: CallbackQuery, user: User):
-    markup = await gen_text_roles_kb(user)
-
-    await callback.message.edit_reply_markup(reply_markup=markup)
+    await callback.message.edit_text(text=ROLE_TEXT, reply_markup=await gen_text_roles_kb(user))
     await callback.answer()
 
 
@@ -64,17 +62,14 @@ async def set_text_role(callback: CallbackQuery, callback_data: RoleCallback, us
     if user.txt_model_role_id != callback_data.role_id:
         await update_object(user, txt_model_role_id=role_id, update_relations=True)
 
-    markup = await gen_txt_settings_kb(user)
-
-    await callback.message.edit_reply_markup(reply_markup=markup)
+    await callback.message.edit_reply_markup(text=gen_txt_settings_text(user),
+                                             reply_markup=await gen_txt_settings_kb(user))
     await callback.answer()
 
 
 @router.callback_query(TextSettingsCallback.filter(F.action == TextSettingsButtons.BACK))
 async def text_settings_role_back(callback: CallbackQuery, user: User):
-    markup = await gen_txt_settings_kb(user)
-
-    await callback.message.edit_reply_markup(reply_markup=markup)
+    await callback.message.edit_text(text=gen_txt_settings_text(user), reply_markup=await gen_txt_settings_kb(user))
     await callback.answer()
 
 
@@ -84,9 +79,7 @@ async def choice_speaker(callback: CallbackQuery, user: User):
         await callback.answer(text=VOICE_NO_PREMIUM_TEXT, show_alert=True)
         return
 
-    markup = await gen_main_speaker_kb(cur_speaker=user.tts_mode)
-
-    await callback.message.edit_reply_markup(reply_markup=markup)
+    await callback.message.edit_reply_markup(reply_markup=await gen_main_speaker_kb(cur_speaker=user.tts_mode))
     await callback.answer()
 
 
@@ -101,7 +94,7 @@ async def show_speaker_category(callback: CallbackQuery, callback_data: SileroCa
 
     markup = await gen_speaker_category_kb(cur_speaker=user.tts_mode, category=category, cur_subcategory=subcategory)
 
-    await callback.message.edit_reply_markup(reply_markup=markup)
+    await callback.message.edit_text(text=CHOICE_SPEAKER_TEXT, reply_markup=markup)
     await callback.answer()
 
 
@@ -114,16 +107,16 @@ async def set_speaker_handler(callback: CallbackQuery, callback_data: SileroCall
     if user.tts_mode != speaker:
         await update_object(user, tts_mode=speaker, update_relations=True)
 
-    if speaker is None:
-        markup = await gen_txt_settings_kb(user)
+    if not speaker:
+        await callback.message.edit_text(text=gen_txt_settings_text(user), reply_markup=await gen_txt_settings_kb(user))
     else:
         markup = await gen_speaker_category_kb(cur_speaker=user.tts_mode, category=category,
                                                cur_subcategory=subcategory)
+        try:
+            await callback.message.edit_reply_markup(reply_markup=markup)
+        except TelegramBadRequest:
+            pass
 
-    try:
-        await callback.message.edit_reply_markup(reply_markup=markup)
-    except TelegramBadRequest:
-        pass
     await callback.answer()
 
 
@@ -144,13 +137,8 @@ async def empty_button(callback: CallbackQuery):
 
 @router.callback_query(ImageModelCallback.filter())
 async def set_image_model(callback: CallbackQuery, callback_data: ImageModelCallback, user: User):
-    if user.img_model == callback_data.model:
-        pass
-    else:
+    if user.img_model != callback_data.model:
         await update_object(user, img_model=callback_data.model, update_relations=True)
-        text = gen_img_settings_text(user)
-        markup = await gen_img_model_kb(user)
-
-        await callback.message.edit_text(text=text, reply_markup=markup)
-
+        await callback.message.edit_text(text=gen_img_settings_text(user), reply_markup=await gen_img_model_kb(user),
+                                         disable_web_page_preview=True)
     await callback.answer()
