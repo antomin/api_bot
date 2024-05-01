@@ -5,12 +5,13 @@ from common.db_api import get_roles
 from common.enums import ImageModels, TextModels, VideoModels
 from common.models import User
 from common.settings import settings
-from tgbot_app.utils.callbacks import (AiTypeCallback, ImageModelCallback,
-                                       RoleCallback, TextModelCallback,
-                                       TextSettingsCallback, VideoModelCallback,
-                                       CommonCallback, OtherServicesCallback)
-from tgbot_app.utils.enums import (AiTypeButtons, TextSettingsButtons,
-                                   CommonChapter, OtherServicesButtons)
+from tgbot_app.utils.callbacks import (AiTypeCallback, CommonCallback,
+                                       ImageModelCallback,
+                                       OtherServicesCallback, RoleCallback,
+                                       TextModelCallback, TextSettingsCallback,
+                                       VideoModelCallback)
+from tgbot_app.utils.enums import (AiTypeButtons, CommonChapter,
+                                   OtherServicesButtons, TextSettingsButtons)
 
 
 async def gen_ai_types_kb() -> InlineKeyboardMarkup:

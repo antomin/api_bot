@@ -5,15 +5,15 @@ from aiogram.filters.callback_data import CallbackData
 from common.enums import ImageAction, ImageModels, TextModels, VideoModels
 from tgbot_app.utils.enums import (AdminLinksButtons, AdminMainButtons,
                                    AiTypeButtons, ArticleAction, ArticleModes,
-                                   DiplomaAction, DiplomaStructButtons,
-                                   FAQFinancesButtons, FAQMainButtons,
-                                   FAQProblemsButtons, FAQRecButtons,
-                                   LearningButtons, MainButtons,
+                                   CommonChapter, DiplomaAction,
+                                   DiplomaStructButtons, FAQFinancesButtons,
+                                   FAQMainButtons, FAQProblemsButtons,
+                                   FAQRecButtons, LearningButtons, MainButtons,
                                    OtherServicesButtons, PaymentAction,
                                    ProfileButtons, SearchEngine,
                                    ServicesButtons, SileroAction,
                                    TextSettingsButtons, WorkingButtons,
-                                   WorkPlanButtons, WorkTypes, CommonChapter)
+                                   WorkPlanButtons, WorkTypes)
 
 
 class ProfileCallback(CallbackData, prefix="profile"):

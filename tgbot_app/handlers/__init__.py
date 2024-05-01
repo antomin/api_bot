@@ -4,10 +4,12 @@ from .admin_handler import router as admin_router
 from .ais_handler import router as ais_router
 from .article_handler import router as article_router
 from .diploma_handler import router as diploma_router
+from .empty_handler import router as empty_router
 from .faq_handler import router as faq_router
 from .gen_image_handler import router as image_router
 from .gen_text_handler import router as text_router
 from .gen_video_handler import router as video_router
+from .img_rembg_handler import router as img_rembg_router
 from .modes_handler import router as modes_router
 from .premium_handler import router as premium_router
 from .profile_handler import router as profile_router
@@ -18,8 +20,6 @@ from .stt_handler import router as stt_router
 from .tokens_handler import router as tokens_router
 from .tts_handler import router as tts_router
 from .vision_handler import router as vision_router
-from .empty_handler import router as empty_router
-from .img_rembg_handler import router as img_rembg_router
 
 main_router = Router()
 
