@@ -1,9 +1,9 @@
-import asyncio
 from datetime import datetime, timedelta, date
 from typing import Any
 
 from loguru import logger
 from sqlalchemy import desc, select, func
+from sqlalchemy.exc import IntegrityError
 
 from common.enums import ImageModels, TextModels, VideoModels, ServiceModels
 from common.models import (Invoice, ReferalLink, Tariff, TextGenerationRole,
@@ -382,7 +382,7 @@ async def create_report(auto: bool = False) -> Report:
         trial_buys_cnt = await session.scalar(select(func.count()).select_from(Invoice).where(Invoice.tariff.has(Tariff.is_trial), Invoice.is_paid, Invoice.created_at.between(*time_range)))
         _tariffs_buys_result = await session.execute(select(Invoice.sum, func.count(Invoice.id)).where(Invoice.is_paid, Invoice.tariff.has(~Tariff.is_extra), Invoice.created_at.between(*time_range)).group_by(Invoice.sum))
         tariffs_buys_dict = {price: count for price, count in _tariffs_buys_result}
-        recurring_invoices_cnt = await session.scalar(select(func.count()).select_from(Invoice).where(Invoice.mother_invoice_id.is_not(None), Invoice.created_at.between(*time_range)))
+        recurring_invoices_cnt = await session.scalar(select(func.count()).select_from(Invoice).where(Invoice.mother_invoice_id.is_not(None), Invoice.created_at.between(*time_range), Invoice.is_paid))
 
         report = Report(
             users_cnt=users_cnt,
@@ -436,5 +436,13 @@ async def create_report(auto: bool = False) -> Report:
     return report
 
 
-if __name__ == '__main__':
-    asyncio.run(create_report(True))
+def create_admin_user(username: str, password: str) -> None:
+    with db.session_factory() as session:
+        user = session.scalar(select(UserAdmin).where(UserAdmin.username == username))
+
+        if not user:
+            user = UserAdmin(username=username)
+
+        user.set_password(password)
+        session.add(user)
+        session.commit()

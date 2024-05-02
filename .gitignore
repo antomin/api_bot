@@ -151,9 +151,9 @@ celerybeat.pid
 # Environments
 .env
 .venv
-env/
+.env/
 venv/
-ENV/
+.env/
 env.bak/
 venv.bak/
 
@@ -200,3 +200,4 @@ tgbot_app/media/users_files/*
 !tgbot_app/media/users_files/.gitkeep
 temp.py
 docker-compose-dev.yml
+.env

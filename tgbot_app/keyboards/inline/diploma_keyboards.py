@@ -3,8 +3,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from tgbot_app.utils.callbacks import (DiplomaCallback, LearningCallback,
                                        ServicesCallback, CommonCallback)
-from tgbot_app.utils.enums import (DiplomaAction, DiplomaStructButtons,
-                                   LearningButtons, ServicesButtons, WorkTypes, CommonChapter)
+from tgbot_app.utils.enums import (DiplomaAction, LearningButtons, ServicesButtons, WorkTypes, CommonChapter)
 
 
 async def gen_type_work_kb() -> InlineKeyboardMarkup:

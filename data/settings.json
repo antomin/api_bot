@@ -28,6 +28,10 @@
             "value": "",
             "caption": "Чат"
         },
+        "target_chat_link": {
+            "value": "",
+            "caption": "Чат"
+        },
         "api_token": {
             "value": "bae13502-6936-4e64-a2b6-6dd5893bae42",
             "caption": "Api токен"

@@ -2,7 +2,6 @@ import asyncio
 from datetime import datetime, timedelta
 
 from aiogram import Bot
-from aiogram.exceptions import TelegramBadRequest
 from loguru import logger
 from sqlalchemy import select, update
 
@@ -103,7 +102,3 @@ async def update_users_files() -> None:
 
     with open(f"{settings.MEDIA_DIR}/users_files/premium_users.txt", "w", encoding="utf-8") as file:
         file.write("\n".join(map(str, premium_users_id)))
-
-
-if __name__ == '__main__':
-    asyncio.run(update_users_files())

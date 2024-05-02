@@ -1,6 +1,8 @@
 from flask import Flask
+from flask_migrate import upgrade
 from loguru import logger
 
+from common.db_api import create_admin_user
 from common.settings import settings
 from flask_app.admin.admin import admin
 from flask_app.auth.views import auth_app
@@ -31,6 +33,12 @@ def __set_extensions(app: Flask) -> None:
     migrate.init_app(app=app, db=db)
     admin.init_app(app=app)
     login_manager.init_app(app)
+    app.cli.add_command(admin_cli)
+
+
+def __migrate_db(app: Flask) -> None:
+    with app.app_context():
+        upgrade()
 
 
 def create_app() -> Flask:
@@ -42,6 +50,7 @@ def create_app() -> Flask:
     __set_extensions(app)
     __register_blueprints(app)
 
-    app.cli.add_command(admin_cli)
+    __migrate_db(app)
+    create_admin_user(username=settings.ADMIN_USERNAME, password=settings.ADMIN_PASSWORD)
 
     return app

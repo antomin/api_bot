@@ -4,6 +4,7 @@ from aiogram.types import CallbackQuery, FSInputFile
 
 from common.db_api import reset_session, switch_context, update_object
 from common.models import User
+from common.settings import settings
 from tgbot_app.keyboards import (gen_img_model_kb, gen_main_speaker_kb,
                                  gen_speaker_category_kb, gen_text_models_kb,
                                  gen_text_roles_kb, gen_txt_settings_kb)
@@ -114,7 +115,7 @@ async def set_speaker_handler(callback: CallbackQuery, callback_data: SileroCall
     if user.tts_mode != speaker:
         await update_object(user, tts_mode=speaker, update_relations=True)
 
-    if speaker is None:
+    if not speaker:
         markup = await gen_txt_settings_kb(user)
     else:
         markup = await gen_speaker_category_kb(cur_speaker=user.tts_mode, category=category,
@@ -128,13 +129,11 @@ async def set_speaker_handler(callback: CallbackQuery, callback_data: SileroCall
 
 
 @router.callback_query(SileroCallback.filter(F.action == SileroAction.EXAMPLE))
-async def send_example(callback: CallbackQuery):
-    await callback.answer("TODO", show_alert=True)  # TODO
+async def send_example(callback: CallbackQuery, user: User):
+    example = FSInputFile(f"{settings.MEDIA_DIR}/tts_examples/{user.tts_mode}.ogg")
 
-    # example = FSInputFile(f"{settings.MEDIA_DIR}/tts_examples/{user.tts_mode}.wav")
-    #
-    # await callback.message.answer_voice(example, caption=user.tts_mode)
-    # await callback.answer()
+    await callback.message.answer_voice(example, caption=user.tts_mode)
+    await callback.answer()
 
 
 @router.callback_query(SileroCallback.filter(F.action == SileroAction.NONE))

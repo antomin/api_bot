@@ -18,9 +18,8 @@ async def no_query_model(message: Message, user: User, state: FSMContext):
         await get_data_vision(message, user, state)
     elif message.document:
         await get_data_rewrite(message, user, state)
-        return
     elif message.text or message.voice:
-        model = TextModels.GPT_3_TURBO if user.tariff_id else TextModels.CLAUDE
+        model = TextModels.GPT_3_TURBO if user.tariff_id else TextModels.GEMINI
 
         if user.txt_model != model:
             await update_object(user, txt_model=model)

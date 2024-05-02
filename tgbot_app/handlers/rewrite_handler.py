@@ -68,7 +68,7 @@ async def get_data_rewrite(message: Message, user: User, state: FSMContext):
         return
 
     if message.document:
-        await message.answer_document(document=URLInputFile(url=result.result, filename=file_name))
+        await message.answer_document(document=URLInputFile(url=result.result, filename=file_name))  # noqa
     else:
         await message.answer(result.result)
 

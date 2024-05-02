@@ -77,10 +77,14 @@ class Settings(BaseSettings):
     APP_NAME: str = settings_data["app_name"]
     DOMAIN: str = settings_data["domain"]
 
+    ADMIN_USERNAME: str = env.str("ADMIN_USERNAME")
+    ADMIN_PASSWORD: str = env.str("ADMIN_PASSWORD")
+
     TG_TOKEN: str = settings_data["tgbot_token"]
     BOT_USERNAME: str = settings_data["bot_username"]
     SUPPORT_USERNAME: str = settings_data["support_username"]
     TARGET_CHAT: str = settings_data["target_chat"]
+    TARGET_CHAT_LINK: str = settings_data["target_chat"]
 
     NEIRO_TOKEN: str = settings_data["api_token"]
 
