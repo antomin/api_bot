@@ -35,6 +35,8 @@ services:
     depends_on:
       - db
       - web
+    environment:
+      - 'TZ=Europe/Moscow'
     volumes:
       - ./data/tmp:/code/tgbot_app/media/tmp
       - ./data/users_files:/code/tgbot_app/media/users_files
