@@ -19,13 +19,14 @@ async def get_or_create_user(tgid: int, username: str, first_name: str, last_nam
         user: User = await session.get(User, tgid)
         logger.debug(link_id)
         if link_id and link_id.isdigit():
-            link: ReferalLink = await session.get(ReferalLink, int(link_id))
+            link: ReferalLink | None = await session.get(ReferalLink, int(link_id))
+            link_id = int(link_id)
         else:
-            link = None
+            link = link_id = None
 
         if not user:
             user = User(id=tgid, username=username if username else str(tgid), first_name=first_name,
-                        last_name=last_name, referal_link_id=int(link_id))
+                        last_name=last_name, referal_link_id=link_id)
             user.gemini_daily_limit = settings.FREE_GEMINI_QUERIES
             user.sd_daily_limit = settings.FREE_SD_QUERIES
             user.kandinsky_daily_limit = settings.FREE_KANDINSKY_QUERIES
