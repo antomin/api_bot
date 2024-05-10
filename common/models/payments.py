@@ -37,7 +37,7 @@ class Tariff(Base):
 class Invoice(Base):
     __tablename__ = "invoices"
 
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     is_paid: Mapped[bool] = mapped_column(default=False)
     mother_invoice_id: Mapped[int | None] = mapped_column(default=None)
     tariff_id: Mapped[int | None] = mapped_column(ForeignKey("tariffs.id", ondelete="SET NULL"))
