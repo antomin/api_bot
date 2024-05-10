@@ -17,6 +17,7 @@ from common.settings import Model, settings
 async def get_or_create_user(tgid: int, username: str, first_name: str, last_name: str, link_id: str | None) -> User:
     async with db.async_session_factory() as session:
         user: User = await session.get(User, tgid)
+        logger.debug(link_id)
         if link_id and link_id.isdigit():
             link: ReferalLink = await session.get(ReferalLink, int(link_id))
         else:
