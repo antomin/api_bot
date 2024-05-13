@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 
 from flask_login import UserMixin
 from sqlalchemy import (BigInteger, Boolean, Column, DateTime, ForeignKey,
-                        String)
+                        Integer, String, Table)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql.functions import now
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -15,6 +15,16 @@ if TYPE_CHECKING:
     from .generations import (ImageQuery, ServiceQuery, TextGenerationRole,
                               TextQuery, TextSession, VideoQuery)
     from .payments import Invoice, Refund, Tariff
+
+
+user_referral_link_association = Table(
+    "user_referral_link_association",
+    Base.metadata,
+    Column("user_id", BigInteger, ForeignKey("users.id", ondelete="CASCADE"),
+           primary_key=True),
+    Column("referal_link_id", Integer, ForeignKey("referal_links.id", ondelete="CASCADE"),
+           primary_key=True),
+)
 
 
 class User(Base):
@@ -60,6 +70,8 @@ class User(Base):
     video_queries: Mapped[list["VideoQuery"]] = relationship(back_populates="user")
     services_queries: Mapped[list["ServiceQuery"]] = relationship(back_populates="user")
     txt_model_role: Mapped["TextGenerationRole"] = relationship(back_populates="users", lazy="joined")
+    referal_links: Mapped[list["ReferalLink"]] = relationship(secondary=user_referral_link_association,
+                                                              back_populates="users")
 
     def __str__(self):
         return f"<User: {self.id}>"
@@ -98,6 +110,8 @@ class ReferalLink(Base):
     new_users: Mapped[int] = mapped_column(default=0)
     bot_link: Mapped[str] = mapped_column(unique=True, default="")
     site_link: Mapped[str] = mapped_column(unique=True, default="")
+
+    users: Mapped[list["User"]] = relationship(secondary=user_referral_link_association, back_populates="referal_links")
 
     def __str__(self):
         return f"<RefLink: {self.id}>"
