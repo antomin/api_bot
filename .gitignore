@@ -198,5 +198,8 @@ tgbot_app/media/tmp/*
 !tgbot_app/media/tmp/.gitkeep
 tgbot_app/media/users_files/*
 !tgbot_app/media/users_files/.gitkeep
-temp.py
+migrator.py
 docker-compose-dev.yml
+json_invoices.json
+json_links.json
+json_users.json

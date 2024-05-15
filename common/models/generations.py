@@ -26,7 +26,7 @@ class TextSession(Base):
 class TextQuery(Base):
     __tablename__ = "text_queries"
 
-    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     model: Mapped[TextModels] = mapped_column(String(20), default=TextModels.GPT_3_TURBO)
     session_id: Mapped[int | None] = mapped_column(ForeignKey("sessions.id", ondelete="SET NULL"))
     prompt: Mapped[str]
@@ -43,7 +43,7 @@ class ImageQuery(Base):
     __tablename__ = "image_queries"
 
     id: Mapped[str] = mapped_column(String(50), primary_key=True)
-    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     model: Mapped[ImageModels] = mapped_column(String(20), default=ImageModels.KANDINSKY)
     prompt: Mapped[str] = mapped_column(default="")
     result: Mapped[str] = mapped_column(default="")
@@ -60,7 +60,7 @@ class ImageQuery(Base):
 class VideoQuery(Base):
     __tablename__ = "video_queries"
 
-    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     type: Mapped[VideoModels] = mapped_column(String(20))
     prompt: Mapped[str]
     result: Mapped[str]
@@ -74,7 +74,7 @@ class VideoQuery(Base):
 class ServiceQuery(Base):
     __tablename__ = "service_queries"
 
-    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     type: Mapped[ServiceModels] = mapped_column(String(20))
     result: Mapped[str]
 

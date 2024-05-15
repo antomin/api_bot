@@ -48,7 +48,7 @@ class User(Base):
         ForeignKey("text_generation_roles.id", ondelete="SET NULL"), default=None)
     img_model: Mapped[ImageModels] = mapped_column(String(), default=ImageModels.KANDINSKY)
     tts_mode: Mapped[str] = mapped_column(default="")
-    text_session_id: Mapped[int | None] = mapped_column(ForeignKey("sessions.id", ondelete="SET NULL"),
+    text_session_id: Mapped[int | None] = mapped_column(ForeignKey("sessions.id", ondelete="CASCADE"),
                                                         default=None, server_default=None)
 
     update_daily_limits_time: Mapped[datetime] = mapped_column(DateTime, default=now(), server_default=now())
