@@ -1,6 +1,5 @@
 import json
 from datetime import datetime
-from pprint import pprint
 
 from loguru import logger
 
@@ -27,6 +26,8 @@ def parse_name(name: str) -> list:
     if len(_names) == 2:
         return _names
     else:
+        if _names[0] == "need_update":
+            return [None, None]
         return [_names[0], None]
 
 
@@ -41,6 +42,21 @@ def calc_update_time(date_str: str) -> datetime:
     now = datetime.now()
     result = datetime(year=now.year, month=now.month, day=now.day, hour=dt.hour, minute=dt.minute, second=dt.second)
     return result
+
+
+def calc_payment_time(user: dict, invoices: list[dict]) -> (datetime | None, int | None):
+    if user["type"] != "subscription":
+        return None, None
+    user_invoices_to_paid = [inv for inv in invoices if inv['payment_status'] == 'due-on-date' and user["id"] == inv["user_id"]]
+    if not user_invoices_to_paid:
+        return None, None
+    last_inv = user_invoices_to_paid[-1]
+    dt = str_to_datetime(last_inv['next_payment_date'])
+
+    if dt < datetime(year=2024, month=5, day=14):
+        return None, None
+
+    return dt, last_inv['parent_invoice_id']
 
 
 def calc_tariff(type_: str, quantity: float) -> dict:
@@ -63,9 +79,9 @@ def calc_tariff(type_: str, quantity: float) -> dict:
 
 
 def get_mother_inv_id(user_id: int, invoices: list[dict]) -> int | None:
-    paid_user_invoices = set([inv["parent_invoice_id"] for inv in invoices if inv['payment_status'] == "success" and inv["user_id"] == user_id and inv["parent_invoice_id"] is not None])
-    if paid_user_invoices:
-        return max(paid_user_invoices)
+    user_invoices = [inv["parent_invoice_id"] for inv in invoices if inv["user_id"] == user_id and inv["parent_invoice_id"]]
+    if user_invoices:
+        return max(user_invoices)
 
 
 def create_users(users: list[dict], invoices: list[dict]) -> None:
@@ -73,27 +89,44 @@ def create_users(users: list[dict], invoices: list[dict]) -> None:
     cnt = len(users)
 
     for user in users:
-        if user["full_name"] == "need_update":
-            continue
-
         names = parse_name(user["full_name"])
-        tariff = calc_tariff(type_=user["type"], quantity=user["quantity"])
+        # mother_invoice_id = get_mother_inv_id(user["id"], invoices)
+
+        payment_time, mother_invoice_id = calc_payment_time(user, invoices)
+
+        if user["type"] == "subscription" and payment_time and mother_invoice_id:
+            tariff_id = TARIFFS.get(user["quantity"])
+            chatgpt_daily_limit = -1
+            gemini_daily_limit = -1
+            kandinsky_daily_limit = 5
+            sd_daily_limit = -1
+            first_payment = False
+        else:
+            tariff_id = None
+            chatgpt_daily_limit = 0
+            gemini_daily_limit = 5
+            kandinsky_daily_limit = 2
+            sd_daily_limit = 0
+            first_payment = True
+            payment_time = None
+            mother_invoice_id = None
 
         user_obj = User(
             id=user["user_id"],
             username=user["username"],
             first_name=names[0],
             last_name=names[1],
-            is_active=True if user["active"] else False,
-            chatgpt_daily_limit=tariff["chatgpt_daily_limit"],
-            gemini_daily_limit=tariff["gemini_daily_limit"],
-            kandinsky_daily_limit=tariff["kandinsky_daily_limit"],
-            sd_daily_limit=tariff["sd_daily_limit"],
+            is_active=True if user["active"] in (1, None) else False,
+            chatgpt_daily_limit=chatgpt_daily_limit,
+            gemini_daily_limit=gemini_daily_limit,
+            kandinsky_daily_limit=kandinsky_daily_limit,
+            sd_daily_limit=sd_daily_limit,
             token_balance=int(user["left"]) * 15 if user["left"] else 0,
             update_daily_limits_time=calc_update_time(user["created_at"]) if user["created_at"] else datetime.now(),
-            tariff_id=tariff["tariff_id"],
-            mother_invoice_id=get_mother_inv_id(user["id"], invoices),
-            payment_time=str_to_datetime(user["expiration_date"]) if tariff["tariff_id"] else None,
+            tariff_id=tariff_id,
+            mother_invoice_id=mother_invoice_id,
+            payment_time=payment_time,
+            first_payment=first_payment,
             created_at=str_to_datetime(user["created_at"]) if user["created_at"] else datetime.now(),
         )
 
@@ -167,9 +200,9 @@ def delete_data() -> None:
 
 
 def main():
-    users = get_data("fixtures/json_users.json")
-    invoices = get_data("fixtures/json_invoices.json")
-    links = get_data("fixtures/json_links.json")
+    users = get_data("data/fixtures/json_users.json")
+    invoices = get_data("data/fixtures/json_invoices.json")
+    links = get_data("data/fixtures/json_links.json")
 
     create_users(users, invoices)
     create_links(links, users, invoices)
