@@ -170,9 +170,9 @@ def delete_data() -> None:
 
 
 def main():
-    users = get_data("/fixtures/json_users.json")
-    invoices = get_data("/fixtures/json_invoices.json")
-    links = get_data("/fixtures/json_links.json")
+    users = get_data("fixtures/json_users.json")
+    invoices = get_data("fixtures/json_invoices.json")
+    links = get_data("fixtures/json_links.json")
 
     create_users(users, invoices)
     create_links(links, users, invoices)
