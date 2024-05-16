@@ -162,5 +162,5 @@ class AsyncNeiroAPI:
                     logger.error(f"API REQUEST JSON error: {error.args} | {result}")
                     return
                 if not response.ok:
-                    logger.error(f"API REQUEST error: {response.status} | {result}")
+                    logger.error(f"API REQUEST <{url}> error: {response.status} | {result}")
                 return result

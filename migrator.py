@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 
 from loguru import logger
+from sqlalchemy import update
 
 from common.models import ReferalLink, User, db
 
@@ -216,7 +217,15 @@ def save_errors():
         file.write("\n".join(str(e) for e in errors))
 
 
+def switch_model():
+    with db.session_factory() as session:
+        stmt = update(User).where(User.txt_model != "gemini-pro").values(txt_model="txt_model")
+        session.execute(stmt)
+        session.commit()
+
+
 if __name__ == '__main__':
-    delete_data()
-    main()
-    save_errors()
+    # delete_data()
+    # main()
+    # save_errors()
+    switch_model()
