@@ -170,7 +170,7 @@ def create_links(links: list[dict], users: list[dict], invoices: list[dict]) -> 
 
         try:
             with db.session_factory() as session:
-                for user_id in users_ids:
+                for user_id in set(users_ids):
                     user = session.get(User, user_id)
                     link_obj.users.append(user)
 
