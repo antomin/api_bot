@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 
 from loguru import logger
-from sqlalchemy import update
+from sqlalchemy import update, select
 
 from common.models import ReferalLink, User, db
 
@@ -224,8 +224,21 @@ def switch_model():
         session.commit()
 
 
+def create_users_files():
+    with db.session_factory() as session:
+        free_users = session.scalars(select(User.id).where(User.tariff_id.is_(None), User.is_active)).all()
+        prem_users = session.scalars(select(User.id).where(User.tariff_id.is_not(None), User.is_active)).all()
+
+        with open("free_users.txt", "w") as file:
+            file.write("\n".join(map(str, free_users)))
+
+        with open("prem_users.txt", "w") as file:
+            file.write("\n".join(map(str, prem_users)))
+
+
 if __name__ == '__main__':
     # delete_data()
     # main()
     # save_errors()
-    switch_model()
+    # switch_model()
+    create_users_files()
