@@ -30,7 +30,10 @@ class UserAdminView(AdminView):
 
 
 class ReferalLinkView(AdminView):
-    pass
+    column_display_pk = True
+    form_columns = ["id", "name", "owner_id", "clicks", "buys_cnt", "buys_sum", "new_users", "bot_link", "site_link"]
+    column_list = form_columns
+    column_searchable_list = ["owner_id", "name"]
 
 
 class InvoiceView(AdminView):
@@ -61,3 +64,4 @@ admin.add_view(InvoiceView(Invoice, db.session, name='Счета'))
 admin.add_view(TextGenerationRoleView(TextGenerationRole, db.session, name='Роли'))
 admin.add_view(ReportView(Report, db.session, name='Отчёты'))
 admin.add_view(RefundView(Refund, db.session, name='Возвраты'))
+admin.add_view(ReferalLinkView(ReferalLink, db.session, name='Возвраты'))
