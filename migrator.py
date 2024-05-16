@@ -179,8 +179,12 @@ def create_links(links: list[dict], users: list[dict], invoices: list[dict]) -> 
                     users_cnt -= 1
                     print(f"LINK {link['id']} Users: {users_cnt}")
 
-                session.add(link_obj)
-                session.commit()
+                    try:
+                        session.add(link_obj)
+                        session.commit()
+                    except Exception as error:
+                        logger.error(f"Add link <{link['id']}> failed: {error.args}")
+                        errors.append({"link_id": link["id"], "error": error.args})
 
         except Exception as error:
             logger.error(f"Creating link <{link['id']}> failed: {error.args}")
