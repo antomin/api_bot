@@ -176,7 +176,10 @@ def create_links(links: list[dict], users: list[dict], invoices: list[dict]) -> 
 
                     session.add(user)
 
-                session.add(link)
+                    users_cnt -= 1
+                    print(f"LINK {link['id']} Users: {users_cnt}")
+
+                session.add(link_obj)
                 session.commit()
 
         except Exception as error:
@@ -186,13 +189,13 @@ def create_links(links: list[dict], users: list[dict], invoices: list[dict]) -> 
         cnt -= 1
         print(f"LINKS: {cnt}")
 
-        logger.info("Creating links FINISH")
+    logger.info("Creating links FINISH")
 
 
 def delete_data() -> None:
     logger.info("Deleting data")
     with db.session_factory() as session:
-        session.query(User).delete()
+        # session.query(User).delete()
         session.query(ReferalLink).delete()
         session.commit()
 
@@ -204,13 +207,13 @@ def main():
     invoices = get_data("fixtures/json_invoices.json")
     links = get_data("fixtures/json_links.json")
 
-    create_users(users, invoices)
+    # create_users(users, invoices)
     create_links(links, users, invoices)
 
 
 def save_errors():
     with open("errors.log", "w") as file:
-        file.write("\n".join(errors))
+        file.write("\n".join(str(e) for e in errors))
 
 
 if __name__ == '__main__':
