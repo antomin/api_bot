@@ -47,20 +47,14 @@ async def recurrent_payments() -> None:
     if not users:
         logger.info("SCHEDULER | RecurrentPayments | NO USERS")
 
-    tasks_for_unsubscribe = []
-    tasks_for_update_users = []
-    tasks_for_recurring = []
-
     for user in users:
         if user.payment_tries >= 4 or not user.recurring:
-            tasks_for_unsubscribe.append(asyncio.create_task(unsubscribe_user(user)))
+            await unsubscribe_user(user)
             continue
 
-        tasks_for_update_users.append(asyncio.create_task(
-            update_object(user,
-                          payment_time=user.payment_time + timedelta(hours=24 if user.payment_tries == 1 else 12),
-                          payment_tries=user.payment_tries + 1)
-        ))
+        await update_object(user,
+                            payment_time=user.payment_time + timedelta(hours=24 if user.payment_tries == 1 else 12),
+                            payment_tries=user.payment_tries + 1)
 
         if user.tariff.is_trial:
             tariff = await get_obj_by_id(Tariff, user.tariff.main_tariff_id)
@@ -69,14 +63,8 @@ async def recurrent_payments() -> None:
 
         invoice = await create_invoice(user_id=user.id, mother_invoice_id=user.mother_invoice_id, tariff_id=tariff.id)
 
-        tasks_for_recurring.append(asyncio.create_task(
-            robokassa.async_recurring_request(user_id=user.id, inv_id=invoice.id, price=tariff.price,
-                                              desc=tariff.description, mother_inv_id=user.mother_invoice_id)
-        ))
-
-    await asyncio.gather(*tasks_for_unsubscribe)
-    await asyncio.gather(*tasks_for_update_users)
-    await asyncio.gather(*tasks_for_recurring)
+        await robokassa.async_recurring_request(user_id=user.id, inv_id=invoice.id, price=tariff.price,
+                                                desc=tariff.description, mother_inv_id=user.mother_invoice_id)
 
     logger.info(f"SCHEDULER | RecurrentPayments | FINISH ({len(users)})")
 
