@@ -5,6 +5,7 @@ from .ais_handler import router as ais_router
 from .article_handler import router as article_router
 from .diploma_handler import router as diploma_router
 from .empty_handler import router as empty_router
+from .error_handler import router as error_router
 from .faq_handler import router as faq_router
 from .gen_image_handler import router as image_router
 from .gen_text_handler import router as text_router
@@ -25,6 +26,7 @@ main_router = Router()
 
 main_router.include_routers(
     start_router,
+    error_router,
     ais_router,
     faq_router,
     profile_router,
