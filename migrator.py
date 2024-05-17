@@ -1,10 +1,17 @@
+import asyncio
 import json
+import time
 from datetime import datetime
 
+from aiogram import Bot
+from aiogram.exceptions import TelegramBadRequest, TelegramForbiddenError, TelegramRetryAfter
+from aiogram.types import InlineKeyboardMarkup, ReplyKeyboardMarkup
 from loguru import logger
 from sqlalchemy import update, select
 
 from common.models import ReferalLink, User, db
+from common.settings import settings
+from tgbot_app.keyboards import main_kb
 
 TARIFFS = {
     50.0: 2,
@@ -236,9 +243,45 @@ def create_users_files():
             file.write("\n".join(map(str, prem_users)))
 
 
+async def update_keyboard_process(user_id: int, bot: Bot, semaphore, markup: ReplyKeyboardMarkup) -> None:
+    async with semaphore:
+        start = time.time()
+        try:
+            await bot.send_message(chat_id=user_id, reply_markup=markup, disable_notification=True, text=".")
+            logger.info(f"User <{user_id}> sent keyboard markup>")
+        except (TelegramBadRequest, TelegramForbiddenError):
+            async with db.async_session_factory() as session:
+                await session.execute(update(User).where(User.id == user_id).values(is_active=False))
+                logger.info(f"User <{user_id}> inactive")
+        except TelegramRetryAfter as error:
+            await asyncio.sleep(error.retry_after)
+            await update_keyboard_process(user_id, bot, semaphore, markup)
+        except Exception as error:
+            logger.error(f"Update keyboard process failed: {error.args}")
+        finally:
+            work_time = time.time() - start
+            if work_time < 1:
+                await asyncio.sleep(1 - work_time)
+
+
+async def update_keyboard():
+    async with db.async_session_factory() as session:
+        result = await session.scalars(select(User.id).where(User.is_active))
+        users = result.all()
+
+    bot = Bot(token=settings.BOT_TOKEN)
+    semaphore = asyncio.Semaphore(value=25)
+    markup = await main_kb()
+    tasks = []
+
+    for user in users:
+        tasks.append(asyncio.create_task(update_keyboard_process(user, bot, semaphore, markup)))
+
+
 if __name__ == '__main__':
     # delete_data()
     # main()
     # save_errors()
     # switch_model()
-    create_users_files()
+    # create_users_files()
+    asyncio.run(update_keyboard())
