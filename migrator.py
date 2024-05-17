@@ -2,10 +2,12 @@ import asyncio
 import json
 import time
 from datetime import datetime
+from enum import Enum
 
 from aiogram import Bot
 from aiogram.exceptions import TelegramBadRequest, TelegramForbiddenError, TelegramRetryAfter
-from aiogram.types import InlineKeyboardMarkup, ReplyKeyboardMarkup
+from aiogram.types import InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
+from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from loguru import logger
 from sqlalchemy import update, select
 
@@ -243,6 +245,23 @@ def create_users_files():
             file.write("\n".join(map(str, prem_users)))
 
 
+class MainButtons(str, Enum):
+    PROFILE = "⚡️ Тарифы и токены"
+    AIS = "🤖 Нейросети"
+    FAQ = "❓ Помощь"
+    SERVICES = "📲 Сервисы"
+    GEN_IMG = "🏞 Генерация изображений"
+
+
+def main_kb_temp() -> ReplyKeyboardMarkup:
+    builder = ReplyKeyboardBuilder()
+
+    for btn in MainButtons:
+        builder.button(text=btn)
+
+    return builder.adjust(2, 2, 1).as_markup(resize_keyboard=True)
+
+
 async def update_keyboard_process(user_id: int, bot: Bot, semaphore, markup: ReplyKeyboardMarkup) -> None:
     async with semaphore:
         start = time.time()
@@ -265,17 +284,20 @@ async def update_keyboard_process(user_id: int, bot: Bot, semaphore, markup: Rep
 
 
 async def update_keyboard():
+    logger.info("Updating keyboard")
     async with db.async_session_factory() as session:
         result = await session.scalars(select(User.id).where(User.is_active))
         users = result.all()
 
     bot = Bot(token=settings.BOT_TOKEN)
     semaphore = asyncio.Semaphore(value=25)
-    markup = await main_kb()
+    markup = main_kb_temp()
     tasks = []
 
     for user in users:
         tasks.append(asyncio.create_task(update_keyboard_process(user, bot, semaphore, markup)))
+
+    await asyncio.gather(*tasks)
 
 
 if __name__ == '__main__':
