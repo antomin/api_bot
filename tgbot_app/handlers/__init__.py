@@ -25,8 +25,8 @@ from .vision_handler import router as vision_router
 main_router = Router()
 
 main_router.include_routers(
-    start_router,
     error_router,
+    start_router,
     ais_router,
     faq_router,
     profile_router,

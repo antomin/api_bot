@@ -15,7 +15,7 @@ async def gen_admin_main_kb(user_id: int) -> InlineKeyboardMarkup:
     return builder.adjust(1).as_markup()
 
 
-async def gen_admin_links_kb(user_id: str) -> InlineKeyboardMarkup:
+async def gen_admin_links_kb(user_id: int) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
 
     builder.button(text=AdminLinksButtons.CREATE.value,

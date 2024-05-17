@@ -41,7 +41,9 @@ def _set_schedulers(bot: Bot) -> None:
     scheduler.add_job(recurrent_payments, trigger=IntervalTrigger(minutes=15))
     scheduler.add_job(send_report, trigger=CronTrigger(hour=0, minute=5), kwargs={"bot": bot})
     scheduler.add_job(update_users_files, trigger=CronTrigger(hour=0, minute=0))
-    scheduler.start()
+
+    if not settings.DEBUG:
+        scheduler.start()
 
 
 async def _set_default_commands(bot: Bot) -> None:

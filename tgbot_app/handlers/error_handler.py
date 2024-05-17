@@ -6,6 +6,8 @@ from aiogram.types import ErrorEvent, Message
 router = Router()
 
 
-@router.error(ExceptionTypeFilter(CancelHandler))
-async def handle_cancel_exception(event: ErrorEvent, message: Message):
-    pass
+@router.errors()
+@router.error()
+async def handle_cancel_exception(event: ErrorEvent):
+    if isinstance(event.exception, CancelHandler):
+        pass
