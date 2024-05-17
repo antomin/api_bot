@@ -6,14 +6,13 @@ from enum import Enum
 
 from aiogram import Bot
 from aiogram.exceptions import TelegramBadRequest, TelegramForbiddenError, TelegramRetryAfter
-from aiogram.types import InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import ReplyKeyboardMarkup
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from loguru import logger
 from sqlalchemy import update, select
 
 from common.models import ReferalLink, User, db
 from common.settings import settings
-from tgbot_app.keyboards import main_kb
 
 TARIFFS = {
     50.0: 2,
