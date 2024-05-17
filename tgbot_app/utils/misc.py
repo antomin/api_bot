@@ -15,6 +15,7 @@ from common.services import neiro_api
 from common.settings import settings
 from tgbot_app.keyboards import gen_error_kb, gen_no_tokens_kb
 from tgbot_app.utils.enums import GenerationResult
+from tgbot_app.utils.exceptions import SilentCancelHandler
 from tgbot_app.utils.generation_workers import run_service_generation
 from tgbot_app.utils.text_variables import (ERROR_MAIN_TEXT, ERROR_STT_TEXT,
                                             ERROR_TRANSLATION_TEXT,
@@ -65,18 +66,18 @@ async def send_no_balance_msg(user: User, bot: Bot) -> None:
                 "токенов. Для Вас они будут в 2 раза дешевле.")
     markup = await gen_no_tokens_kb()
     await bot.send_message(chat_id=user.id, text=text, reply_markup=markup)
-    raise CancelHandler()
+    raise SilentCancelHandler()
 
 
 async def handle_voice_prompt(message: Message, user: User, check_premium: bool = True) -> str:
     if check_premium and not user.tariff:
         await message.answer(text="🗣️ Голосовые запросы доступны только в тарифе PREMIUM.",
                              reply_markup=await gen_no_tokens_kb())
-        raise CancelHandler()
+        raise SilentCancelHandler()
 
     if message.voice.duration > 30:
         await message.answer(text="🗣️ Длина аудио не должна превышать 30сек. Попробуйте ещё раз.")
-        raise CancelHandler()
+        raise SilentCancelHandler()
 
     path = f"{settings.MEDIA_DIR}/tmp/{user.id}.ogg"
     await message.bot.download(file=message.voice.file_id, destination=path)
@@ -88,7 +89,7 @@ async def handle_voice_prompt(message: Message, user: User, check_premium: bool 
 
     if not result.success:
         await message.answer(text=ERROR_STT_TEXT, reply_markup=await gen_error_kb())
-        raise CancelHandler()
+        raise SilentCancelHandler()
 
     return result.result
 
@@ -138,7 +139,7 @@ async def translate_text(text: str, message: Message) -> str:
         return result.result
 
     await message.answer(text=ERROR_TRANSLATION_TEXT)
-    raise CancelHandler()
+    raise SilentCancelHandler()
 
 
 def parse_user_work_struct(raw_struct: str) -> dict | None:
