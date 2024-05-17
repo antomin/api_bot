@@ -288,7 +288,7 @@ async def update_keyboard():
         result = await session.scalars(select(User.id).where(User.is_active))
         users = result.all()
 
-    bot = Bot(token=settings.BOT_TOKEN)
+    bot = Bot(token=settings.TG_TOKEN)
     semaphore = asyncio.Semaphore(value=25)
     markup = main_kb_temp()
     tasks = []
