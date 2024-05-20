@@ -291,7 +291,7 @@ def update_subscription(user: User, invoice: Invoice) -> None:
         session.add(user)
         session.commit()
 
-    logger.info(f"SUBSCRIPTION UPDATED | User <{user.id}> | Tariff <{tariff.name}>")
+    logger.info(f"SUBSCRIPTION UPDATE SUCCESS | User <{user.id}> | Tariff <{tariff.name}>")
 
 
 def get_admin_user(username: str) -> UserAdmin:

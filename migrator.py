@@ -289,7 +289,7 @@ async def update_keyboard():
         users = result.all()
 
     bot = Bot(token=settings.TG_TOKEN)
-    semaphore = asyncio.Semaphore(value=25)
+    semaphore = asyncio.Semaphore(value=20)
     markup = main_kb_temp()
     tasks = []
 

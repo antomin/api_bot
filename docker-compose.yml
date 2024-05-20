@@ -41,7 +41,7 @@ services:
     volumes:
       - ./data/tmp:/code/tgbot_app/media/tmp
       - ./data/users_files:/code/tgbot_app/media/users_files
-      - ./logs/bot:/code/tgbot_app/logs
+      - ./logs/bot:/code/logs
       - ./data/settings.json:/code/common/settings.json
     command: "python run_bot.py"
 

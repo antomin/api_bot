@@ -34,7 +34,7 @@ def __set_extensions(app: Flask) -> None:
 
 
 def create_app() -> Flask:
-    logger.add("logs/flask.log", rotation="00:00", level="ERROR", enqueue=True)
+    # logger.add("logs/flask.log", rotation="00:00", level="ERROR", enqueue=True)
 
     app = Flask(__name__)
 
