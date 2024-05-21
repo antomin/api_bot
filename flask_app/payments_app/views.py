@@ -42,9 +42,9 @@ def result_view():
         if invoice.is_paid:
             return Response(f"OK{inv_id}", status=200)
 
-        if not robokassa.check_signature(inv_id=inv_id, price=price, recv_signature=signature):
-            logger.error(f"Check signature ERROR | {inv_id}")
-            return Response("Check signature ERROR", status=403)
+        # if not robokassa.check_signature(inv_id=inv_id, price=price, recv_signature=signature):
+        #     logger.error(f"Check signature ERROR | {inv_id}")
+        #     return Response("Check signature ERROR", status=403)
 
         user: User = sync_get_object_by_id(User, id_=invoice.user_id, relations=[User.referal_links])
         tariff: Tariff = sync_get_object_by_id(Tariff, id_=invoice.tariff_id)
@@ -52,7 +52,7 @@ def result_view():
         if tariff.is_extra:
             sync_update_object(user, token_balance=user.token_balance + tariff.token_balance)
         else:
-            update_subscription(user=user, invoice=invoice)
+            update_subscription(user=user, invoice=invoice, tariff=tariff)
 
         if user.referal_links:
             link = user.referal_links[0]
