@@ -261,11 +261,12 @@ def main_kb_temp() -> ReplyKeyboardMarkup:
     return builder.adjust(2, 2, 1).as_markup(resize_keyboard=True)
 
 
-async def update_keyboard_process(user_id: int, bot: Bot, semaphore, markup: ReplyKeyboardMarkup) -> None:
+async def update_keyboard_process(user_id: int, bot: Bot, semaphore, markup: ReplyKeyboardMarkup, text: str) -> None:
+
     async with semaphore:
         start = time.time()
         try:
-            await bot.send_message(chat_id=user_id, reply_markup=markup, disable_notification=True, text=".")
+            await bot.send_message(chat_id=user_id, reply_markup=markup, disable_notification=True, text=text)
             logger.info(f"User <{user_id}> sent keyboard markup>")
         except (TelegramBadRequest, TelegramForbiddenError):
             async with db.async_session_factory() as session:
@@ -292,9 +293,11 @@ async def update_keyboard():
     semaphore = asyncio.Semaphore(value=20)
     markup = main_kb_temp()
     tasks = []
+    text = ("⚡️Дарим тебе <b>5 бесплатных вопросов</b> боту и <b>2 бесплатные генерации картинок</b>. Скорей "
+            "воспользуйся ими! Для общения выбери Gemini, а для картинок Kandinsky. Задай вопрос боту👇")
 
     for user in users:
-        tasks.append(asyncio.create_task(update_keyboard_process(user, bot, semaphore, markup)))
+        tasks.append(asyncio.create_task(update_keyboard_process(user, bot, semaphore, markup, text)))
 
     await asyncio.gather(*tasks)
 
