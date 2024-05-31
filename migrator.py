@@ -266,7 +266,7 @@ async def update_keyboard_process(user_id: int, bot: Bot, semaphore, markup: Rep
     async with semaphore:
         start = time.time()
         try:
-            await bot.send_message(chat_id=user_id, reply_markup=markup, disable_notification=True, text=text)
+            await bot.send_message(chat_id=user_id, reply_markup=markup, text=text)
             logger.info(f"User <{user_id}> sent keyboard markup>")
         except (TelegramBadRequest, TelegramForbiddenError):
             async with db.async_session_factory() as session:
