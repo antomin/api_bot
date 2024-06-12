@@ -7,11 +7,12 @@ from sqlalchemy.orm import joinedload
 
 from common.enums import ImageModels, ServiceModels, TextModels, VideoModels
 from common.models import (Invoice, ReferalLink, Report, Tariff,
-                           TextGenerationRole, User, UserAdmin, db)
+                           TextGenerationRole, User, UserAdmin, db, Database)
 from common.models.generations import (ImageQuery, ServiceQuery, TextQuery,
                                        TextSession, VideoQuery)
 from common.models.payments import Refund
 from common.settings import Model, settings
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def get_or_create_user(tgid: int, username: str, first_name: str, last_name: str, link_id: str | None) -> User:
@@ -263,6 +264,35 @@ def sync_update_object(obj: Any, **params) -> None:
         session.commit()
         session.refresh(obj)
         session.close()
+
+
+async def async_update_subscription(session: AsyncSession, user: User, invoice: Invoice, tariff: Tariff) -> None:
+    # Логика обновления подписки асинхронно
+    if user.tariff_id != tariff.id:
+        user.tariff_id = tariff.id
+
+    if user.payment_time:  # Recurring update
+        user.payment_time += timedelta(days=tariff.days)
+    else:  # First payment
+        user.payment_time = datetime.now() + timedelta(days=tariff.days)
+        user.gemini_daily_limit = tariff.gemini_daily_limit
+        user.kandinsky_daily_limit = tariff.kandinsky_daily_limit
+        user.sd_daily_limit = tariff.sd_daily_limit
+        user.check_subscriptions = False
+        user.update_daily_limits_time = datetime.now() + timedelta(hours=24)
+
+    user.token_balance += tariff.token_balance
+    user.payment_tries = 0
+    user.recurring = True
+    user.first_payment = False
+
+    if not user.mother_invoice_id:
+        user.mother_invoice_id = invoice.id
+
+    session.add(user)
+    session.commit()
+
+    logger.info(f"SUBSCRIPTION UPDATE SUCCESS | User <{user.id}> | Tariff <{tariff.name}>")
 
 
 def update_subscription(user: User, invoice: Invoice, tariff: Tariff) -> None:

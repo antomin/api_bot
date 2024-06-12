@@ -20,6 +20,7 @@ class Tariff(Base):
     kandinsky_daily_limit: Mapped[int] = mapped_column(default=0)
     sd_daily_limit: Mapped[int] = mapped_column(default=0)
     token_balance: Mapped[int]
+    price_stars: Mapped[int] = mapped_column(default=0)
     days: Mapped[int]
     price: Mapped[int]
     main_tariff_id: Mapped[int | None] = mapped_column(default=None, unique=True)
