@@ -111,8 +111,6 @@ class Settings(BaseSettings):
     ROBOKASSA_PASS1: str = settings_data["robokassa_pass1"]
     ROBOKASSA_PASS2: str = settings_data["robokassa_pass2"]
 
-    STARS_TOKEN: str = env.str("STARS_TOKEN")
-
     DB_URL: str = f"postgresql+psycopg2://{_db_user}:{_db_pass}@{_db_host}:{_db_port}/{_db_name}"
     ASYNC_DB_URL: str = f"postgresql+asyncpg://{_db_user}:{_db_pass}@{_db_host}:{_db_port}/{_db_name}"
 
