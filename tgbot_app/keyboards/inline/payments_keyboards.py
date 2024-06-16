@@ -4,8 +4,9 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from common.db_api import get_tariffs
 from common.models import Tariff, User
 from common.settings import settings
-from tgbot_app.utils.callbacks import PaymentCallback, ProfileCallback
-from tgbot_app.utils.enums import PaymentAction, ProfileButtons
+from tgbot_app.utils.callbacks import PaymentCallback, ProfileCallback, PayProviderCallback
+from tgbot_app.utils.enums import PaymentAction, ProfileButtons, TariffCode
+from tgbot_app.utils.enums import PayProvider
 
 
 async def gen_no_tokens_kb() -> InlineKeyboardMarkup:
@@ -15,18 +16,41 @@ async def gen_no_tokens_kb() -> InlineKeyboardMarkup:
 
     return builder.adjust(1).as_markup()
 
+def gen_price_str(user: User, tariff: Tariff, provider: PayProvider) -> str:
+    price_fields = {PayProvider.ROBOKASSA: "price", PayProvider.STARS: "price_stars"}
+    price = getattr(tariff, price_fields[provider])
 
-async def gen_premium_kb(user: User) -> InlineKeyboardMarkup:
+    if price == 0:
+        price = 1
+
+    if tariff.is_extra and user.tariff.code != TariffCode.FREE and price != 1:
+        price = int(price / 2)
+
+    # if provider == PayProvider.ROBOKASSA:
+    #     return f"{price}₽"
+    # else:
+    return f"{price}⭐"
+
+
+async def gen_premium_kb(user: User, provider: PayProvider) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
 
     if not user.tariff:
         tariffs = await get_tariffs(is_trial=user.first_payment)
 
         for tariff in tariffs:
+            price_str = gen_price_str(user=user, tariff=tariff, provider=provider)
+
+            text = f"💳 {tariff.name} / {price_str}"
             builder.button(
-                text=f"💳 {tariff.name}",
-                callback_data=PaymentCallback(action=PaymentAction.SUBSCRIBE, value=tariff.id),
+                text=text,
+                callback_data=PaymentCallback(action=PaymentAction.SUBSCRIBE, value=tariff.id, provider=provider),
             )
+
+        # builder.button(text=("✅ " if provider == PayProvider.ROBOKASSA else "") + "Оплата картами РФ 🇷🇺",
+        #                callback_data=PayProviderCallback(provider=PayProvider.ROBOKASSA, source="premium"))
+        builder.button(text="✅ " + "Оплата Telegram STARS ⭐️",
+                       callback_data=PayProviderCallback(provider=PayProvider.STARS, source="premium"))
 
     else:
         if not user.recurring:
@@ -62,17 +86,30 @@ async def gen_premium_cancel_kb(refund: bool = False) -> InlineKeyboardMarkup:
     return builder.adjust(1).as_markup()
 
 
-async def gen_tokens_kb(user: User) -> InlineKeyboardMarkup:
+async def gen_tokens_kb(user: User, provider: PayProvider) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     tariffs = await get_tariffs(is_extra=True)
 
     for tariff in tariffs:
-        if user.tariff and not user.tariff.is_trial:
-            price = int(tariff.price / 2)
-        else:
-            price = tariff.price
-        url = f"{settings.DOMAIN}/payments/redirect/{tariff.id}/{user.id}/"
+        price_str = gen_price_str(user=user, tariff=tariff, provider=provider)
+        text = f"💎 {tariff.name} / {price_str}"
+        builder.button(
+            text=text,
+            callback_data=PaymentCallback(action=PaymentAction.TOKENS, value=tariff.id, provider=provider),
+        )
 
-        builder.button(text=f"💎 {tariff.name} / {price} ₽ 💸", web_app=WebAppInfo(url=url))
+    # builder.button(text=("✅ " if provider == PayProvider.ROBOKASSA else "") + "Оплата картами РФ 🇷🇺",
+    #                callback_data=PayProviderCallback(provider=PayProvider.ROBOKASSA, source="tokens"))
+    builder.button(text="✅ " + "Оплата Telegram STARS ⭐️",
+                   callback_data=PayProviderCallback(provider=PayProvider.STARS, source="tokens"))
 
     return builder.adjust(1).as_markup()
+
+
+async def gen_confirm_tokens_kb(user: User, tariff: Tariff) -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    builder.button(
+        text=f"Оплатить {tariff.price}₽",
+        web_app=WebAppInfo(url=f"{settings.DOMAIN}/payments/redirect/{tariff.id}/{user.id}/"))
+
+    return builder.as_markup()

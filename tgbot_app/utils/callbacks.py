@@ -13,7 +13,7 @@ from tgbot_app.utils.enums import (AdminLinksButtons, AdminMainButtons,
                                    ProfileButtons, SearchEngine,
                                    ServicesButtons, SileroAction,
                                    TextSettingsButtons, WorkingButtons,
-                                   WorkPlanButtons, WorkTypes)
+                                   WorkPlanButtons, WorkTypes, PayProvider)
 
 
 class ProfileCallback(CallbackData, prefix="profile"):
@@ -91,6 +91,12 @@ class FAQCallback(CallbackData, prefix="faq"):
 class PaymentCallback(CallbackData, prefix="pay"):
     action: PaymentAction
     value: int | bool
+    provider: PayProvider | str = "_"
+
+
+class PayProviderCallback(CallbackData, prefix="pay_provider"):
+    provider: PayProvider
+    source: str
 
 
 class AdminCallback(CallbackData, prefix="admin"):

@@ -11,6 +11,11 @@ class MainButtons(str, Enum):
     GEN_IMG = "🏞 Генерация изображений"
 
 
+class TariffCode(str, Enum):
+    FREE = "free"
+    TRIAL_50 = "trial_50"
+
+
 class DefaultCommands(Enum):
     start = "Перезапуск 🚀"
     profile = "Профиль 👨‍💼"
@@ -147,9 +152,16 @@ class FAQFinancesButtons(Enum):
     REFUND = "Политика возврата средств"
 
 
+class PayProvider(Enum):
+    ROBOKASSA = "robokassa"
+    # CRYPTO = "crypto"
+    STARS = "stars"
+
+
 class PaymentAction(Enum):
     SUBSCRIBE = "subscribe"
     CONFIRM = "confirm"
+    TOKENS = "tokens"
     REACTIVATE = "reactivate"
     CANCEL = "cancel"
     CONFIRM_CANCEL = "confirm_cancel"
