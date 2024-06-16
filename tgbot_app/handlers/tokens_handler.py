@@ -41,7 +41,7 @@ async def premium_confirm(callback: CallbackQuery, callback_data: PaymentCallbac
             currency="XTR",
             prices=[LabeledPrice(label=description, amount=tariff.price_stars)],
             payload=str(invoice.id),
-            provider_token=settings.STARS_TOKEN,
+            provider_token="",
         )
     # else:
     #     text = (f"🏦 Вы оформляете покупку дополнительных <b>{tariff.token_balance} токенов</b>\n\n"
