@@ -290,7 +290,7 @@ async def async_update_subscription(session: AsyncSession, user: User, invoice: 
         user.mother_invoice_id = invoice.id
 
     session.add(user)
-    session.commit()
+    await session.commit()
 
     logger.info(f"SUBSCRIPTION UPDATE SUCCESS | User <{user.id}> | Tariff <{tariff.name}>")
 

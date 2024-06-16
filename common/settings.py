@@ -30,11 +30,11 @@ def get_settings():
     dict_data = {}
     with open(f"{_base_dir}/common/settings.json", "r", encoding="utf-8") as file:
         settings_raw_data = json.loads(file.read())
-        
+
     for section, data in settings_raw_data.items():
         for key, info in data.items():
             dict_data[key] = info['value']
-            
+
     return dict_data
 
 
@@ -110,6 +110,8 @@ class Settings(BaseSettings):
     ROBOKASSA_LOGIN: str = settings_data["robokassa_login"]
     ROBOKASSA_PASS1: str = settings_data["robokassa_pass1"]
     ROBOKASSA_PASS2: str = settings_data["robokassa_pass2"]
+
+    STARS_TOKEN: str = env.str("STARS_TOKEN")
 
     DB_URL: str = f"postgresql+psycopg2://{_db_user}:{_db_pass}@{_db_host}:{_db_port}/{_db_name}"
     ASYNC_DB_URL: str = f"postgresql+asyncpg://{_db_user}:{_db_pass}@{_db_host}:{_db_port}/{_db_name}"

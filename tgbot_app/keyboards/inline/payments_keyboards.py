@@ -26,10 +26,10 @@ def gen_price_str(user: User, tariff: Tariff, provider: PayProvider) -> str:
     if tariff.is_extra and user.tariff.code != TariffCode.FREE and price != 1:
         price = int(price / 2)
 
-    if provider == PayProvider.ROBOKASSA:
-        return f"{price}₽"
-    else:
-        return f"{price}⭐"
+    # if provider == PayProvider.ROBOKASSA:
+    #     return f"{price}₽"
+    # else:
+    return f"{price}⭐"
 
 
 async def gen_premium_kb(user: User, provider: PayProvider) -> InlineKeyboardMarkup:
@@ -47,9 +47,9 @@ async def gen_premium_kb(user: User, provider: PayProvider) -> InlineKeyboardMar
                 callback_data=PaymentCallback(action=PaymentAction.SUBSCRIBE, value=tariff.id, provider=provider),
             )
 
-        builder.button(text=("✅ " if provider == PayProvider.ROBOKASSA else "") + "Оплата картами РФ 🇷🇺",
-                       callback_data=PayProviderCallback(provider=PayProvider.ROBOKASSA, source="premium"))
-        builder.button(text=("✅ " if provider == PayProvider.STARS else "") + "Оплата Telegram STARS ⭐️",
+        # builder.button(text=("✅ " if provider == PayProvider.ROBOKASSA else "") + "Оплата картами РФ 🇷🇺",
+        #                callback_data=PayProviderCallback(provider=PayProvider.ROBOKASSA, source="premium"))
+        builder.button(text="✅ " + "Оплата Telegram STARS ⭐️",
                        callback_data=PayProviderCallback(provider=PayProvider.STARS, source="premium"))
 
     else:
@@ -98,9 +98,9 @@ async def gen_tokens_kb(user: User, provider: PayProvider) -> InlineKeyboardMark
             callback_data=PaymentCallback(action=PaymentAction.TOKENS, value=tariff.id, provider=provider),
         )
 
-    builder.button(text=("✅ " if provider == PayProvider.ROBOKASSA else "") + "Оплата картами РФ 🇷🇺",
-                   callback_data=PayProviderCallback(provider=PayProvider.ROBOKASSA, source="tokens"))
-    builder.button(text=("✅ " if provider == PayProvider.STARS else "") + "Оплата Telegram STARS ⭐️",
+    # builder.button(text=("✅ " if provider == PayProvider.ROBOKASSA else "") + "Оплата картами РФ 🇷🇺",
+    #                callback_data=PayProviderCallback(provider=PayProvider.ROBOKASSA, source="tokens"))
+    builder.button(text="✅ " + "Оплата Telegram STARS ⭐️",
                    callback_data=PayProviderCallback(provider=PayProvider.STARS, source="tokens"))
 
     return builder.adjust(1).as_markup()

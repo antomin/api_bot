@@ -20,6 +20,7 @@ from tgbot_app.handlers.profile_handler import gen_profile_text, gen_profile_kb
 from tgbot_app.utils.text_variables import REACTIVATE_RECURRING_TEXT
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.fsm.context import FSMContext
+from common.settings import settings
 
 router = Router()
 
@@ -31,7 +32,7 @@ async def premium_handler(message: Message | CallbackQuery, user: User):
         await message.answer()
         message = message.message
 
-    await message.answer(text=gen_premium_text(user), reply_markup=await gen_premium_kb(user, PayProvider.ROBOKASSA))
+    await message.answer(text=gen_premium_text(user), reply_markup=await gen_premium_kb(user, PayProvider.STARS))
 
 
 @router.callback_query(PaymentCallback.filter(F.action == PaymentAction.SUBSCRIBE))
@@ -53,7 +54,7 @@ async def premium_confirm(callback: CallbackQuery, callback_data: PaymentCallbac
             currency="XTR",
             prices=[LabeledPrice(label=description, amount=tariff.price_stars)],
             payload=str(invoice.id),
-            provider_token="",
+            provider_token=settings.STARS_TOKEN,
         )
     await callback.answer()
 
