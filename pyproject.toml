@@ -26,6 +26,7 @@ requests = "^2.31.0"
 apscheduler = "^3.10.4"
 gunicorn = "^22.0.0"
 flask-security = "^3.0.0"
+asgiref = "^3.8.1"
 
 
 [build-system]
