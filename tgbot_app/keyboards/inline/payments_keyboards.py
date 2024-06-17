@@ -23,7 +23,7 @@ def gen_price_str(user: User, tariff: Tariff, provider: PayProvider) -> str:
     if price == 0:
         price = 1
 
-    if tariff.is_extra and user.tariff.code != TariffCode.FREE and price != 1:
+    if tariff.is_extra and user.tariff and user.tariff.code != TariffCode.FREE and price != 1:
         price = int(price / 2)
 
     # if provider == PayProvider.ROBOKASSA:
