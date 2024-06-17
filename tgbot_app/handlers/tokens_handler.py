@@ -3,11 +3,11 @@ from aiogram.filters import Command
 from aiogram.types import CallbackQuery, Message, LabeledPrice
 
 from common.models import User, Tariff, db
-from tgbot_app.keyboards.inline.payments_keyboards import gen_confirm_tokens_kb
+from tgbot_app.keyboards.inline.payments_keyboards import gen_confirm_tokens_kb, gen_price_str
 from common.db_api import create_refund, get_obj_by_id, update_object, create_invoice
 from tgbot_app.keyboards import gen_tokens_kb, gen_confirm_premium_kb
 from tgbot_app.utils.callbacks import ProfileCallback, PaymentCallback
-from tgbot_app.utils.enums import DefaultCommands, ProfileButtons, PayProvider, PaymentAction
+from tgbot_app.utils.enums import DefaultCommands, ProfileButtons, PayProvider, PaymentAction, TariffCode
 from tgbot_app.utils.text_generators import (gen_token_text, gen_confirm_tariff_text,
                                              gen_premium_canceled_text,
                                              gen_premium_text, gen_refund_text)
@@ -35,6 +35,8 @@ async def premium_confirm(callback: CallbackQuery, callback_data: PaymentCallbac
         description = f"Покупка {tariff.token_balance} токенов"
         if tariff.price_stars == 0:
             tariff.price_stars = 1
+        if tariff.is_extra and user.tariff and user.tariff.code != TariffCode.FREE and tariff.price_stars != 1:
+            tariff.price_stars = int(tariff.price_stars / 2)
         await callback.message.answer_invoice(
             title="Покупка токенов",
             description=description,
